@@ -1,11 +1,9 @@
 class HttpException extends Error {
-  public status: number;
-  public message: string;
+  errors?: Record<string, string>;
+  validationErrors?: Record<string, string>;
 
-  constructor(status: number, message: string) {
+  constructor(readonly status: number, readonly message: string) {
     super(message);
-    this.status = status;
-    this.message = message;
   }
 }
 
