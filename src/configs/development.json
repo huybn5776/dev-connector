@@ -1,0 +1,7 @@
+{
+  "env": "development",
+  "dbConfig": {
+    "connectionString": "mongodb+srv://dev:jorjlenoasya14@devconnector.aldkg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+  },
+  "secretKey": "secretKey"
+}
