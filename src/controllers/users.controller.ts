@@ -1,43 +1,52 @@
 import { Request, Response } from 'express';
 
-import { CreateUserDto } from '@dtos/users.dto';
-import { User } from '@interfaces/users';
+import { CreateUserDto } from '@dtos/create-user.dto';
+import AuthService from '@services/auth.service';
 import UserService from '@services/users.service';
 
 class UsersController {
+  readonly authService = new AuthService();
   readonly userService = new UserService();
+  readonly authService = new AuthService();
 
   public getUsers = async (req: Request, res: Response): Promise<void> => {
-    const findAllUsersData = await this.userService.findAllUser();
-    res.status(200).json({ data: findAllUsersData, message: 'findAll' });
+    const users = await this.userService.findAllUser();
+    res.status(200).json(users);
+  };
+
+  public getCurrentUser = async (req: Request, res: Response): Promise<void> => {
+    res.status(200).json(req.user.current());
   };
 
   public getUserById = async (req: Request, res: Response): Promise<void> => {
     const userId: string = req.params.id;
-    const findOneUserData: User = await this.userService.findUserById(userId);
+    const user = await this.userService.findUserById(userId);
 
-    res.status(200).json({ data: findOneUserData, message: 'findOne' });
+    res.status(200).json(user);
   };
 
   public createUser = async (req: Request, res: Response): Promise<void> => {
     const userData: CreateUserDto = req.body;
-    const createUserData = await this.userService.createUser(userData);
-    res.status(201).json({ data: createUserData, message: 'created' });
+    const user = await this.userService.createUser(userData);
+    const token = this.authService.createToken(user);
+
+    res.setHeader('Set-Cookie', [this.authService.getAuthCookie(token)]);
+    res.status(201).json({ user, token });
   };
 
   public updateUser = async (req: Request, res: Response): Promise<void> => {
     const userId: string = req.params.id;
     const userData: CreateUserDto = req.body;
-    const updateUserData = await this.userService.updateUser(userId, userData);
+    const updatedUser = await this.userService.updateUser(userId, userData);
 
-    res.status(200).json({ data: updateUserData, message: 'updated' });
+    res.status(200).json(updatedUser);
   };
 
   public deleteUser = async (req: Request, res: Response): Promise<void> => {
     const userId: string = req.params.id;
-    const deleteUserData: User = await this.userService.deleteUser(userId);
+    const deleteUserData = await this.userService.deleteUser(userId);
 
-    res.status(200).json({ data: deleteUserData, message: 'deleted' });
+    res.status(200).json(deleteUserData);
   };
 }
 

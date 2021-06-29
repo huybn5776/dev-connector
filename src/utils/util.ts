@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/ban-types
-export const isEmpty = (value: string | number | object): boolean => {
+export const isEmpty = (value: string | number | object | undefined | null): boolean => {
   if (value === null) {
     return true;
   }

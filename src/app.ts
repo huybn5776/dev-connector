@@ -15,7 +15,7 @@ import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 
 import Routes from '@interfaces/routes';
-import { globalAuthMiddleware } from "@middlewares/auth.middleware";
+import { globalAuthMiddleware } from '@middlewares/auth.middleware';
 import errorMiddleware from '@middlewares/error.middleware';
 import { logger, stream } from '@utils/logger';
 

@@ -78,7 +78,7 @@ module.exports = {
     'no-useless-return': 1,
     'no-underscore-dangle': [2, { allow: ['_id'] }],
     'prettier/prettier': 0,
-    quotes: ['error', 'single'],
+    quotes: ['error', 'single', { allowTemplateLiterals: true }],
     semi: [2, 'always'],
 
     'jsx-a11y/click-events-have-key-events': 0,

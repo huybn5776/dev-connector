@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import request from 'supertest';
 
 import App from '@/app';
-import { CreateUserDto } from '@dtos/users.dto';
+import { CreateUserDto } from '@dtos/create-user.dto';
 import UsersRoute from '@routes/users.route';
 
 afterAll(async () => {
@@ -62,6 +62,7 @@ describe('Testing Users', () => {
   describe('[POST] /users', () => {
     it('response Create User', async () => {
       const userData: CreateUserDto = {
+        name: 'Test',
         email: 'test@email.com',
         password: 'q1w2e3r4',
       };
@@ -86,6 +87,7 @@ describe('Testing Users', () => {
     it('response Update User', async () => {
       const userId = '60706478aad6c9ad19a31c84';
       const userData: CreateUserDto = {
+        name: 'Test',
         email: 'test@email.com',
         password: 'q1w2e3r4',
       };

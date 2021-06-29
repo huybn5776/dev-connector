@@ -1,49 +1,46 @@
 import bcrypt from 'bcrypt';
+import * as gravatar from 'gravatar';
 
-import { CreateUserDto } from '@dtos/users.dto';
+import { CreateUserDto } from '@dtos/create-user.dto';
 import HttpException from '@exceptions/http-exception';
-import { User } from '@interfaces/users';
-import userModel from '@models/users.model';
-import { isEmpty } from '@utils/util';
+import { UserDocument, UserModel } from '@models/user.model';
 
 class UserService {
-  public users = userModel;
+  public users = UserModel;
 
-  public async findAllUser(): Promise<User[]> {
-    return this.users.find();
+  public async findAllUser(): Promise<UserDocument[]> {
+    return this.users.find().select('-password');
   }
 
-  public async findUserById(userId: string): Promise<User> {
-    if (isEmpty(userId)) {
-      throw new HttpException(400, 'You\'re not userId');
+  public async findUserById(id: string): Promise<UserDocument> {
+    const user = await this.users.findById(id).select('-password');
+    if (!user) {
+      throw new HttpException(404);
     }
 
-    const findUser = await this.users.findOne({ _id: userId });
-    if (!findUser) throw new HttpException(409, 'You\'re not user');
-
-    return findUser;
+    return user;
   }
 
-  public async createUser(userData: CreateUserDto): Promise<User> {
+  public async createUser(userData: CreateUserDto): Promise<UserDocument> {
     const existingUser = await this.users.findOne({ email: userData.email });
     if (existingUser) {
-      throw new HttpException(409, `You're email ${userData.email} already exists`);
+      throw new HttpException(409, `This email address is already being used`);
     }
-
+    const avatar = gravatar.url(userData.email, {
+      s: '200',
+      r: 'pg',
+      d: 'mm',
+    });
     const hashedPassword = await bcrypt.hash(userData.password, 10);
-    return this.users.create({ ...userData, password: hashedPassword });
+    return this.users.create({ ...userData, password: hashedPassword, avatar });
   }
 
-  public async updateUser(userId: string, userData: CreateUserDto): Promise<User> {
-    if (isEmpty(userData)) {
-      throw new HttpException(400, 'You\'re not userData');
-    }
-
+  public async updateUser(userId: string, userData: CreateUserDto): Promise<UserDocument> {
     let updatingUserData = { ...userData };
     if (updatingUserData.email) {
-      const findUser = await this.users.findOne({ email: updatingUserData.email });
-      if (findUser && findUser._id !== userId) {
-        throw new HttpException(409, `You're email ${updatingUserData.email} already exists`);
+      const userWithSameEmail = await this.users.findOne({ email: updatingUserData.email });
+      if (userWithSameEmail && userWithSameEmail._id !== userId) {
+        throw new HttpException(409, `This email address is already being used`);
       }
     }
 
@@ -52,21 +49,24 @@ class UserService {
       updatingUserData = { ...updatingUserData, password: hashedPassword };
     }
 
-    const updateUserById = await this.users.findByIdAndUpdate(userId, { userData: updatingUserData });
-    if (!updateUserById) {
-      throw new HttpException(409, 'You\'re not user');
+    const updatedUser = await this.users.findByIdAndUpdate(
+      userId,
+      { userData: updatingUserData },
+      { runValidators: true },
+    );
+    if (!updatedUser) {
+      throw new HttpException(404);
     }
 
-    return updateUserById;
+    return updatedUser;
   }
 
-  public async deleteUser(userId: string): Promise<User> {
-    const deleteUserById = await this.users.findByIdAndDelete(userId);
-    if (!deleteUserById) {
-      throw new HttpException(409, 'You\'re not user');
+  public async deleteUser(userId: string): Promise<UserDocument> {
+    const deletingUser = await this.users.findByIdAndDelete(userId);
+    if (!deletingUser) {
+      throw new HttpException(404);
     }
-
-    return deleteUserById;
+    return deletingUser;
   }
 }
 

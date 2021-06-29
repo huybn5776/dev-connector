@@ -2,62 +2,53 @@ import bcrypt from 'bcrypt';
 import config from 'config';
 import jwt from 'jsonwebtoken';
 
-import { CreateUserDto } from '@dtos/users.dto';
-import HttpException from '@exceptions/http-exception';
-import { DataStoredInToken, TokenData } from '@interfaces/auth.interface';
-import { User } from '@interfaces/users';
-import userModel from '@models/users.model';
-import { isEmpty } from '@utils/util';
+import { AuthRequest } from '@dtos/auth-request';
+import { AuthException, AuthErrorType } from '@exceptions/auth-exception';
+import { AuthToken } from '@interfaces/auth-token';
+import { DataStoredInToken } from '@interfaces/auth.interface';
+import { UserDocument, UserModel } from '@models/user.model';
 
 class AuthService {
-  public users = userModel;
+  users = UserModel;
 
-  public async signup(userData: CreateUserDto): Promise<User> {
-    if (isEmpty(userData)) throw new HttpException(400, "You're not userData");
-
-    const findUser = await this.users.findOne({ email: userData.email });
-    if (findUser) throw new HttpException(409, `You're email ${userData.email} already exists`);
-
-    const hashedPassword = await bcrypt.hash(userData.password, 10);
-    return this.users.create({ ...userData, password: hashedPassword });
-  }
-
-  public async login(userData: CreateUserDto): Promise<{ cookie: string; findUser: User }> {
-    if (isEmpty(userData)) throw new HttpException(400, "You're not userData");
-
-    const findUser = await this.users.findOne({ email: userData.email });
-    if (!findUser) throw new HttpException(409, `You're email ${userData.email} not found`);
-
-    const isPasswordMatching: boolean = await bcrypt.compare(userData.password, findUser.password);
-    if (!isPasswordMatching) throw new HttpException(409, "You're password not matching");
-
-    const tokenData = this.createToken(findUser);
-    const cookie = this.createCookie(tokenData);
-
-    return { cookie, findUser };
-  }
-
-  public async logout(userData: User): Promise<User> {
-    if (isEmpty(userData)) throw new HttpException(400, "You're not userData");
-
-    const findUser = await this.users.findOne({ email: userData.email, password: userData.password });
-    if (!findUser) {
-      throw new HttpException(409, `You're email ${userData.email} not found`);
+  public async login(authRequest: AuthRequest): Promise<AuthToken> {
+    if (authRequest.grant_type !== 'password') {
+      throw new AuthException(AuthErrorType.UnsupportedGrantType);
+    }
+    if (!authRequest.username || !authRequest.password) {
+      throw new AuthException(AuthErrorType.InvalidRequest, 'Password grant require either username and password');
     }
 
-    return findUser;
+    const user = await this.users.findOne({ $or: [{ name: authRequest.username }, { email: authRequest.username }] });
+    const isPasswordMatching = user?.password && (await bcrypt.compare(authRequest.password, user.password)) || false;
+    if (!user || !isPasswordMatching) {
+      throw new AuthException(AuthErrorType.InvalidGrant, 'The username or password is incorrect');
+    }
+
+    return this.createToken(user);
   }
 
-  public createToken(user: User): TokenData {
+  public createToken(user: UserDocument): AuthToken {
     const dataStoredInToken: DataStoredInToken = { _id: user._id };
-    const secret: string = config.get('secretKey');
-    const expiresIn: number = 60 * 60;
+    const secret: string = config.get('jwtSecretKey');
+    const expiresIn = 24 * 60 * 60;
+    const token = jwt.sign(dataStoredInToken, secret, { expiresIn });
 
-    return { expiresIn, token: jwt.sign(dataStoredInToken, secret, { expiresIn }) };
+    return {
+      access_token: token,
+      token_type: 'Bearer',
+      expires_in: expiresIn,
+      expires: new Date().getTime() + expiresIn * 1000,
+      user,
+    };
   }
 
-  public createCookie(tokenData: TokenData): string {
-    return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn};`;
+  public getAuthCookie(token: AuthToken): string {
+    return `Authorization=${token.access_token}; HttpOnly; Max-Age=${token.expires_in}; Path=/`;
+  }
+
+  public getRemoveAuthCookie(): string {
+    return 'Authorization=; HttpOnly; Max-age=0; Path=/';
   }
 }
 
