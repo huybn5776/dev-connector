@@ -12,7 +12,12 @@ declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     interface Request {
-      user: { current: () => UserDocument };
+      user: {
+        claims: () => {
+          id: string;
+        };
+        current: () => Promise<UserDocument>;
+      };
       token: string;
     }
   }
@@ -26,14 +31,21 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction): 
       const secretKey: string = config.get('jwtSecretKey');
       const verificationResponse = (await jwt.verify(Authorization, secretKey)) as DataStoredInToken;
       const userId = verificationResponse._id;
-      const user = await UserModel.findById(userId).select('-password');
+      let user: UserDocument | null = null;
 
-      if (user) {
-        req.user = { current: () => user };
-        next();
-      } else {
-        next(new AuthException(AuthErrorType.InvalidToken));
-      }
+      req.user = {
+        claims: () => ({
+          id: userId,
+        }),
+        current: async () => {
+          user = user ?? await UserModel.findById(userId).select(['-password', '-__v']);
+          if (!user) {
+            throw new AuthException(AuthErrorType.InvalidToken, 'The user is not exist');
+          }
+          return user;
+        },
+      };
+      next();
     } else {
       next(new AuthException(AuthErrorType.InvalidToken, 'No token'));
     }
@@ -48,6 +60,9 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction): 
 
 export const globalAuthMiddleware = (req: Request, res: Response, next: NextFunction): void => {
   req.user = {
+    claims() {
+      throw new HttpException(500, 'Unauthorized');
+    },
     current() {
       throw new HttpException(500, 'Unauthorized');
     },

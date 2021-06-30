@@ -15,7 +15,8 @@ class UsersController {
   };
 
   public getCurrentUser = async (req: Request, res: Response): Promise<void> => {
-    res.status(200).json(req.user.current());
+    const currentUser = await req.user.current();
+    res.status(200).json(currentUser);
   };
 
   public getUserById = async (req: Request, res: Response): Promise<void> => {
