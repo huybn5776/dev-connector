@@ -3,5 +3,7 @@
   "dbConfig": {
     "connectionString": "mongodb+srv://dev:jorjlenoasya14@devconnector.aldkg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
   },
-  "jwtSecretKey": "secretKey"
+  "jwtSecretKey": "secretKey",
+  "githubClientId": "183a8289f7221c396e07",
+  "githubSecret": "2e56e3ecc8578d87d5760af30a14bfab15a190d9"
 }

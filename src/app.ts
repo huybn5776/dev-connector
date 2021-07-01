@@ -1,5 +1,6 @@
 /* eslint-disable import/first */
 process.env.NODE_CONFIG_DIR = `${__dirname}/configs`;
+import 'reflect-metadata';
 
 import express from 'express';
 

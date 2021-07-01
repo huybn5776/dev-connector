@@ -2,12 +2,13 @@ import { Request, Response } from 'express';
 
 import { CreateUserDto } from '@dtos/create-user.dto';
 import AuthService from '@services/auth.service';
+import ProfileService from '@services/profile.service';
 import UserService from '@services/users.service';
 
 class UsersController {
   readonly authService = new AuthService();
   readonly userService = new UserService();
-  readonly authService = new AuthService();
+  readonly profileService  = new ProfileService();
 
   public getUsers = async (req: Request, res: Response): Promise<void> => {
     const users = await this.userService.findAllUser();
@@ -46,6 +47,7 @@ class UsersController {
   public deleteUser = async (req: Request, res: Response): Promise<void> => {
     const userId: string = req.params.id;
     const deleteUserData = await this.userService.deleteUser(userId);
+    await this.profileService.deleteProfileOfUser(userId);
 
     res.status(200).json(deleteUserData);
   };
