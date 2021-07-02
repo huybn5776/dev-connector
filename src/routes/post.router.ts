@@ -26,6 +26,10 @@ class PostsRoute implements Route {
       asyncHandler(this.postsController.createPost),
     );
     this.router.delete(`${this.path}/:id`, authMiddleware, asyncHandler(this.postsController.deletePost));
+
+    this.router.get(`${this.path}/:id/likes`, authMiddleware, asyncHandler(this.postsController.getLikes));
+    this.router.post(`${this.path}/:id/likes`, authMiddleware, asyncHandler(this.postsController.addLike));
+    this.router.delete(`${this.path}/:id/likes`, authMiddleware, asyncHandler(this.postsController.deleteLike));
   }
 }
 

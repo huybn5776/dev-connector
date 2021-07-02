@@ -29,6 +29,26 @@ class PostsController {
     await this.postsService.deletePost(userId, postId);
     res.status(200).send();
   };
+
+  getLikes = async (req: Request, res: Response): Promise<void> => {
+    const postId = req.params.id;
+    const likes = await this.postsService.getLikes(postId);
+    res.status(200).send(likes);
+  };
+
+  addLike = async (req: Request, res: Response): Promise<void> => {
+    const postId = req.params.id;
+    const userId = req.user.claims().id;
+    const likes = await this.postsService.addLike(userId, postId);
+    res.status(201).send(likes);
+  };
+
+  deleteLike = async (req: Request, res: Response): Promise<void> => {
+    const postId = req.params.id;
+    const userId = req.user.claims().id;
+    const likes = await this.postsService.deleteLike(userId, postId);
+    res.status(200).send(likes);
+  };
 }
 
 export default PostsController;
