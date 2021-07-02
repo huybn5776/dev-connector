@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 
+import { CreatePostCommentDto } from '@dtos/create-post-comment.dto';
 import PostsService from '@services/posts.service';
 
 class PostsController {
@@ -48,6 +49,27 @@ class PostsController {
     const userId = req.user.claims().id;
     const likes = await this.postsService.deleteLike(userId, postId);
     res.status(200).send(likes);
+  };
+
+  getPostComments = async (req: Request, res: Response): Promise<void> => {
+    const postId = req.params.id;
+    const comments = await this.postsService.getPostComments(postId);
+    res.status(200).send(comments);
+  };
+
+  addPostComment = async (req: Request, res: Response): Promise<void> => {
+    const postId = req.params.id;
+    const user =await req.user.current();
+    const commentData: CreatePostCommentDto = req.body;
+    const comments = await this.postsService.addPostComment(user, postId, commentData);
+    res.status(201).send(comments);
+  };
+
+  deletePostComment = async (req: Request, res: Response): Promise<void> => {
+    const userId = req.user.claims().id;
+    const { postId, commentId } = req.params;
+    const comments = await this.postsService.deleteComment(userId, postId, commentId);
+    res.status(200).send(comments);
   };
 }
 

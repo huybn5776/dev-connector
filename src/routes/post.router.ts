@@ -1,6 +1,7 @@
 import { Router } from 'express';
 
 import PostsController from '@controllers/posts.controller';
+import { CreatePostCommentDto } from '@dtos/create-post-comment.dto';
 import { CreatePostDto } from '@dtos/create-post.dto';
 import Route from '@interfaces/routes';
 import authMiddleware from '@middlewares/auth.middleware';
@@ -30,6 +31,19 @@ class PostsRoute implements Route {
     this.router.get(`${this.path}/:id/likes`, authMiddleware, asyncHandler(this.postsController.getLikes));
     this.router.post(`${this.path}/:id/likes`, authMiddleware, asyncHandler(this.postsController.addLike));
     this.router.delete(`${this.path}/:id/likes`, authMiddleware, asyncHandler(this.postsController.deleteLike));
+
+    this.router.get(`${this.path}/:id/comments`, authMiddleware, asyncHandler(this.postsController.getPostComments));
+    this.router.post(
+      `${this.path}/:id/comments`,
+      validationMiddleware(CreatePostCommentDto, 'body', { skipMissingProperties: true }),
+      authMiddleware,
+      asyncHandler(this.postsController.addPostComment),
+    );
+    this.router.delete(
+      `${this.path}/:postId/comments/:commentId`,
+      authMiddleware,
+      asyncHandler(this.postsController.deletePostComment),
+    );
   }
 }
 
