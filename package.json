@@ -5,7 +5,8 @@
   "main": ".eslintrc.js",
   "scripts": {
     "server": "cd server && npm run dev",
-    "dev": "concurrently \"npm run server\""
+    "client": "cd client && npm run start",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "repository": {
     "type": "git",

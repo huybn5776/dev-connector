@@ -21,6 +21,6 @@
     "resolveJsonModule": true,
     "importHelpers": true
   },
-  "include": ["core/src/**/*", "server/src/**/*"],
+  "include": ["core/src/**/*", "client/src/**/*", "client/vite.config.ts", "server/src/**/*"],
   "exclude": ["node_modules"]
 }
