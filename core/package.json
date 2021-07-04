@@ -1,0 +1,15 @@
+{
+  "name": "dev-connector-core",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "class-transformer": "^0.4.0",
+    "class-validator": "^0.13.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.23"
+  }
+}

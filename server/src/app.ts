@@ -15,10 +15,10 @@ import morgan from 'morgan';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 
-import Routes from '@interfaces/routes';
+import Routes from '@/interfaces/routes';
+import { logger, stream } from '@/utils/logger';
 import { globalAuthMiddleware } from '@middlewares/auth.middleware';
 import errorMiddleware from '@middlewares/error.middleware';
-import { logger, stream } from '@utils/logger';
 
 class App {
   public app: express.Application;

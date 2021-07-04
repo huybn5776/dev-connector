@@ -1,7 +1,7 @@
 import express, { Router } from 'express';
 
+import Route from '@/interfaces/routes';
 import AuthController from '@controllers/auth.controller';
-import Route from '@interfaces/routes';
 import authMiddleware from '@middlewares/auth.middleware';
 import { asyncHandler } from '@middlewares/error.middleware';
 

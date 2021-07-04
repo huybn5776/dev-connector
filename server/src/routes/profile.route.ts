@@ -1,10 +1,10 @@
 import { Router } from 'express';
 
+import Route from '@/interfaces/routes';
 import ProfileController from '@controllers/profile.controller';
 import { CreateProfileEducationDto } from '@dtos/create-profile-education.dto';
 import { CreateProfileExperienceDto } from '@dtos/create-profile-experience.dto';
 import { CreateProfileDto } from '@dtos/create-profile.dto';
-import Route from '@interfaces/routes';
 import authMiddleware from '@middlewares/auth.middleware';
 import { asyncHandler } from '@middlewares/error.middleware';
 import validationMiddleware from '@middlewares/validation.middleware';

@@ -1,0 +1,22 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "src",
+    "paths": {
+      "@/*": ["*"],
+      "@core/*": ["../../core/src/*"],
+      "@dtos/*": ["../../core/src/dtos/*"],
+      "@interfaces/*": ["../../core/src/interfaces/*"],
+      "@utils/*": ["../../core/src/utils/*"],
+      "@controllers/*": ["controllers/*"],
+      "@databases": ["databases"],
+      "@exceptions/*": ["exceptions/*"],
+      "@middlewares/*": ["middlewares/*"],
+      "@models/*": ["models/*"],
+      "@routes/*": ["routes/*"],
+      "@services/*": ["services/*"],
+    }
+  },
+  "include": ["../core/**.*.ts", "src/**/*.ts", "src/**/*.json", ".env"],
+  "exclude": ["node_modules"]
+}

@@ -1,9 +1,9 @@
 import { Router } from 'express';
 
+import Route from '@/interfaces/routes';
 import PostsController from '@controllers/posts.controller';
 import { CreatePostCommentDto } from '@dtos/create-post-comment.dto';
 import { CreatePostDto } from '@dtos/create-post.dto';
-import Route from '@interfaces/routes';
 import authMiddleware from '@middlewares/auth.middleware';
 import { asyncHandler } from '@middlewares/error.middleware';
 import validationMiddleware from '@middlewares/validation.middleware';

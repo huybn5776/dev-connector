@@ -44,7 +44,7 @@ module.exports = {
             group: 'internal',
           },
           {
-            pattern: '@/app',
+            pattern: '@/**',
             group: 'internal',
           },
           {

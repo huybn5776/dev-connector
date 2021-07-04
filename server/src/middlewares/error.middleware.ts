@@ -2,9 +2,9 @@ import { NextFunction, Request, Response, RequestHandler } from 'express';
 
 import { Error as MongooseErrors } from 'mongoose';
 
+import { logger } from '@/utils/logger';
 import { AuthException } from '@exceptions/auth-exception';
 import HttpException from '@exceptions/http-exception';
-import { logger } from '@utils/logger';
 import { isEmpty } from '@utils/util';
 
 export const asyncHandler =
