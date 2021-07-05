@@ -1,0 +1,46 @@
+.NavBar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 32px;
+  color: white;
+}
+
+.header-logo {
+  margin-right: auto;
+}
+
+.header-logo-link {
+  color: white;
+
+  &:hover {
+    color: lightgray;
+  }
+}
+
+.header-link {
+  padding: 12px 28px;
+  color: white;
+  font-size: 16px;
+  border-radius: 4px;
+  transition: background-color .1s;
+
+  &:hover {
+    color: white;
+  }
+
+  &:not(.header-link-primary):hover {
+    background-color: rgba(white, .1);
+  }
+}
+
+.header-link-primary {
+  color: black;
+  font-weight: bold;
+  background-color: white;
+
+  &:hover {
+    color: black;
+    background-color: lightgray;
+  }
+}
