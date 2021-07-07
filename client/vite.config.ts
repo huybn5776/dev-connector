@@ -5,7 +5,7 @@ import path from 'path';
 import reactRefresh from '@vitejs/plugin-react-refresh';
 import { Alias, defineConfig } from 'vite';
 
-import * as tsconfig from './tsconfig.paths.json';
+import * as tsconfig from './tsconfig.json';
 
 function readAliasFromTsConfig(): Alias[] {
   const pathReplaceRegex = new RegExp(/\/\*$/, '');
