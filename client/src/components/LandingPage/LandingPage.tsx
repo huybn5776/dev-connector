@@ -1,6 +1,7 @@
 import React from 'react';
 
 import styles from './LandingPage.module.scss';
+import buttonStyles from '@styles/button.module.scss';
 
 const LandingPage: React.FC = () => {
   return (
@@ -13,10 +14,10 @@ const LandingPage: React.FC = () => {
           Create a developer profile/portfolio, share posts and get help from other developers
         </p>
 
-       <div className={styles.getStartContainer}>
-         <input className={styles.getStartInput}  type="email" placeholder='Enter your email address'/>
-         <button className='primary-button' type='button'>Get Started</button>
-       </div>
+        <div className={styles.getStartContainer}>
+          <input className={styles.getStartInput} type="email" placeholder="Enter your email address" />
+          <button className={buttonStyles.primaryButton} type="button">Get Started</button>
+        </div>
       </div>
     </div>
   );
