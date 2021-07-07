@@ -1,0 +1,40 @@
+.form-container {
+  width: 100%;
+  max-width: 400px;
+  padding: 16px;
+  background-color: rgba(white, .1);
+  border-radius: 12px;
+}
+
+.form-title {
+  margin-bottom: 24px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-input {
+  padding: 8px 12px;
+  font-size: 16px;
+  background-color: rgba(white, .1);
+  border: 0;
+  outline: 0;
+}
+
+.form-field-annotation {
+  color: lightgray;
+}
+
+.form-submit-button {
+  margin-top: 16px;
+  font-size: 18px;
+}
+
+.form-error {
+  margin-top: -6px;
+  margin-bottom: 0;
+  color: #e67272;
+}

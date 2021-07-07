@@ -26,7 +26,10 @@ export default defineConfig({
   css: { modules: { localsConvention: 'camelCase' } },
   server: {
     proxy: {
-      '*': 'http://localhost:5000',
+      '/api': {
+        target: 'http://localhost:5000',
+        rewrite: (urlPath) => urlPath.replace(/^\/api/, ''),
+      },
     },
   },
   build: {
