@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { Provider } from 'react-redux';
 import { BrowserRouter, Route } from 'react-router-dom';
 
 import './App.scss';
@@ -9,18 +10,22 @@ import LoginPage from '@components/LoginPage/LoginPage';
 import NavBar from '@components/NavBar/NavBar';
 import RegisterPage from '@components/RegisterPage/RegisterPage';
 
+import store from './store';
+
 const App: React.FC = () => {
   return (
-    <div className="App">
-      <BrowserRouter>
-        <div className="main-layout">
-          <NavBar />
-          <Route path="/" exact component={LandingPage} />
-          <Route path="/login" exact component={LoginPage} />
-          <Route path="/register" exact component={RegisterPage} />
-        </div>
-      </BrowserRouter>
-    </div>
+    <Provider store={store}>
+      <div className="App">
+        <BrowserRouter>
+          <div className="main-layout">
+            <NavBar />
+            <Route path="/" exact component={LandingPage} />
+            <Route path="/login" exact component={LoginPage} />
+            <Route path="/register" exact component={RegisterPage} />
+          </div>
+        </BrowserRouter>
+      </div>
+    </Provider>
   );
 };
 

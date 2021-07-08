@@ -1,17 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { isEmpty } from '@core/utils/util';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { AxiosResponse } from 'axios';
 import clsx from 'clsx';
 import { useForm } from 'react-hook-form';
-import { useHistory } from 'react-router-dom';
-import { takeUntil } from 'rxjs/operators';
+import { useDispatch, connect } from 'react-redux';
 import * as yup from 'yup';
 
-import { AuthApiService } from '@services/api/auth-api.service';
-import { catchFormError } from '@utils/form-utils';
+import HttpException from '@exceptions/http-exception';
 
-import { useOnDestroy } from '../../hooks/use-on-destroy';
+import { useHandleFormError } from '../../hooks/use-handle-form-error';
+import { StateToPropsFunc } from '../../store';
+import { authActions } from '../../store/actions';
 import styles from './LoginPage.module.scss';
 import buttonStyles from '@styles/button.module.scss';
 import formStyles from '@styles/form.module.scss';
@@ -26,9 +27,13 @@ const schema = yup.object().shape({
   password: yup.string().required().label('Password').min(6).max(24).required(),
 });
 
-const authApiService = new AuthApiService();
+interface PropsFromState {
+  errorResponse?: AxiosResponse<HttpException>;
+}
 
-const LoginPage: React.FC = () => {
+type AllProps = PropsFromState;
+
+const LoginPage: React.FC<AllProps> = ({ errorResponse }: AllProps) => {
   const {
     register,
     handleSubmit,
@@ -37,27 +42,17 @@ const LoginPage: React.FC = () => {
     formState: { errors },
   } = useForm<LoginForm>({
     resolver: yupResolver(schema),
-    defaultValues: {
-      email: 'Fooooo@abc.def',
-      password: 'abcdef',
-    },
   });
 
-  const destroy$ = useOnDestroy();
-  const history = useHistory();
-  const [formErrorMessage, setFormErrorMessage] = useState('');
+  const [formErrorMessage, setFormErrorMessage] = useHandleFormError(setError, errorResponse);
+  const dispatch = useDispatch();
 
-  function onSubmit(formData:LoginForm): void {
+  function onSubmit(formData: LoginForm): void {
     if (!isEmpty(formState.errors)) {
       return;
     }
     setFormErrorMessage('');
-    authApiService
-      .login(formData.email, formData.password)
-      .pipe(takeUntil(destroy$), catchFormError(setFormErrorMessage, setError))
-      .subscribe((token) => {
-        history.push('/');
-      });
+    dispatch(authActions.login.request({ email: formData.email, password: formData.password }));
   }
 
   return (
@@ -88,4 +83,8 @@ const LoginPage: React.FC = () => {
   );
 };
 
-export default LoginPage;
+const mapStateToProps: StateToPropsFunc<PropsFromState> = ({ auth }) => ({
+  errorResponse: auth.errorResponse,
+});
+
+export default connect(mapStateToProps)(LoginPage);

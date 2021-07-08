@@ -1,17 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { isEmpty } from '@core/utils/util';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { AxiosResponse } from 'axios';
 import clsx from 'clsx';
 import { useForm } from 'react-hook-form';
-import { useHistory } from 'react-router-dom';
-import { takeUntil } from 'rxjs/operators';
+import { useDispatch, connect } from 'react-redux';
 import * as yup from 'yup';
 
-import { UserApiService } from '@services/api/user-api.service';
-import { catchFormError } from '@utils/form-utils';
+import { CreateUserDto } from '@dtos/create-user.dto';
+import HttpException from '@exceptions/http-exception';
 
-import { useOnDestroy } from '../../hooks/use-on-destroy';
+import { useHandleFormError } from '../../hooks/use-handle-form-error';
+import { StateToPropsFunc } from '../../store';
+import { userActions } from '../../store/actions';
 import styles from './RegisterPage.module.scss';
 import buttonStyles from '@styles/button.module.scss';
 import formStyles from '@styles/form.module.scss';
@@ -34,9 +36,13 @@ const schema = yup.object().shape({
     .oneOf([yup.ref('password'), null], 'Passwords did not match'),
 });
 
-const userApiService = new UserApiService();
+interface PropsFromState {
+  errorResponse?: AxiosResponse<HttpException>;
+}
 
-const RegisterPage: React.FC = () => {
+type AllProps = PropsFromState;
+
+const RegisterPage: React.FC<AllProps> = ({ errorResponse }: AllProps) => {
   const {
     register,
     handleSubmit,
@@ -47,21 +53,16 @@ const RegisterPage: React.FC = () => {
     resolver: yupResolver(schema),
   });
 
-  const destroy$ = useOnDestroy();
-  const history = useHistory();
-  const [formErrorMessage, setFormErrorMessage] = useState('');
+  const [formErrorMessage, setFormErrorMessage] = useHandleFormError(setError, errorResponse);
+  const dispatch = useDispatch();
 
   function onSubmit(formData: RegisterForm): void {
     if (!isEmpty(formState.errors)) {
       return;
     }
     setFormErrorMessage('');
-    userApiService
-      .post({ name: formData.name, email: formData.email, password: formData.password })
-      .pipe(takeUntil(destroy$), catchFormError(setFormErrorMessage, setError))
-      .subscribe((user) => {
-        history.push('/');
-      });
+    const userData: CreateUserDto = { name: formData.name, email: formData.email, password: formData.password };
+    dispatch(userActions.createUser.request(userData));
   }
 
   return (
@@ -102,4 +103,8 @@ const RegisterPage: React.FC = () => {
   );
 };
 
-export default RegisterPage;
+const mapStateToProps: StateToPropsFunc<PropsFromState> = ({ user }) => ({
+  errorResponse: user.errorResponse,
+});
+
+export default connect(mapStateToProps)(RegisterPage);
