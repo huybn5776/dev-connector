@@ -38,11 +38,12 @@ const schema = yup.object().shape({
 
 interface PropsFromState {
   errorResponse?: AxiosResponse<HttpException>;
+  loading: boolean;
 }
 
 type AllProps = PropsFromState;
 
-const RegisterPage: React.FC<AllProps> = ({ errorResponse }: AllProps) => {
+const RegisterPage: React.FC<AllProps> = ({ errorResponse, loading }: AllProps) => {
   const {
     register,
     handleSubmit,
@@ -91,8 +92,15 @@ const RegisterPage: React.FC<AllProps> = ({ errorResponse }: AllProps) => {
           {errors.confirmPassword && <p className={formStyles.formError}>{errors.confirmPassword.message}</p>}
 
           <button
-            className={clsx('ui', 'button', buttonStyles.primaryButton, formStyles.formSubmitButton)}
+            className={clsx(
+              'ui',
+              'button',
+              loading ? 'loading' : '',
+              buttonStyles.primaryButton,
+              formStyles.formSubmitButton,
+            )}
             type="submit"
+            disabled={loading}
           >
             Register
           </button>
@@ -105,6 +113,7 @@ const RegisterPage: React.FC<AllProps> = ({ errorResponse }: AllProps) => {
 
 const mapStateToProps: StateToPropsFunc<PropsFromState> = ({ user }) => ({
   errorResponse: user.errorResponse,
+  loading: user.loading,
 });
 
 export default connect(mapStateToProps)(RegisterPage);
