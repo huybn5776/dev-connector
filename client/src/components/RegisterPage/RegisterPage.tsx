@@ -90,7 +90,7 @@ const RegisterPage: React.FC = () => {
           {errors.confirmPassword && <p className={formStyles.formError}>{errors.confirmPassword.message}</p>}
 
           <button
-            className={clsx(buttonStyles.primaryButton, formStyles.formSubmitButton)}
+            className={clsx('ui', 'button', buttonStyles.primaryButton, formStyles.formSubmitButton)}
             type="submit"
           >
             Register

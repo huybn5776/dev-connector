@@ -5,6 +5,7 @@ import path from 'path';
 import reactRefresh from '@vitejs/plugin-react-refresh';
 import { Alias, defineConfig } from 'vite';
 
+import { postcssIncreaseSpecificity } from './src/config/increase-specificity';
 import * as tsconfig from './tsconfig.json';
 
 function readAliasFromTsConfig(): Alias[] {
@@ -23,7 +24,10 @@ export default defineConfig({
   resolve: {
     alias: readAliasFromTsConfig(),
   },
-  css: { modules: { localsConvention: 'camelCase' } },
+  css: {
+    modules: { localsConvention: 'camelCase' },
+    postcss: { plugins: [postcssIncreaseSpecificity()] },
+  },
   server: {
     proxy: {
       '/api': {
