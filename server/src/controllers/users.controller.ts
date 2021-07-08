@@ -33,7 +33,7 @@ class UsersController {
     const token = this.authService.createToken(user);
 
     res.setHeader('Set-Cookie', [this.authService.getAuthCookie(token)]);
-    res.status(201).json({ user, token });
+    res.status(201).json(token);
   };
 
   public updateUser = async (req: Request, res: Response): Promise<void> => {
