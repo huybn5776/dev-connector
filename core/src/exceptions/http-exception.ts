@@ -1,4 +1,4 @@
-class HttpException extends Error {
+export class HttpException extends Error {
   errors?: Record<string, string>;
   validationErrors?: Record<string, string>;
 

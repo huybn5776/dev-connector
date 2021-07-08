@@ -44,6 +44,10 @@ module.exports = {
             group: 'internal',
           },
           {
+            pattern: '@+(exceptions)',
+            group: 'internal',
+          },
+          {
             pattern: '@/**',
             group: 'internal',
           },
