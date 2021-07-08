@@ -5,6 +5,7 @@ import { BrowserRouter, Route } from 'react-router-dom';
 import './App.scss';
 
 import LandingPage from '@components/LandingPage/LandingPage';
+import LoginPage from '@components/LoginPage/LoginPage';
 import NavBar from '@components/NavBar/NavBar';
 import RegisterPage from '@components/RegisterPage/RegisterPage';
 
@@ -15,6 +16,7 @@ const App: React.FC = () => {
         <div className="main-layout">
           <NavBar />
           <Route path="/" exact component={LandingPage} />
+          <Route path="/login" exact component={LoginPage} />
           <Route path="/register" exact component={RegisterPage} />
         </div>
       </BrowserRouter>
