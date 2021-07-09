@@ -44,7 +44,7 @@ module.exports = {
             group: 'internal',
           },
           {
-            pattern: '@+(actions|exceptions|store)',
+            pattern: '@+(actions|exceptions|selectors|store)',
             group: 'internal',
           },
           {

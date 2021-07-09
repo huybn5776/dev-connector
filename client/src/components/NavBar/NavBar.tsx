@@ -1,21 +1,16 @@
 import React from 'react';
 
 import clsx from 'clsx';
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import { authActions } from '@actions';
-import { StateToPropsFunc } from '@store';
+import { authSelectors } from '@selectors';
 
 import styles from './NavBar.module.scss';
 
-interface PropsFromState {
-  isAuthenticated: boolean;
-}
-
-type AllProps = PropsFromState;
-
-const NavBar: React.FC<AllProps> = ({ isAuthenticated }: AllProps) => {
+const NavBar: React.FC = () => {
+  const isAuthenticated = useSelector(authSelectors.selectIsAuthenticated);
   const dispatch = useDispatch();
 
   return (
@@ -47,8 +42,4 @@ const NavBar: React.FC<AllProps> = ({ isAuthenticated }: AllProps) => {
   );
 };
 
-const mapStateToProps: StateToPropsFunc<PropsFromState> = ({ auth }) => ({
-  isAuthenticated: auth.tokenExpires > new Date().getTime(),
-});
-
-export default connect(mapStateToProps)(NavBar);
+export default NavBar;

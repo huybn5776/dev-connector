@@ -5,12 +5,13 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { AxiosResponse } from 'axios';
 import clsx from 'clsx';
 import { useForm } from 'react-hook-form';
-import { useDispatch, connect } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import * as yup from 'yup';
 
 import { authActions } from '@actions';
 import HttpException from '@exceptions/http-exception';
+import { authSelectors } from '@selectors';
 import { StateToPropsFunc } from '@store';
 
 import { useHandleFormError } from '../../hooks/use-handle-form-error';
@@ -31,12 +32,11 @@ const schema = yup.object().shape({
 interface PropsFromState {
   errorResponse?: AxiosResponse<HttpException>;
   loading: boolean;
-  isAuthenticated: boolean;
 }
 
 type AllProps = PropsFromState;
 
-const LoginPage: React.FC<AllProps> = ({ errorResponse, loading, isAuthenticated }: AllProps) => {
+const LoginPage: React.FC<AllProps> = ({ errorResponse, loading }: AllProps) => {
   const {
     register,
     handleSubmit,
@@ -49,6 +49,8 @@ const LoginPage: React.FC<AllProps> = ({ errorResponse, loading, isAuthenticated
 
   const [formErrorMessage, setFormErrorMessage] = useHandleFormError(setError, errorResponse);
   const dispatch = useDispatch();
+
+  const isAuthenticated = useSelector(authSelectors.selectIsAuthenticated);
 
   if (isAuthenticated) {
     return <Redirect to="/dashboard" />;
@@ -100,7 +102,6 @@ const LoginPage: React.FC<AllProps> = ({ errorResponse, loading, isAuthenticated
 const mapStateToProps: StateToPropsFunc<PropsFromState> = ({ auth }) => ({
   errorResponse: auth.errorResponse,
   loading: auth.loading,
-  isAuthenticated: auth.tokenExpires > new Date().getTime(),
 });
 
 export default connect(mapStateToProps)(LoginPage);
