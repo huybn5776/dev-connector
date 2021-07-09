@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Provider } from 'react-redux';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { BrowserRouter, Route, Redirect, Switch } from 'react-router-dom';
 
 import './App.scss';
 
@@ -19,9 +19,12 @@ const App: React.FC = () => {
         <BrowserRouter>
           <div className="main-layout">
             <NavBar />
-            <Route path="/" exact component={LandingPage} />
-            <Route path="/login" exact component={LoginPage} />
-            <UnauthenticatedRoute path="/register" exact component={RegisterPage} fallbackTo="/dashboard" />
+            <Switch>
+              <Route path="/" exact component={LandingPage} />
+              <Route path="/login" exact component={LoginPage} />
+              <UnauthenticatedRoute path="/register" exact component={RegisterPage} fallbackTo="/dashboard" />
+              <Redirect to="/" />
+            </Switch>
           </div>
         </BrowserRouter>
       </div>
