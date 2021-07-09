@@ -39,3 +39,13 @@ export const saveAuthToStorage: EpicType = (action$) =>
       return EMPTY;
     }),
   );
+
+export const logout: EpicType = (action$) =>
+  action$.pipe(
+    filter(isActionOf(authActions.logout)),
+    switchMap(() => {
+      localStorage.removeItem('authToken');
+      navigateTo('/');
+      return EMPTY;
+    }),
+  );
