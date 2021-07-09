@@ -1,8 +1,10 @@
 import bcrypt from 'bcrypt';
 import * as gravatar from 'gravatar';
+import * as R from 'ramda';
 
 import { CreateUserDto } from '@dtos/create-user.dto';
 import HttpException from '@exceptions/http-exception';
+import { User } from '@interfaces/users';
 import { UserDocument, UserModel } from '@models/user.model';
 
 class UserService {
@@ -21,7 +23,7 @@ class UserService {
     return user;
   }
 
-  public async createUser(userData: CreateUserDto): Promise<UserDocument> {
+  public async createUser(userData: CreateUserDto): Promise<User> {
     const existingUser = await this.users.findOne({ email: userData.email });
     if (existingUser) {
       throw new HttpException(409, `This email address is already being used`);
@@ -32,7 +34,9 @@ class UserService {
       d: 'mm',
     });
     const hashedPassword = await bcrypt.hash(userData.password, 10);
-    return this.users.create({ ...userData, password: hashedPassword, avatar });
+    const userDocument = await this.users.create({ ...userData, password: hashedPassword, avatar });
+    const user = userDocument.toObject();
+    return R.omit(['password', '__v'], user) as User;
   }
 
   public async updateUser(userId: string, userData: CreateUserDto): Promise<UserDocument> {
