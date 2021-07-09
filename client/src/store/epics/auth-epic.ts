@@ -22,15 +22,6 @@ export const login: EpicType = (action$, state$, { api }) =>
     ),
   );
 
-export const redirectAfterLogin: EpicType = (action$) =>
-  action$.pipe(
-    filter(isActionOf(authActions.login.success)),
-    switchMap(() => {
-      navigateTo('/dashboard');
-      return EMPTY;
-    }),
-  );
-
 export const saveAuthToStorage: EpicType = (action$) =>
   action$.pipe(
     filter(isActionOf([authActions.login.success, userActions.createUser.success])),

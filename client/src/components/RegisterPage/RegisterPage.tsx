@@ -5,14 +5,12 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { AxiosResponse } from 'axios';
 import clsx from 'clsx';
 import { useForm } from 'react-hook-form';
-import { connect, useDispatch, useSelector } from 'react-redux';
-import { Redirect } from 'react-router-dom';
+import { connect, useDispatch } from 'react-redux';
 import * as yup from 'yup';
 
 import { userActions } from '@actions';
 import { CreateUserDto } from '@dtos/create-user.dto';
 import HttpException from '@exceptions/http-exception';
-import { authSelectors } from '@selectors';
 import { StateToPropsFunc } from '@store';
 
 import { useHandleFormError } from '../../hooks/use-handle-form-error';
@@ -58,11 +56,6 @@ const RegisterPage: React.FC<AllProps> = ({ errorResponse, loading}: AllProps) =
 
   const [formErrorMessage, setFormErrorMessage] = useHandleFormError(setError, errorResponse);
   const dispatch = useDispatch();
-  const isAuthenticated = useSelector(authSelectors.selectIsAuthenticated);
-
-  if (isAuthenticated) {
-    return <Redirect to="/dashboard" />;
-  }
 
   function onSubmit(formData: RegisterForm): void {
     if (!isEmpty(formState.errors)) {

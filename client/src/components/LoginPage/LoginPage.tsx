@@ -53,7 +53,8 @@ const LoginPage: React.FC<AllProps> = ({ errorResponse, loading }: AllProps) => 
   const isAuthenticated = useSelector(authSelectors.selectIsAuthenticated);
 
   if (isAuthenticated) {
-    return <Redirect to="/dashboard" />;
+    const nextUrl = new URLSearchParams(window.location.search).get('redirect') || '/dashboard';
+    return <Redirect to={nextUrl} />;
   }
 
   function onSubmit(formData: LoginForm): void {
