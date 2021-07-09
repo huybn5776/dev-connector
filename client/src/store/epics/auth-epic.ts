@@ -1,4 +1,5 @@
 import { AxiosResponse } from 'axios';
+import * as R from 'ramda';
 import { Epic } from 'redux-observable';
 import { of, EMPTY } from 'rxjs';
 import { catchError, filter, map, switchMap } from 'rxjs/operators';
@@ -7,7 +8,7 @@ import { isActionOf, RootAction, RootState, Services } from 'typesafe-actions';
 import HttpException from '@exceptions/http-exception';
 import { navigateTo } from '@utils/navigate-utils';
 
-import { authActions } from '../actions';
+import { authActions, userActions } from '../actions';
 
 type EpicType = Epic<RootAction, RootAction, RootState, Services>;
 
@@ -27,6 +28,15 @@ export const redirectAfterLogin: EpicType = (action$) =>
     filter(isActionOf(authActions.login.success)),
     switchMap(() => {
       navigateTo('/');
+      return EMPTY;
+    }),
+  );
+
+export const saveAuthToStorage: EpicType = (action$) =>
+  action$.pipe(
+    filter(isActionOf([authActions.login.success, userActions.createUser.success])),
+    switchMap(({ payload: authToken }) => {
+      localStorage.setItem('authToken', JSON.stringify(R.omit(['access_token'], authToken)));
       return EMPTY;
     }),
   );

@@ -2,6 +2,7 @@ import { AxiosResponse } from 'axios';
 import { createReducer } from 'typesafe-actions';
 
 import HttpException from '@exceptions/http-exception';
+import { AuthToken } from '@interfaces/auth-token';
 import { User } from '@interfaces/users';
 
 import { userActions, authActions } from '../actions';
@@ -17,7 +18,21 @@ export interface AuthState {
 export const initialState: AuthState = {
   tokenExpires: 0,
   loading: false,
+  ...initializeState(),
 };
+
+function initializeState(): Partial<AuthState> {
+  const authTokenJson = localStorage.getItem('authToken');
+  if (!authTokenJson) {
+    return {};
+  }
+  const authToken = (JSON.parse(authTokenJson) as AuthToken);
+  return {
+    tokenExpires: authToken.expires,
+    refreshToken: authToken.refresh_token,
+    user: authToken.user,
+  };
+}
 
 const authReducer = createReducer(initialState)
   .handleAction([authActions.login.request], (state) => ({
