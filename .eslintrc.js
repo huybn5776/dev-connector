@@ -40,11 +40,11 @@ module.exports = {
           },
           {
             pattern:
-              '@+(controllers|components|databases|dtos|exceptions|interfaces|middlewares|models|routes|services|utils)/**',
+              '@+(controllers|components|databases|dtos|exceptions|interfaces|middlewares|models|routes|services|store|utils)/**',
             group: 'internal',
           },
           {
-            pattern: '@+(exceptions)',
+            pattern: '@+(actions|exceptions|store)',
             group: 'internal',
           },
           {

@@ -1,9 +1,8 @@
 import { AxiosResponse } from 'axios';
 import { createReducer } from 'typesafe-actions';
 
+import { userActions } from '@actions';
 import HttpException from '@exceptions/http-exception';
-
-import { userActions } from '../actions';
 
 export interface UserState {
   errorResponse?: AxiosResponse<HttpException>;

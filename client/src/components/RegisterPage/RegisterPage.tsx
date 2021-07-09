@@ -9,12 +9,12 @@ import { useDispatch, connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import * as yup from 'yup';
 
+import { userActions } from '@actions';
 import { CreateUserDto } from '@dtos/create-user.dto';
 import HttpException from '@exceptions/http-exception';
+import { StateToPropsFunc } from '@store';
 
 import { useHandleFormError } from '../../hooks/use-handle-form-error';
-import { StateToPropsFunc } from '../../store';
-import { userActions } from '../../store/actions';
 import styles from './RegisterPage.module.scss';
 import buttonStyles from '@styles/button.module.scss';
 import formStyles from '@styles/form.module.scss';

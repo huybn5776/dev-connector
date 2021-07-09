@@ -18,8 +18,10 @@
       "@exceptions/*": ["../core/src/exceptions/*"],
       "@exceptions": ["../core/src/exceptions"],
       "@interfaces/*": ["../core/src/interfaces/*"],
+      "@actions": ["src/store/actions"],
       "@components/*": ["src/components/*"],
       "@services/*": ["src/services/*"],
+      "@store": ["src/store"],
       "@styles/*": ["src/styles/*"],
       "@utils/*": ["src/utils/*"]
     }

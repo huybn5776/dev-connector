@@ -9,8 +9,7 @@ import LandingPage from '@components/LandingPage/LandingPage';
 import LoginPage from '@components/LoginPage/LoginPage';
 import NavBar from '@components/NavBar/NavBar';
 import RegisterPage from '@components/RegisterPage/RegisterPage';
-
-import store from './store';
+import store from '@store';
 
 const App: React.FC = () => {
   return (

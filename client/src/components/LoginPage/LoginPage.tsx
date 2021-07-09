@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { authActions } from '@actions';
 import { isEmpty } from '@core/utils/util';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { AxiosResponse } from 'axios';
@@ -10,10 +9,11 @@ import { useDispatch, connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import * as yup from 'yup';
 
+import { authActions } from '@actions';
 import HttpException from '@exceptions/http-exception';
+import { StateToPropsFunc } from '@store';
 
 import { useHandleFormError } from '../../hooks/use-handle-form-error';
-import { StateToPropsFunc } from '../../store';
 import styles from './LoginPage.module.scss';
 import buttonStyles from '@styles/button.module.scss';
 import formStyles from '@styles/form.module.scss';

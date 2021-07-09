@@ -1,11 +1,10 @@
 import { AxiosResponse } from 'axios';
 import { createReducer } from 'typesafe-actions';
 
+import { userActions, authActions } from '@actions';
 import HttpException from '@exceptions/http-exception';
 import { AuthToken } from '@interfaces/auth-token';
 import { User } from '@interfaces/users';
-
-import { userActions, authActions } from '../actions';
 
 export interface AuthState {
   tokenExpires: number;
