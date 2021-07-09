@@ -26,7 +26,7 @@ export const redirectAfterCreateUser: EpicType = (action$) =>
   action$.pipe(
     filter(isActionOf(userActions.createUser.success)),
     switchMap(() => {
-      navigateTo('/');
+      navigateTo('/dashboard');
       return EMPTY;
     }),
   );

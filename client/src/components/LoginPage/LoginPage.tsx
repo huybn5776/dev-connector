@@ -1,18 +1,19 @@
 import React from 'react';
 
+import { authActions } from '@actions';
 import { isEmpty } from '@core/utils/util';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { AxiosResponse } from 'axios';
 import clsx from 'clsx';
 import { useForm } from 'react-hook-form';
 import { useDispatch, connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 import * as yup from 'yup';
 
 import HttpException from '@exceptions/http-exception';
 
 import { useHandleFormError } from '../../hooks/use-handle-form-error';
 import { StateToPropsFunc } from '../../store';
-import { authActions } from '../../store/actions';
 import styles from './LoginPage.module.scss';
 import buttonStyles from '@styles/button.module.scss';
 import formStyles from '@styles/form.module.scss';
@@ -30,11 +31,12 @@ const schema = yup.object().shape({
 interface PropsFromState {
   errorResponse?: AxiosResponse<HttpException>;
   loading: boolean;
+  isAuthenticated: boolean;
 }
 
 type AllProps = PropsFromState;
 
-const LoginPage: React.FC<AllProps> = ({ errorResponse, loading }: AllProps) => {
+const LoginPage: React.FC<AllProps> = ({ errorResponse, loading, isAuthenticated }: AllProps) => {
   const {
     register,
     handleSubmit,
@@ -47,6 +49,10 @@ const LoginPage: React.FC<AllProps> = ({ errorResponse, loading }: AllProps) => 
 
   const [formErrorMessage, setFormErrorMessage] = useHandleFormError(setError, errorResponse);
   const dispatch = useDispatch();
+
+  if (isAuthenticated) {
+    return <Redirect to="/dashboard" />;
+  }
 
   function onSubmit(formData: LoginForm): void {
     if (!isEmpty(formState.errors)) {
@@ -94,6 +100,7 @@ const LoginPage: React.FC<AllProps> = ({ errorResponse, loading }: AllProps) => 
 const mapStateToProps: StateToPropsFunc<PropsFromState> = ({ auth }) => ({
   errorResponse: auth.errorResponse,
   loading: auth.loading,
+  isAuthenticated: auth.tokenExpires > new Date().getTime(),
 });
 
 export default connect(mapStateToProps)(LoginPage);

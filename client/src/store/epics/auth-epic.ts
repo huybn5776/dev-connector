@@ -27,7 +27,7 @@ export const redirectAfterLogin: EpicType = (action$) =>
   action$.pipe(
     filter(isActionOf(authActions.login.success)),
     switchMap(() => {
-      navigateTo('/');
+      navigateTo('/dashboard');
       return EMPTY;
     }),
   );

@@ -6,6 +6,7 @@ import { AxiosResponse } from 'axios';
 import clsx from 'clsx';
 import { useForm } from 'react-hook-form';
 import { useDispatch, connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 import * as yup from 'yup';
 
 import { CreateUserDto } from '@dtos/create-user.dto';
@@ -39,11 +40,12 @@ const schema = yup.object().shape({
 interface PropsFromState {
   errorResponse?: AxiosResponse<HttpException>;
   loading: boolean;
+  isAuthenticated: boolean;
 }
 
 type AllProps = PropsFromState;
 
-const RegisterPage: React.FC<AllProps> = ({ errorResponse, loading }: AllProps) => {
+const RegisterPage: React.FC<AllProps> = ({ errorResponse, loading, isAuthenticated }: AllProps) => {
   const {
     register,
     handleSubmit,
@@ -56,6 +58,10 @@ const RegisterPage: React.FC<AllProps> = ({ errorResponse, loading }: AllProps) 
 
   const [formErrorMessage, setFormErrorMessage] = useHandleFormError(setError, errorResponse);
   const dispatch = useDispatch();
+
+  if (isAuthenticated) {
+    return <Redirect to="/dashboard" />;
+  }
 
   function onSubmit(formData: RegisterForm): void {
     if (!isEmpty(formState.errors)) {
@@ -111,9 +117,10 @@ const RegisterPage: React.FC<AllProps> = ({ errorResponse, loading }: AllProps) 
   );
 };
 
-const mapStateToProps: StateToPropsFunc<PropsFromState> = ({ user }) => ({
+const mapStateToProps: StateToPropsFunc<PropsFromState> = ({ auth, user }) => ({
   errorResponse: user.errorResponse,
   loading: user.loading,
+  isAuthenticated: auth.tokenExpires > new Date().getTime(),
 });
 
 export default connect(mapStateToProps)(RegisterPage);
