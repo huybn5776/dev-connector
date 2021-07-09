@@ -79,6 +79,7 @@ module.exports = {
     'import/prefer-default-export': 0,
     'no-console': 1,
     'no-continue': 0,
+    'no-multiple-empty-lines': 2,
     'no-useless-return': 1,
     'no-underscore-dangle': [2, { allow: ['_id'] }],
     'prettier/prettier': 0,
