@@ -20,13 +20,13 @@ import buttonStyles from '@styles/button.module.scss';
 import formStyles from '@styles/form.module.scss';
 
 interface LoginForm {
-  email: string;
+  username: string;
   password: string;
 }
 
 const schema = yup.object().shape({
-  email: yup.string().required().label('Email').max(100, 'Email is too long').email(),
-  password: yup.string().required().label('Password').min(6).max(24).required(),
+  username: yup.string().required().label('Username').max(100),
+  password: yup.string().required().label('Password').min(6).max(24),
 });
 
 interface PropsFromState {
@@ -62,7 +62,7 @@ const LoginPage: React.FC<AllProps> = ({ errorResponse, loading }: AllProps) => 
       return;
     }
     setFormErrorMessage('');
-    dispatch(authActions.login.request({ email: formData.email, password: formData.password }));
+    dispatch(authActions.login.request({ username: formData.username, password: formData.password }));
   }
 
   return (
@@ -71,11 +71,8 @@ const LoginPage: React.FC<AllProps> = ({ errorResponse, loading }: AllProps) => 
         <h1 className={formStyles.formTitle}>Login</h1>
 
         <form className={formStyles.form} onSubmit={handleSubmit(onSubmit)}>
-          <input className={formStyles.formInput} type="email" placeholder="Email address" {...register('email')} />
-          {errors.email && <p className={formStyles.formError}>{errors.email.message}</p>}
-          <p className={formStyles.formFieldAnnotation}>
-            This site uses Gravatar so if you want a profile image, use a Gravatar email
-          </p>
+          <input className={formStyles.formInput} type="text" placeholder="Username or Email" {...register('username')} />
+          {errors.username && <p className={formStyles.formError}>{errors.username.message}</p>}
 
           <input className={formStyles.formInput} type="password" placeholder="Password" {...register('password')} />
           {errors.password && <p className={formStyles.formError}>{errors.password.message}</p>}

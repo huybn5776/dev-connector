@@ -14,8 +14,8 @@ type EpicType = Epic<RootAction, RootAction, RootState, Services>;
 export const login: EpicType = (action$, state$, { api }) =>
   action$.pipe(
     filter(isActionOf(authActions.login.request)),
-    switchMap(({ payload: { email, password } }) =>
-      api.authApi.login(email, password).pipe(
+    switchMap(({ payload: { username, password } }) =>
+      api.authApi.login(username, password).pipe(
         map(authActions.login.success),
         catchError((error: AxiosResponse<HttpException>) => of(authActions.login.failure(error))),
       ),

@@ -9,7 +9,7 @@ const stateName = 'Auth';
 const { actionName, asyncActionNames } = actionNameCreator(stateName);
 
 export const login = createAsyncAction(...asyncActionNames('Login'))<
-  { email: string; password: string },
+  { username: string; password: string },
   AuthToken,
   AxiosResponse<HttpException>
 >();
