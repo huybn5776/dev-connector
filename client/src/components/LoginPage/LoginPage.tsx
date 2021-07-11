@@ -10,6 +10,7 @@ import { Redirect } from 'react-router-dom';
 import * as yup from 'yup';
 
 import { authActions } from '@actions';
+import FormInput from '@components/FormInput/FormInput';
 import HttpException from '@exceptions/http-exception';
 import { authSelectors } from '@selectors';
 import { StateToPropsFunc } from '@store';
@@ -71,11 +72,8 @@ const LoginPage: React.FC<AllProps> = ({ errorResponse, loading }: AllProps) => 
         <h1 className={formStyles.formTitle}>Login</h1>
 
         <form className={formStyles.form} onSubmit={handleSubmit(onSubmit)}>
-          <input className={formStyles.formInput} type="text" placeholder="Username or Email" {...register('username')} />
-          {errors.username && <p className={formStyles.formError}>{errors.username.message}</p>}
-
-          <input className={formStyles.formInput} type="password" placeholder="Password" {...register('password')} />
-          {errors.password && <p className={formStyles.formError}>{errors.password.message}</p>}
+          <FormInput name="username" placeholder="Username or Email" register={register} errors={errors} />
+          <FormInput name="password" register={register} errors={errors} />
 
           <button
             className={clsx(

@@ -9,6 +9,7 @@ import { connect, useDispatch } from 'react-redux';
 import * as yup from 'yup';
 
 import { userActions } from '@actions';
+import FormInput from '@components/FormInput/FormInput';
 import { CreateUserDto } from '@dtos/create-user.dto';
 import HttpException from '@exceptions/http-exception';
 import { StateToPropsFunc } from '@store';
@@ -43,7 +44,7 @@ interface PropsFromState {
 
 type AllProps = PropsFromState;
 
-const RegisterPage: React.FC<AllProps> = ({ errorResponse, loading}: AllProps) => {
+const RegisterPage: React.FC<AllProps> = ({ errorResponse, loading }: AllProps) => {
   const {
     register,
     handleSubmit,
@@ -72,24 +73,20 @@ const RegisterPage: React.FC<AllProps> = ({ errorResponse, loading}: AllProps) =
         <h1 className={formStyles.formTitle}>Sign up</h1>
 
         <form className={formStyles.form} onSubmit={handleSubmit(onSubmit)}>
-          <input className={formStyles.formInput} type="text" placeholder="Name" {...register('name')} />
-          {errors.name && <p className={formStyles.formError}>{errors.name.message}</p>}
-
-          <input className={formStyles.formInput} type="email" placeholder="Email address" {...register('email')} />
-          {errors.email && <p className={formStyles.formError}>{errors.email.message}</p>}
+          <FormInput name="name" register={register} errors={errors} />
+          <FormInput name="email" placeholder="Email address" type="email" register={register} errors={errors} />
           <p className={formStyles.formFieldAnnotation}>
             This site uses Gravatar so if you want a profile image, use a Gravatar email
           </p>
 
-          <input className={formStyles.formInput} type="password" placeholder="Password" {...register('password')} />
-          {errors.password && <p className={formStyles.formError}>{errors.password.message}</p>}
-          <input
-            className={formStyles.formInput}
+          <FormInput name="password" type="password" register={register} errors={errors} />
+          <FormInput
+            name="confirmPassword"
             type="password"
             placeholder="Confirm password"
-            {...register('confirmPassword')}
+            register={register}
+            errors={errors}
           />
-          {errors.confirmPassword && <p className={formStyles.formError}>{errors.confirmPassword.message}</p>}
 
           <button
             className={clsx(
