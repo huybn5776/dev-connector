@@ -15,7 +15,6 @@ import HttpException from '@exceptions/http-exception';
 import { StateToPropsFunc } from '@store';
 
 import { useHandleFormError } from '../../hooks/use-handle-form-error';
-import styles from './RegisterPage.module.scss';
 import buttonStyles from '@styles/button.module.scss';
 import formStyles from '@styles/form.module.scss';
 
@@ -68,7 +67,7 @@ const RegisterPage: React.FC<AllProps> = ({ errorResponse, loading }: AllProps) 
   }
 
   return (
-    <div className={styles.RegisterPage}>
+    <div className={formStyles.formPage}>
       <div className={formStyles.formContainer}>
         <h1 className={formStyles.formTitle}>Sign up</h1>
 

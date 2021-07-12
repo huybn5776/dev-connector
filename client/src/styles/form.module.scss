@@ -1,6 +1,13 @@
+.form-page {
+  display: flex;
+  justify-content: center;
+  padding: 32px;
+}
+
 .form-container {
   width: 100%;
   max-width: 400px;
+  margin: auto;
   padding: 16px;
   background-color: rgba(white, .1);
   border-radius: 12px;
