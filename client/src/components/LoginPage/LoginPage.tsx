@@ -9,13 +9,13 @@ import { connect, useDispatch, useSelector } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import * as yup from 'yup';
 
+import { useHandleFormError } from '@/hooks/use-handle-form-error';
 import { authActions } from '@actions';
-import FormInput from '@components/FormInput/FormInput';
+import FormInput from '@components/form/FormInput/FormInput';
 import HttpException from '@exceptions/http-exception';
 import { authSelectors } from '@selectors';
 import { StateToPropsFunc } from '@store';
 
-import { useHandleFormError } from '../../hooks/use-handle-form-error';
 import buttonStyles from '@styles/button.module.scss';
 import formStyles from '@styles/form.module.scss';
 

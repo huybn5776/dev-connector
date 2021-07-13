@@ -8,13 +8,13 @@ import { useForm } from 'react-hook-form';
 import { connect, useDispatch } from 'react-redux';
 import * as yup from 'yup';
 
+import { useHandleFormError } from '@/hooks/use-handle-form-error';
 import { userActions } from '@actions';
-import FormInput from '@components/FormInput/FormInput';
+import FormInput from '@components/form/FormInput/FormInput';
 import { CreateUserDto } from '@dtos/create-user.dto';
 import HttpException from '@exceptions/http-exception';
 import { StateToPropsFunc } from '@store';
 
-import { useHandleFormError } from '../../hooks/use-handle-form-error';
 import buttonStyles from '@styles/button.module.scss';
 import formStyles from '@styles/form.module.scss';
 

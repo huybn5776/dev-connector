@@ -13,6 +13,7 @@
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
+      "@/*": ["src/*"],
       "@core/*": ["../core/src/*"],
       "@dtos/*": ["../core/src/dtos/*"],
       "@exceptions/*": ["../core/src/exceptions/*"],

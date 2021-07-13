@@ -1,19 +1,13 @@
 import React from 'react';
 
 import { capitalize } from '@core/utils/string-utils';
-import { FieldValues, FieldErrors, FieldError } from 'react-hook-form';
-import { UseFormRegister } from 'react-hook-form/dist/types/form';
-import { FieldPath } from 'react-hook-form/dist/types/utils';
+import { FieldValues, FieldError } from 'react-hook-form';
+
+import { FormField } from '@/interfaces/form-field';
 
 import formStyles from '@styles/form.module.scss';
 
-interface Props<T> {
-  register: UseFormRegister<T>;
-  name: FieldPath<T>;
-  errors: FieldErrors<T>;
-}
-
-type AllProps<T> = Props<T> & React.InputHTMLAttributes<HTMLInputElement>;
+type AllProps<T> = FormField<T> & React.InputHTMLAttributes<HTMLInputElement>;
 
 const FormInput = <T extends FieldValues>({
   register,
