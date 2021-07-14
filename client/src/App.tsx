@@ -5,6 +5,8 @@ import { BrowserRouter, Route, Redirect, Switch } from 'react-router-dom';
 
 import './App.scss';
 
+import AuthenticatedRoute from '@components/AuthenticatedRoute/AuthenticatedRoute';
+import EditProfilePage from '@components/EditProfilePage/EditProfilePage';
 import LandingPage from '@components/LandingPage/LandingPage';
 import LoginPage from '@components/LoginPage/LoginPage';
 import NavBar from '@components/NavBar/NavBar';
@@ -23,6 +25,7 @@ const App: React.FC = () => {
               <Route path="/" exact component={LandingPage} />
               <Route path="/login" exact component={LoginPage} />
               <UnauthenticatedRoute path="/register" exact component={RegisterPage} fallbackTo="/dashboard" />
+              <AuthenticatedRoute path="/edit-profile" exact component={EditProfilePage} />
               <Redirect to="/" />
             </Switch>
           </div>
