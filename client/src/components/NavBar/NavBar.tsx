@@ -2,7 +2,7 @@ import React from 'react';
 
 import clsx from 'clsx';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import { authActions } from '@actions';
 import { authSelectors } from '@selectors';
@@ -12,9 +12,10 @@ import styles from './NavBar.module.scss';
 const NavBar: React.FC = () => {
   const isAuthenticated = useSelector(authSelectors.selectIsAuthenticated);
   const dispatch = useDispatch();
+  const location = useLocation();
 
   return (
-    <nav className={styles.NavBar}>
+    <nav className={styles.NavBar} style={{ backgroundColor: location.pathname === '/' ? 'black' : undefined }}>
       <h1 className={styles.headerLogo}>
         <Link to="/" className={styles.headerLogoLink}>
           <i className="code icon" />
