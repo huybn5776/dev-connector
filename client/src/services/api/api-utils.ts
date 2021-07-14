@@ -31,6 +31,11 @@ export class AxiosProxy {
       source,
     );
   }
+
+  patch<T, D = unknown>(url: string, data: D, config?: AxiosRequestConfig): Observable<T> {
+    const source = CancelToken.source();
+    return toObservable(() => this.axiosInstance.patch<T>(url, data, { cancelToken: source.token, ...config }), source);
+  }
 }
 
 export function toObservable<T>(
@@ -43,7 +48,7 @@ export function toObservable<T>(
         subscriber.next(result.data);
         subscriber.complete();
       })
-      .catch((error:AxiosError) => {
+      .catch((error: AxiosError) => {
         if (!axios.isCancel(error)) {
           subscriber.error(error.response);
         }
