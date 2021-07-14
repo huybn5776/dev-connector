@@ -25,9 +25,14 @@ const NavBar: React.FC = () => {
         Developers
       </Link>
       {isAuthenticated ? (
-        <button className={styles.headerLink} type="button" onClick={() => dispatch(authActions.logout())}>
-          Logout
-        </button>
+        <>
+          <Link to="dashboard" className={styles.headerLink}>
+            Dashboard
+          </Link>
+          <button className={styles.headerLink} type="button" onClick={() => dispatch(authActions.logout())}>
+            Logout
+          </button>
+        </>
       ) : (
         <>
           <Link to="login" className={styles.headerLink}>

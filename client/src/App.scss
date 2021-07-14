@@ -2,7 +2,16 @@
   width: 100vw;
   height: 100vh;
   color: white;
-  background-color: black;
+  background-color: #1b1c1d;
+
+  a {
+    color: #58a6ff;
+
+    &:hover {
+      color: #58a6ff;
+      text-decoration: underline;
+    }
+  }
 }
 
 .main-layout {

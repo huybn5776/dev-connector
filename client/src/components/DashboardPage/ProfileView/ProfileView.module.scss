@@ -1,0 +1,35 @@
+.profile-content {
+  >* {
+    margin-bottom: 12px;
+  }
+}
+
+.profile-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.profile-secondary-content {
+  color: #aaa;
+}
+
+.skill-tag-container {
+  margin-bottom: 16px;
+}
+
+.skill-tag {
+  padding: 2px 4px;
+  background-color: #666;
+  border-radius: 2px;
+
+  & + & {
+    margin-left: 4px;
+  }
+}
+
+.social-icon {
+  margin-right: 4px;
+  color: lightgray;
+  font-size: 20px;
+}

@@ -1,0 +1,48 @@
+.CardLayout {
+  padding: 0 24px 8px 16px;
+  background-color: #3f4345;
+  border: 1px solid #444;
+  border-radius: 6px;
+}
+
+.card-header {
+  padding: 4px 0;
+  font-weight: bold;
+  font-size: 22px;
+  border-bottom: 1px solid #555;
+}
+
+.card-title {
+  margin-bottom: 4px;
+}
+
+.card-header-action-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 20px;
+  color: white;
+  font-size: 16px;
+  border-radius: 4px;
+  transition: background-color .1s;
+
+  &:hover {
+    background-color: rgba(white, .1);
+  }
+}
+
+.card-header-link {
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.card-content {
+  padding: 12px 0;
+}
+
+.card-actions {
+  padding: 8px 0;
+  border-top: 1px solid #555;
+}
