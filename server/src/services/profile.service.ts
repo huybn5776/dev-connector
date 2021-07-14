@@ -38,7 +38,7 @@ class ProfileService {
     const fields: (keyof Profile)[] = ['company', 'website', 'location', 'status', 'skills', 'bio', 'githubUsername'];
     fields.forEach((field) => {
       const fieldValue = (profileData as Partial<Profile>)[field];
-      if (!isEmpty(fieldValue)) {
+      if (fieldValue !== undefined) {
         profile[field] = fieldValue;
       }
     });
