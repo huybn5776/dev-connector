@@ -16,6 +16,7 @@
       "@models/*": ["models/*"],
       "@routes/*": ["routes/*"],
       "@services/*": ["services/*"],
+      "class-transformer": ["../../core/node_modules/class-transformer"]
     }
   },
   "include": ["../core/**.*.ts", "src/**/*.ts", "src/**/*.json", ".env"],
