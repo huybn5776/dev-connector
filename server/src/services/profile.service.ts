@@ -2,6 +2,11 @@ import axios, { AxiosResponse } from 'axios';
 import config from 'config';
 import { Document } from 'mongoose';
 
+import {
+  updateProfileFromDto,
+  mapCreateExperienceDtoToExperience,
+  mapCreateEducationDtoToEducation,
+} from '@/mappers/profile-mapper';
 import { CreateProfileEducationDto } from '@dtos/create-profile-education.dto';
 import { CreateProfileExperienceDto } from '@dtos/create-profile-experience.dto';
 import { CreateProfileDto } from '@dtos/create-profile.dto';
@@ -9,10 +14,8 @@ import HttpException from '@exceptions/http-exception';
 import { Profile } from '@interfaces/profile';
 import { ProfileEducation } from '@interfaces/profile-education';
 import { ProfileExperience } from '@interfaces/profile-experience';
-import { ProfileSocial } from '@interfaces/profile-social';
 import { ProfileModel, ProfileDocument } from '@models/profile.model';
 import { UserModel } from '@models/user.model';
-import { isEmpty } from '@utils/util';
 
 class ProfileService {
   readonly profiles = ProfileModel;
@@ -35,22 +38,7 @@ class ProfileService {
     const profile: (Profile & Document) | null =
       (await this.profiles.findOne({ user: new UserModel({ _id: userId }) })) ?? new ProfileModel({ user: userId });
 
-    const fields: (keyof Profile)[] = ['company', 'website', 'location', 'status', 'skills', 'bio', 'githubUsername'];
-    fields.forEach((field) => {
-      const fieldValue = (profileData as Partial<Profile>)[field];
-      if (fieldValue !== undefined) {
-        profile[field] = fieldValue;
-      }
-    });
-
-    const socialFields: (keyof ProfileSocial)[] = ['youtube', 'twitter', 'facebook', 'linkedin', 'instagram'];
-    socialFields.forEach((field) => {
-      const fieldValue = profileData.social?.[field];
-      if (!isEmpty(fieldValue)) {
-        profile.social = profile.social ?? {};
-        profile.social[field] = fieldValue;
-      }
-    });
+    updateProfileFromDto(profileData, profile);
 
     await profile.save();
     return profile;
@@ -69,16 +57,7 @@ class ProfileService {
       throw new HttpException(404);
     }
 
-    const profileExperience: ProfileExperience = {
-      title: experienceData.title,
-      company: experienceData.company,
-      location: experienceData.location,
-      from: experienceData.from,
-      to: experienceData.to,
-      current: experienceData.current,
-      description: experienceData.description,
-    };
-    profile.experiences = profile.experiences ?? [];
+    const profileExperience = mapCreateExperienceDtoToExperience(experienceData);
     profile.experiences.unshift(profileExperience);
 
     await profile.save();
@@ -105,15 +84,7 @@ class ProfileService {
       throw new HttpException(404);
     }
 
-    const profileEducation: ProfileEducation = {
-      school: educationData.school,
-      degree: educationData.degree,
-      fieldOfStudy: educationData.fieldOfStudy,
-      from: educationData.from,
-      to: educationData.to,
-      current: educationData.current,
-      description: educationData.description,
-    };
+    const profileEducation = mapCreateEducationDtoToEducation(educationData);
     profile.educations.unshift(profileEducation);
 
     await profile.save();

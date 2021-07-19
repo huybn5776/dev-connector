@@ -1,10 +1,20 @@
-export interface ProfileExperience {
+import { AutoMap } from '@automapper/classes';
+
+export class ProfileExperience {
   _id?: string;
-  title: string;
-  company: string;
+
+  @AutoMap()
+  title!: string;
+  @AutoMap()
+  company!: string;
+  @AutoMap()
   location?: string;
-  from: Date;
+  @AutoMap()
+  from!: Date;
+  @AutoMap()
   to?: Date;
+  @AutoMap()
   current?: boolean;
+  @AutoMap()
   description?: string;
 }

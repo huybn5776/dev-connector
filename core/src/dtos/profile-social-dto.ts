@@ -1,6 +1,6 @@
 import { AutoMap } from '@automapper/classes';
 
-export class ProfileSocial {
+export class ProfileSocialDto {
   @AutoMap()
   youtube?: string;
   @AutoMap()
