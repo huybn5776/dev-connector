@@ -4,8 +4,9 @@ import { Document } from 'mongoose';
 
 import {
   updateProfileFromDto,
-  mapCreateExperienceDtoToExperience,
-  mapCreateEducationDtoToEducation,
+  updateExperienceFromDto,
+  updateEducationFromDto,
+  mapCreateExperienceDtoToExperience, mapCreateEducationDtoToEducation,
 } from '@/mappers/profile-mapper';
 import { CreateProfileEducationDto } from '@dtos/create-profile-education.dto';
 import { CreateProfileExperienceDto } from '@dtos/create-profile-experience.dto';
@@ -64,6 +65,25 @@ class ProfileService {
     return profile.experiences[0];
   }
 
+  async patchUserProfileExperience(
+    userId: string,
+    experienceId: string,
+    experienceData: Partial<CreateProfileExperienceDto>,
+  ): Promise<ProfileExperience> {
+    const profile = await this.findUserProfile(userId);
+    const experience = (profile.experiences as (ProfileExperience & Document)[]).find(
+      (e) => `${e._id}` === `${experienceId}`,
+    );
+    if (!experience) {
+      throw new HttpException(404);
+    }
+
+    updateExperienceFromDto(experienceData, experience);
+
+    await profile.save();
+    return experience;
+  }
+
   async deleteProfileExperienceOfUser(userId: string, experienceId: string): Promise<ProfileExperience[]> {
     const profile: ProfileDocument | null = await this.profiles.findOneAndUpdate(
       { user: new UserModel({ _id: userId }) },
@@ -89,6 +109,25 @@ class ProfileService {
 
     await profile.save();
     return profile.educations[0];
+  }
+
+  async patchUserProfileEducation(
+    userId: string,
+    educationId: string,
+    educationData: Partial<CreateProfileEducationDto>,
+  ): Promise<ProfileEducation> {
+    const profile = await this.findUserProfile(userId);
+    const education = (profile.educations as (ProfileEducation & Document)[]).find(
+      (e) => `${e._id}` === `${educationId}`,
+    );
+    if (!education) {
+      throw new HttpException(404);
+    }
+
+    updateEducationFromDto(educationData, education);
+
+    await profile.save();
+    return education;
   }
 
   async deleteProfileEducationOfUser(userId: string, educationId: string): Promise<ProfileEducation[]> {
@@ -131,6 +170,14 @@ class ProfileService {
     }
 
     return githubProfile;
+  }
+
+  private async findUserProfile(userId: string): Promise<ProfileDocument> {
+    const profile: ProfileDocument | null = await this.profiles.findOne({ user: new UserModel({ _id: userId }) });
+    if (!profile) {
+      throw new HttpException(404);
+    }
+    return profile;
   }
 }
 

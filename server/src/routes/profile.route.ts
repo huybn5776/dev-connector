@@ -5,6 +5,8 @@ import ProfileController from '@controllers/profile.controller';
 import { CreateProfileEducationDto } from '@dtos/create-profile-education.dto';
 import { CreateProfileExperienceDto } from '@dtos/create-profile-experience.dto';
 import { CreateProfileDto } from '@dtos/create-profile.dto';
+import { PatchProfileEducationDto } from '@dtos/patch-profile-education.dto';
+import { PatchProfileExperienceDto } from '@dtos/patch-profile-experience.dto';
 import authMiddleware from '@middlewares/auth.middleware';
 import { asyncHandler } from '@middlewares/error.middleware';
 import validationMiddleware from '@middlewares/validation.middleware';
@@ -34,6 +36,12 @@ class ProfileRoute implements Route {
       authMiddleware,
       asyncHandler(this.profileController.addCurrentUserExperience),
     );
+    this.router.patch(
+      `${this.path}/me/experiences/:id`,
+      validationMiddleware(PatchProfileExperienceDto, 'body', { skipMissingProperties: true }),
+      authMiddleware,
+      asyncHandler(this.profileController.patchCurrentUserExperience),
+    );
     this.router.delete(
       `${this.path}/me/experiences/:id`,
       authMiddleware,
@@ -44,6 +52,12 @@ class ProfileRoute implements Route {
       validationMiddleware(CreateProfileEducationDto, 'body', { skipMissingProperties: true }),
       authMiddleware,
       asyncHandler(this.profileController.addCurrentUserEducation),
+    );
+    this.router.patch(
+      `${this.path}/me/educations/:id`,
+      validationMiddleware(PatchProfileEducationDto, 'body', { skipMissingProperties: true }),
+      authMiddleware,
+      asyncHandler(this.profileController.patchCurrentUserEducation),
     );
     this.router.delete(
       `${this.path}/me/educations/:id`,
