@@ -12,7 +12,9 @@ const validationMiddleware = <T, V extends 'body' | 'query' | 'params' = 'body'>
   options?: ValidatorOptions,
 ): RequestHandler => {
   return (req, res, next) => {
-    validate(plainToClass<T, V>(type, req[value]), { ...{ validationError: { target: false } }, ...options }).then(
+    const classInstance = plainToClass<T, V>(type, req[value]);
+
+    validate(classInstance, { ...{ validationError: { target: false } }, ...options }).then(
       (errors: ValidationError[]) => {
         if (errors.length > 0) {
           const validationErrors: Record<string, string> = {};
@@ -25,6 +27,7 @@ const validationMiddleware = <T, V extends 'body' | 'query' | 'params' = 'body'>
           next(exception);
         } else {
           next();
+          req.body = classInstance;
         }
       },
     );
