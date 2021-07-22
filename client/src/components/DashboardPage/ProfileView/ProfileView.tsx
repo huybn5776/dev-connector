@@ -28,7 +28,7 @@ const ProfileView: React.FC<Props> = ({ user, profile }: Props) => {
 
   return (
     <CardLayout title="Profile">
-      <CardHeader className={styles.profileHeader}>
+      <CardHeader>
         <CardTitle>Profile</CardTitle>
         <CardHeaderLink to="/edit-profile" iconClassName={clsx('edit', 'outline')}/>
       </CardHeader>

@@ -18,9 +18,9 @@ const CardLayout: React.FC<Props> = ({ title, children }: Props) => {
   return (
     <div className={styles.CardLayout}>
       {header ?? (
-        <header className={styles.cardHeader}>
+        <CardHeader>
           <CardTitle>{title}</CardTitle>
-        </header>
+        </CardHeader>
       )}
 
       {content}
@@ -74,4 +74,19 @@ export const CardContent: React.FC<CardComponents> = ({ children, className }: C
 
 export const CardActions: React.FC<CardComponents> = ({ children, className }: CardComponents) => (
   <footer className={clsx(styles.cardActions, className)}>{children}</footer>
+);
+
+interface CardRowProps {
+  children: ReactNode;
+}
+export const CardRow: React.FC<CardRowProps> = ( {children} :CardRowProps)=>(
+ <div className={styles.cardRow}>{children}</div>
+);
+
+interface CardRowToolbarProps {
+  children: ReactNode;
+}
+
+export const CardRowToolbar: React.FC<CardRowToolbarProps> = ({ children }: CardRowToolbarProps) => (
+  <div className={styles.cardRowToolbar}>{children}</div>
 );

@@ -3,9 +3,15 @@
   background-color: #3f4345;
   border: 1px solid #444;
   border-radius: 6px;
+
+  & + & {
+    margin-top: 24px;
+  }
 }
 
 .card-header {
+  display: flex;
+  align-items: flex-end;
   padding: 4px 0;
   font-weight: bold;
   font-size: 22px;
@@ -13,6 +19,7 @@
 }
 
 .card-title {
+  margin-right: auto;
   margin-bottom: 4px;
 }
 
@@ -25,6 +32,7 @@
   color: white;
   font-size: 16px;
   border-radius: 4px;
+  cursor: pointer;
   transition: background-color .1s;
 
   &:hover {
@@ -45,4 +53,38 @@
 .card-actions {
   padding: 8px 0;
   border-top: 1px solid #555;
+}
+
+.card-row {
+  position: relative;
+  padding: 8px;
+  border-top: 1px solid transparent;
+  transition: background-color .1s;
+
+  &:hover {
+    background-color: rgba(white, .1);
+    border-top-color: gray !important;
+  }
+
+  & + & {
+    border-top-color: #555;
+  }
+
+  &:not(:hover) {
+    .card-row-toolbar {
+      opacity: 0;
+    }
+  }
+
+  > * {
+    margin: 0 0 4px;
+  }
+}
+
+.card-row-toolbar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  transition: opacity .1s;
 }

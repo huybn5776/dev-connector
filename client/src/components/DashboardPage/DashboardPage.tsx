@@ -4,6 +4,7 @@ import { useDispatch, connect } from 'react-redux';
 
 import { profileActions } from '@actions';
 import ProfileView from '@components/DashboardPage/ProfileView/ProfileView';
+import ExperienceList from '@components/ExperienceList/ExperienceList';
 import Loader from '@components/Loader/Loader';
 import { Profile } from '@interfaces/profile';
 import { User } from '@interfaces/users';
@@ -37,6 +38,7 @@ const DashboardPage: React.FC<AllProps> = ({ user, profile, loading }: AllProps)
         {user && profile ? (
           <>
             <ProfileView user={user} profile={profile} />
+            <ExperienceList experiences={profile.experiences} />
           </>
         ) : null}
       </div>
