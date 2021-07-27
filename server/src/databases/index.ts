@@ -1,6 +1,6 @@
 import config from 'config';
 
-import { DbConfig } from '@interfaces/db-config';
+import { DbConfig } from '@/interfaces/db-config';
 
 const { connectionString }: DbConfig = config.get('dbConfig');
 

@@ -1,6 +1,6 @@
 import { Document, model, Schema, SchemaDefinition, ObjectId } from 'mongoose';
 
-import { Profile } from '@interfaces/profile';
+import { Profile } from '@entities/profile';
 import { UserDocument } from '@models/user.model';
 
 const profileSchema = new Schema<Profile>(

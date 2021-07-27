@@ -6,15 +6,16 @@ import { profileActions } from '@actions';
 import ProfileView from '@components/DashboardPage/ProfileView/ProfileView';
 import ExperienceList from '@components/ExperienceList/ExperienceList';
 import Loader from '@components/Loader/Loader';
-import { Profile } from '@interfaces/profile';
-import { User } from '@interfaces/users';
+import { ProfileDto } from '@dtos/profile.dto';
+import { UserDto } from '@dtos/user.dto';
+import { HttpException } from '@exceptions';
 import { StateToPropsFunc } from '@store';
 
 import styles from './DashboardPage.module.scss';
 
 interface PropsFromState {
-  user?: User;
-  profile?: Profile;
+  user?: UserDto;
+  profile?: ProfileDto;
   loading: boolean;
 }
 

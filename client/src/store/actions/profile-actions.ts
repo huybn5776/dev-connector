@@ -1,17 +1,17 @@
 import { AxiosResponse } from 'axios';
 import { createAsyncAction, createAction } from 'typesafe-actions';
 
+import { actionNameCreator } from '@/utils/action-utils';
 import { CreateProfileDto } from '@dtos/create-profile.dto';
+import { ProfileDto } from '@dtos/profile.dto';
 import HttpException from '@exceptions/http-exception';
-import { Profile } from '@interfaces/profile';
-import { actionNameCreator } from '@utils/action-utils';
 
 const stateName = 'Profile';
 const { asyncActionNames, actionName } = actionNameCreator(stateName);
 
 export const getCurrentProfile = createAsyncAction(...asyncActionNames('Get current profile'))<
   undefined,
-  Profile,
+  ProfileDto,
   AxiosResponse<HttpException>
 >();
 
@@ -19,6 +19,6 @@ export const clearProfile = createAction(actionName('Clear profile'))<undefined,
 
 export const createProfile = createAsyncAction(...asyncActionNames('Create profile'))<
   CreateProfileDto,
-  Profile,
+  ProfileDto,
   AxiosResponse<HttpException>
 >();

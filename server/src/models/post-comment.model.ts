@@ -1,6 +1,6 @@
 import { Document, model, Schema, ObjectId } from 'mongoose';
 
-import { PostComment } from '@interfaces/post-comment';
+import { PostComment } from '@entities/post-comment';
 import { UserDocument } from '@models/user.model';
 
 const postCommentSchema = new Schema<PostComment>(

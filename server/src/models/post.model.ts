@@ -1,6 +1,6 @@
 import { Document, model, Schema, ObjectId } from 'mongoose';
 
-import { Post } from '@interfaces/post';
+import { Post } from '@entities/post';
 import { PostCommentDocument } from '@models/post-comment.model';
 import { UserDocument } from '@models/user.model';
 

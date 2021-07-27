@@ -1,6 +1,6 @@
 import { Document, model, ObjectId, Schema, SchemaDefinition } from 'mongoose';
 
-import { User } from '@interfaces/users';
+import { User } from '@entities/user';
 
 const userSchema = new Schema<User>(
   {

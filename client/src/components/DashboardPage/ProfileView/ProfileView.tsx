@@ -3,14 +3,14 @@ import React from 'react';
 import clsx from 'clsx';
 
 import CardLayout, { CardContent, CardHeader, CardTitle, CardHeaderLink } from '@components/CardLayout/CardLayout';
-import { Profile } from '@interfaces/profile';
-import { User } from '@interfaces/users';
+import { ProfileDto } from '@dtos/profile.dto';
+import { UserDto } from '@dtos/user.dto';
 
 import styles from './ProfileView.module.scss';
 
 interface Props {
-  user: User;
-  profile: Profile;
+  user: UserDto;
+  profile: ProfileDto;
 }
 
 const ProfileView: React.FC<Props> = ({ user, profile }: Props) => {

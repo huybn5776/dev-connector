@@ -12,19 +12,19 @@ import CardLayout, {
   CardRowToolbar,
   CardRow,
 } from '@components/CardLayout/CardLayout';
-import { ProfileExperience } from '@interfaces/profile-experience';
+import { ProfileExperienceDto } from '@dtos/profile-experience.dto';
 
 import styles from './ExperienceList.module.scss';
 
 interface Props {
-  experiences: ProfileExperience[];
+  experiences: ProfileExperienceDto[];
 }
 
 const dateFormat = 'yyyy-MM-dd';
 const ExperienceList: React.FC<Props> = ({ experiences }: Props) => {
-  function renderExperience(experience: ProfileExperience): JSX.Element {
+  function renderExperience(experience: ProfileExperienceDto): JSX.Element {
     return (
-      <CardRow key={experience._id}>
+      <CardRow key={experience.id}>
         <h3 className={styles.experienceTitle}>{experience.title}</h3>
         <h3 className={styles.experienceCompany}>{experience.company}</h3>
         <p >

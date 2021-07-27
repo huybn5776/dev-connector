@@ -3,8 +3,8 @@ import * as gravatar from 'gravatar';
 import * as R from 'ramda';
 
 import { CreateUserDto } from '@dtos/create-user.dto';
+import { User } from '@entities/user';
 import HttpException from '@exceptions/http-exception';
-import { User } from '@interfaces/users';
 import { UserDocument, UserModel } from '@models/user.model';
 
 class UserService {

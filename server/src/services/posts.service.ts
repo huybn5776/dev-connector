@@ -1,9 +1,9 @@
 import { CreatePostCommentDto } from '@dtos/create-post-comment.dto';
 import { CreatePostDto } from '@dtos/create-post.dto';
+import { Post } from '@entities/post';
+import { PostComment } from '@entities/post-comment';
+import { User } from '@entities/user';
 import HttpException from '@exceptions/http-exception';
-import { Post } from '@interfaces/post';
-import { PostComment } from '@interfaces/post-comment';
-import { User } from '@interfaces/users';
 import { PostCommentModel, PostCommentDocument } from '@models/post-comment.model';
 import { PostModel, PostDocument } from '@models/post.model';
 import { UserDocument, UserModel } from '@models/user.model';
@@ -12,30 +12,31 @@ class PostsService {
   readonly posts = PostModel;
   readonly comments = PostCommentModel;
 
-  getPosts(): Promise<Post[]> {
-    return this.posts.find().sort({ created: -1 }).exec();
+  async getPosts(): Promise<Post[]> {
+    const postDocuments: PostDocument[] = await this.posts.find().sort({ created: -1 }).exec();
+    return postDocuments.map((post) => post.toObject());
   }
 
-  async getPost(id: string): Promise<PostDocument> {
-    const post = await this.posts.findById(id).populate('likes.user', ['name', 'avatar']).populate('comments');
-    if (!post) {
-      throw new HttpException(404);
-    }
-    return post;
+  async getPost(id: string): Promise<Post> {
+    return (await this.getPostDocument(id)).toObject();
   }
 
   async createPost(user: UserDocument, postData: CreatePostDto): Promise<Post> {
-    return this.posts.create({
+    const postDocument: PostDocument = await this.posts.create({
       user: user._id,
       text: postData.text,
       name: user.name,
       avatar: user.avatar,
     });
+    return postDocument.toObject();
   }
 
   async deletePost(userId: string, postId: string): Promise<void> {
-    const deletedPost = await this.posts.findOneAndDelete({ user: new UserModel({ _id: userId }), id: postId });
-    if (!deletedPost) {
+    const deletedPostDocument: PostDocument | null = await this.posts.findOneAndDelete({
+      user: new UserModel({ _id: userId }),
+      id: postId,
+    });
+    if (!deletedPostDocument) {
       throw new HttpException(404);
     }
   }
@@ -46,26 +47,26 @@ class PostsService {
   }
 
   async addLike(userId: string, postId: string): Promise<{ user: User }[]> {
-    const post = await this.getPost(postId);
-    const liked = post.likes.find((like) => `${like.user._id}` === `${userId}`);
+    const postDocument = await this.getPostDocument(postId);
+    const liked = postDocument.likes.find((like) => `${like.user._id}` === `${userId}`);
     if (liked) {
       throw new HttpException(400, 'Already liked');
     }
-    post.likes.unshift({ user: new UserModel({ _id: userId }) });
-    await post.save();
-    return post.likes;
+    postDocument.likes.unshift({ user: new UserModel({ _id: userId }) });
+    await postDocument.save();
+    return postDocument.toObject().likes;
   }
 
   async deleteLike(userId: string, postId: string): Promise<{ user: User }[]> {
-    const post = await this.getPost(postId);
-    const liked = post.likes.find((like) => `${like.user._id}` === `${userId}`);
+    const postDocument = await this.getPostDocument(postId);
+    const liked = postDocument.likes.find((like) => `${like.user._id}` === `${userId}`);
     if (!liked) {
       throw new HttpException(400, 'Not yet been liked');
     }
-    post.likes = post.likes.filter((like) => `${like.user._id}` !== `${userId}`);
+    postDocument.likes = postDocument.likes.filter((like) => `${like.user._id}` !== `${userId}`);
 
-    await post.save();
-    return post.likes;
+    await postDocument.save();
+    return postDocument.toObject().likes;
   }
 
   async getPostComments(id: string): Promise<PostComment[]> {
@@ -74,7 +75,7 @@ class PostsService {
   }
 
   async addPostComment(user: User, postId: string, commentData: CreatePostCommentDto): Promise<PostComment[]> {
-    const post = await this.getPost(postId);
+    const postDocument = await this.getPostDocument(postId);
     const comment = new PostCommentModel({
       user: new UserModel({ _id: user._id }),
       text: commentData.text,
@@ -82,14 +83,14 @@ class PostsService {
       avatar: user.avatar,
     });
     await comment.save();
-    post.comments.unshift(comment);
-    await post.save();
-    return post.comments;
+    postDocument.comments.unshift(comment);
+    await postDocument.save();
+    return postDocument.toObject().comments;
   }
 
   async deleteComment(userId: string, postId: string, commentId: string): Promise<PostComment[]> {
-    const post = await this.getPost(postId);
-    const postComments: PostCommentDocument[] = post.comments;
+    const postDocument = await this.getPostDocument(postId);
+    const postComments: PostCommentDocument[] = postDocument.comments;
     const deletingComment = postComments.find((comment) => `${comment._id}` === commentId);
     if (!deletingComment) {
       throw new HttpException(404);
@@ -97,10 +98,23 @@ class PostsService {
     if (`${deletingComment.user._id}` !== userId) {
       throw new HttpException(403);
     }
-    post.comments = post.comments.filter((comment) => comment !== deletingComment) as PostCommentDocument[];
+    postDocument.comments = postDocument.comments.filter(
+      (comment) => comment !== deletingComment,
+    ) as PostCommentDocument[];
     await deletingComment.delete();
-    await post.save();
-    return post.comments;
+    await postDocument.save();
+    return postDocument.toObject().comments;
+  }
+
+  private async getPostDocument(id: string): Promise<PostDocument> {
+    const postDocument: PostDocument | null = await this.posts
+      .findById(id)
+      .populate('likes.user', ['name', 'avatar'])
+      .populate('comments');
+    if (!postDocument) {
+      throw new HttpException(404);
+    }
+    return postDocument;
   }
 }
 

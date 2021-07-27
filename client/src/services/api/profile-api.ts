@@ -2,14 +2,14 @@ import axios from 'axios';
 import { Observable } from 'rxjs';
 
 import { CreateProfileDto } from '@dtos/create-profile.dto';
-import { Profile } from '@interfaces/profile';
+import { ProfileDto } from '@dtos/profile.dto';
 
 import { AxiosProxy } from './api-utils';
 
 const axiosInstance = axios.create({ baseURL: 'api/profile' });
 const axiosProxy = new AxiosProxy(axiosInstance);
 
-export function getCurrentProfile(): Observable<Profile> {
+export function getCurrentProfile(): Observable<ProfileDto> {
   return axiosProxy.get('/me');
 }
 

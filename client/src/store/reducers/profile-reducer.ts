@@ -2,12 +2,12 @@ import { AxiosResponse } from 'axios';
 import { createReducer } from 'typesafe-actions';
 
 import { profileActions } from '@actions';
+import { ProfileDto } from '@dtos/profile.dto';
 import HttpException from '@exceptions/http-exception';
-import { Profile } from '@interfaces/profile';
 
 export interface ProfileState {
-  currentProfile?: Profile;
-  profiles: Profile[];
+  currentProfile?: ProfileDto;
+  profiles: ProfileDto[];
   repos: string[];
   errorResponse?: AxiosResponse<HttpException>;
   loading: boolean;

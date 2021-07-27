@@ -1,7 +1,8 @@
 import { AutoMap } from '@automapper/classes';
 
 export class ProfileEducation {
-  _id?: string;
+  @AutoMap()
+  _id!: string;
 
   @AutoMap()
   school!: string;

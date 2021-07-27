@@ -1,7 +1,7 @@
 import { AutoMap } from '@automapper/classes';
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsString, IsNotEmpty, IsDefined } from 'class-validator';
 
-import { ProfileSocial } from '@interfaces/profile-social';
+import { ProfileSocial } from '@entities/profile-social';
 
 export class CreateProfileDto {
   @AutoMap()
@@ -18,10 +18,13 @@ export class CreateProfileDto {
 
   @AutoMap()
   @IsString()
+  @IsNotEmpty()
+  @IsDefined()
   status!: string;
 
   @AutoMap()
   @IsNotEmpty()
+  @IsDefined()
   skills!: string[];
 
   @AutoMap()

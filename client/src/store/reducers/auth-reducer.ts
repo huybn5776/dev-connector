@@ -2,14 +2,14 @@ import { AxiosResponse } from 'axios';
 import { createReducer } from 'typesafe-actions';
 
 import { userActions, authActions } from '@actions';
+import { UserDto } from '@dtos/user.dto';
 import HttpException from '@exceptions/http-exception';
 import { AuthToken } from '@interfaces/auth-token';
-import { User } from '@interfaces/users';
 
 export interface AuthState {
   tokenExpires: number;
   refreshToken?: string;
-  user?: User;
+  user?: UserDto;
   errorResponse?: AxiosResponse<HttpException>;
   loading: boolean;
 }

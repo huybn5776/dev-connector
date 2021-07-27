@@ -4,8 +4,14 @@ import { CreateProfileExperienceDto } from '@dtos/create-profile-experience.dto'
 import { CreateProfileDto } from '@dtos/create-profile.dto';
 import { PatchProfileEducationDto } from '@dtos/patch-profile-education.dto';
 import { PatchProfileExperienceDto } from '@dtos/patch-profile-experience.dto';
-import { ProfileEducation } from '@interfaces/profile-education';
-import { ProfileExperience } from '@interfaces/profile-experience';
+import { PatchProfileDto } from '@dtos/patch-profile.dto';
+import { ProfileEducationDto } from '@dtos/profile-education.dto';
+import { ProfileExperienceDto } from '@dtos/profile-experience.dto';
+import { ProfileDto } from '@dtos/profile.dto';
+import { Profile } from '@entities/profile';
+import { ProfileEducation } from '@entities/profile-education';
+import { ProfileExperience } from '@entities/profile-experience';
+import { mapper } from '@mappers';
 import ProfileService from '@services/profile.service';
 
 class ProfileController {
@@ -13,33 +19,46 @@ class ProfileController {
 
   public getAllProfiles = async (req: Request, res: Response): Promise<void> => {
     const profiles = await this.profileService.getProfiles();
-    res.status(200).send(profiles);
+    const profileDtoList = mapper.mapArray(profiles, ProfileDto, Profile);
+    res.status(200).send(profileDtoList);
   };
 
   public getProfilesWithId = async (req: Request, res: Response): Promise<void> => {
     const { userId } = req.params;
-    const profiles = await this.profileService.getUserProfile(userId);
-    res.status(200).send(profiles);
+    const profile = await this.profileService.getUserProfile(userId);
+    const profileDto = mapper.map(profile, ProfileDto, Profile);
+    res.status(200).send(profileDto);
   };
 
   public getCurrentUserProfile = async (req: Request, res: Response): Promise<void> => {
     const userId = req.user.claims().id;
     const profile = await this.profileService.getUserProfile(userId);
-    res.status(200).send(profile);
+    const profileDto = mapper.map(profile, ProfileDto, Profile);
+    res.status(200).send(profileDto);
+  };
+
+  public updateCurrentUserProfile = async (req: Request, res: Response): Promise<void> => {
+    const userId = req.user.claims().id;
+    const profileData: CreateProfileDto = req.body;
+    const profile = await this.profileService.updateUserProfile(userId, profileData);
+    const profileDto = mapper.map(profile, ProfileDto, Profile);
+    res.status(200).send(profileDto);
   };
 
   public patchCurrentUserProfile = async (req: Request, res: Response): Promise<void> => {
     const userId = req.user.claims().id;
-    const profileData: CreateProfileDto = req.body;
+    const profileData: PatchProfileDto = req.body;
     const profile = await this.profileService.patchUserProfile(userId, profileData);
-    res.status(200).send(profile);
+    const profileDto = mapper.map(profile, ProfileDto, Profile);
+    res.status(200).send(profileDto);
   };
 
   public addCurrentUserExperience = async (req: Request, res: Response): Promise<void> => {
     const userId = req.user.claims().id;
     const experienceData: CreateProfileExperienceDto = req.body;
-    const profileExperiences = await this.profileService.addUserProfileExperience(userId, experienceData);
-    res.status(201).send(profileExperiences);
+    const profileExperience = await this.profileService.addUserProfileExperience(userId, experienceData);
+    const experienceDto = mapper.map(profileExperience, ProfileExperienceDto, ProfileExperience);
+    res.status(201).send(experienceDto);
   };
 
   public patchCurrentUserExperience = async (req: Request, res: Response): Promise<void> => {
@@ -47,36 +66,41 @@ class ProfileController {
       req,
       this.profileService.patchUserProfileExperience.bind(this.profileService),
     );
-    res.status(200).send(profileExperience);
+    const experienceDto = mapper.map(profileExperience, ProfileExperienceDto, ProfileExperience);
+    res.status(200).send(experienceDto);
   };
 
   public deleteCurrentUserProfileExperience = async (req: Request, res: Response): Promise<void> => {
     const userId = req.user.claims().id;
     const experienceId: string = req.params.id;
     const profileExperiences = await this.profileService.deleteProfileExperienceOfUser(userId, experienceId);
-    res.status(200).send(profileExperiences);
+    const experienceDtoList = mapper.mapArray(profileExperiences, ProfileExperienceDto, ProfileExperience);
+    res.status(200).send(experienceDtoList);
   };
 
   public addCurrentUserEducation = async (req: Request, res: Response): Promise<void> => {
     const userId = req.user.claims().id;
     const education = req.body;
     const profileEducation = await this.profileService.addUserProfileEducation(userId, education);
-    res.status(201).send(profileEducation);
+    const experienceDto = mapper.map(profileEducation, ProfileEducationDto, ProfileEducation);
+    res.status(201).send(experienceDto);
   };
 
   public patchCurrentUserEducation = async (req: Request, res: Response): Promise<void> => {
-    const profileExperience = await this.patchData<PatchProfileEducationDto, ProfileEducation>(
+    const profileEducation = await this.patchData<PatchProfileEducationDto, ProfileEducation>(
       req,
       this.profileService.patchUserProfileEducation.bind(this.profileService),
     );
-    res.status(200).send(profileExperience);
+    const experienceDto = mapper.map(profileEducation, ProfileEducationDto, ProfileEducation);
+    res.status(200).send(experienceDto);
   };
 
   public deleteCurrentUserProfileEducation = async (req: Request, res: Response): Promise<void> => {
     const userId = req.user.claims().id;
     const educationId: string = req.params.id;
     const profileEducations = await this.profileService.deleteProfileEducationOfUser(userId, educationId);
-    res.status(200).send(profileEducations);
+    const experienceDtoList = mapper.mapArray(profileEducations, ProfileEducationDto, ProfileEducation);
+    res.status(200).send(experienceDtoList);
   };
 
   public getGithubProfile = async (req: Request, res: Response): Promise<void> => {

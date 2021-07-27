@@ -22,3 +22,10 @@ export function setPathValue<T extends Record<string, unknown>, V>(path: string,
 export function deletePathValue<T extends Record<string, unknown>>(path: string, obj: T): T {
   return R.dissocPath(path.split('.'), obj);
 }
+
+export function isNestedEmpty<T>(value: T): boolean {
+  if (isNilOrEmpty(value)) {
+    return true;
+  }
+  return Object.values(value).every((v) => isNilOrEmpty(v) && isNestedEmpty(v));
+}

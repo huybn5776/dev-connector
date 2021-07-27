@@ -1,4 +1,4 @@
-import { User } from '@interfaces/users';
+import { UserDto } from '@dtos/user.dto';
 
 export interface AuthToken {
   access_token?: string;
@@ -7,5 +7,5 @@ export interface AuthToken {
   expires_in: number;
   expires?: number;
 
-  user?: User;
+  user?: UserDto;
 }

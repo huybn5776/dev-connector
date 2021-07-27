@@ -1,11 +1,12 @@
 import { AutoMap } from '@automapper/classes';
 
-import { ProfileEducation } from '@interfaces/profile-education';
-import { ProfileExperience } from '@interfaces/profile-experience';
-import { ProfileSocial } from '@interfaces/profile-social';
-import { User } from '@interfaces/users';
+import { ProfileEducation } from '@entities/profile-education';
+import { ProfileExperience } from '@entities/profile-experience';
+import { ProfileSocial } from '@entities/profile-social';
+import { User } from '@entities/user';
 
 export class Profile {
+  @AutoMap()
   _id!: string;
 
   @AutoMap()
@@ -26,13 +27,15 @@ export class Profile {
   @AutoMap()
   githubUsername?: string;
 
-  @AutoMap()
+  @AutoMap({ typeFn: () => ProfileExperience })
   experiences!: ProfileExperience[];
-  @AutoMap()
+  @AutoMap({ typeFn: () => ProfileEducation })
   educations!: ProfileEducation[];
   @AutoMap()
   social?: ProfileSocial;
 
+  @AutoMap()
   createdAt!: Date;
+  @AutoMap()
   updatedAt!: Date;
 }

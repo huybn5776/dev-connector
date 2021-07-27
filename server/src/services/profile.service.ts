@@ -2,27 +2,23 @@ import axios, { AxiosResponse } from 'axios';
 import config from 'config';
 import { Document } from 'mongoose';
 
-import {
-  updateProfileFromDto,
-  updateExperienceFromDto,
-  updateEducationFromDto,
-  mapCreateExperienceDtoToExperience, mapCreateEducationDtoToEducation,
-} from '@/mappers/profile-mapper';
 import { CreateProfileEducationDto } from '@dtos/create-profile-education.dto';
 import { CreateProfileExperienceDto } from '@dtos/create-profile-experience.dto';
 import { CreateProfileDto } from '@dtos/create-profile.dto';
+import { Profile } from '@entities/profile';
+import { ProfileEducation } from '@entities/profile-education';
+import { ProfileExperience } from '@entities/profile-experience';
 import HttpException from '@exceptions/http-exception';
-import { Profile } from '@interfaces/profile';
-import { ProfileEducation } from '@interfaces/profile-education';
-import { ProfileExperience } from '@interfaces/profile-experience';
+import { mapper } from '@mappers';
 import { ProfileModel, ProfileDocument } from '@models/profile.model';
 import { UserModel } from '@models/user.model';
 
 class ProfileService {
   readonly profiles = ProfileModel;
 
-  getProfiles(): Promise<Profile[]> {
-    return this.profiles.find().populate('user', ['name', 'avatar']).exec();
+  async getProfiles(): Promise<Profile[]> {
+    const profileDocuments = await this.profiles.find().populate('user', ['name', 'avatar']).exec();
+    return profileDocuments.map((profile) => profile.toObject() as Profile);
   }
 
   async getUserProfile(userId: string): Promise<Profile> {
@@ -32,17 +28,17 @@ class ProfileService {
     if (!profile) {
       throw new HttpException(404);
     }
-    return profile;
+    return profile.toObject();
   }
 
   async patchUserProfile(userId: string, profileData: CreateProfileDto): Promise<Profile> {
     const profile: (Profile & Document) | null =
       (await this.profiles.findOne({ user: new UserModel({ _id: userId }) })) ?? new ProfileModel({ user: userId });
 
-    updateProfileFromDto(profileData, profile);
+    mapper.map(profileData, Profile, CreateProfileDto, profile);
 
     await profile.save();
-    return profile;
+    return profile.toObject();
   }
 
   async deleteProfileOfUser(userId: string): Promise<void> {
@@ -58,11 +54,11 @@ class ProfileService {
       throw new HttpException(404);
     }
 
-    const profileExperience = mapCreateExperienceDtoToExperience(experienceData);
+    const profileExperience = mapper.map(experienceData, ProfileExperience, CreateProfileExperienceDto);
     profile.experiences.unshift(profileExperience);
 
     await profile.save();
-    return profile.experiences[0];
+    return profile.toObject().experiences[0];
   }
 
   async patchUserProfileExperience(
@@ -78,10 +74,10 @@ class ProfileService {
       throw new HttpException(404);
     }
 
-    updateExperienceFromDto(experienceData, experience);
+    mapper.map(experienceData, ProfileExperience, CreateProfileExperienceDto, experience);
 
     await profile.save();
-    return experience;
+    return experience.toObject();
   }
 
   async deleteProfileExperienceOfUser(userId: string, experienceId: string): Promise<ProfileExperience[]> {
@@ -91,11 +87,11 @@ class ProfileService {
     );
 
     const deletedExperience = profile?.experiences.some((experience) => `${experience._id}` === experienceId);
-    if (!deletedExperience) {
+    if (!profile || !deletedExperience) {
       throw new HttpException(404);
     }
 
-    return profile?.experiences.filter((experience) => `${experience._id}` !== experienceId) || [];
+    return profile.toObject().experiences.filter((experience) => `${experience._id}` !== experienceId);
   }
 
   async addUserProfileEducation(userId: string, educationData: CreateProfileEducationDto): Promise<ProfileEducation> {
@@ -104,11 +100,11 @@ class ProfileService {
       throw new HttpException(404);
     }
 
-    const profileEducation = mapCreateEducationDtoToEducation(educationData);
+    const profileEducation = mapper.map(educationData, ProfileEducation, CreateProfileEducationDto);
     profile.educations.unshift(profileEducation);
 
     await profile.save();
-    return profile.educations[0];
+    return profile.toObject().educations[0];
   }
 
   async patchUserProfileEducation(
@@ -124,10 +120,10 @@ class ProfileService {
       throw new HttpException(404);
     }
 
-    updateEducationFromDto(educationData, education);
+    mapper.map(educationData, ProfileEducation, CreateProfileEducationDto, education);
 
     await profile.save();
-    return education;
+    return education.toObject();
   }
 
   async deleteProfileEducationOfUser(userId: string, educationId: string): Promise<ProfileEducation[]> {
@@ -141,7 +137,7 @@ class ProfileService {
       throw new HttpException(404);
     }
 
-    return profile.educations.filter((education) => `${education._id}` !== educationId);
+    return profile.toObject().educations.filter((education) => `${education._id}` !== educationId);
   }
 
   async getGithubProfile(username: string): Promise<unknown> {

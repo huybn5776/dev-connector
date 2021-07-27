@@ -5,6 +5,7 @@
     "paths": {
       "@/*": ["*"],
       "@dtos/*": ["dtos/*"],
+      "@entities/*": ["entities/*"],
       "@interfaces/*": ["interfaces/*"],
       "@models/*": ["models/*"],
       "@utils/*": ["utils/*"]
