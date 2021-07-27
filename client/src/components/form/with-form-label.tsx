@@ -24,7 +24,7 @@ export const withFormLabel =
         <label className={formStyles.formLabel} htmlFor={elementId}>
           {label || capitalize(rest.name)}
         </label>
-        <Component {...(rest as P)} />
+        <Component {...(rest as P)} id={elementId} />
       </>
     );
   };
