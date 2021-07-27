@@ -7,6 +7,7 @@ import { CreateProfileExperienceDto } from '@dtos/create-profile-experience.dto'
 import { CreateProfileDto } from '@dtos/create-profile.dto';
 import { PatchProfileEducationDto } from '@dtos/patch-profile-education.dto';
 import { PatchProfileExperienceDto } from '@dtos/patch-profile-experience.dto';
+import { PatchProfileDto } from '@dtos/patch-profile.dto';
 import authMiddleware from '@middlewares/auth.middleware';
 import { asyncHandler } from '@middlewares/error.middleware';
 import validationMiddleware from '@middlewares/validation.middleware';
@@ -24,9 +25,15 @@ class ProfileRoute implements Route {
     this.router.get(this.path, asyncHandler(this.profileController.getAllProfiles));
     this.router.get(`${this.path}/user/:userId`, asyncHandler(this.profileController.getProfilesWithId));
     this.router.get(`${this.path}/me`, authMiddleware, asyncHandler(this.profileController.getCurrentUserProfile));
-    this.router.patch(
+    this.router.post(
       `${this.path}/me`,
       validationMiddleware(CreateProfileDto, 'body', { skipMissingProperties: true }),
+      authMiddleware,
+      asyncHandler(this.profileController.updateCurrentUserProfile),
+    );
+    this.router.patch(
+      `${this.path}/me`,
+      validationMiddleware(PatchProfileDto, 'body', { skipMissingProperties: true }),
       authMiddleware,
       asyncHandler(this.profileController.patchCurrentUserProfile),
     );

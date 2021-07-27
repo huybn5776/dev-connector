@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { AxiosResponse } from 'axios';
 import clsx from 'clsx';
+import * as R from 'ramda';
 import { useForm } from 'react-hook-form';
 import { connect, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -14,10 +15,11 @@ import FormInput from '@components/form/FormInput/FormInput';
 import FormSelect from '@components/form/FormSelect/FormSelect';
 import { withFormLabel } from '@components/form/with-form-label';
 import { CreateProfileDto } from '@dtos/create-profile.dto';
+import { PatchProfileDto } from '@dtos/patch-profile.dto';
+import { ProfileDto } from '@dtos/profile.dto';
 import HttpException from '@exceptions/http-exception';
-import { Profile } from '@interfaces/profile';
 import { StateToPropsFunc } from '@store';
-import { isNotNilOrEmpty } from '@utils/object-utils';
+import { isNotNilOrEmpty, deleteNilProperties } from '@utils/object-utils';
 
 import buttonStyles from '@styles/button.module.scss';
 import formStyles from '@styles/form.module.scss';
@@ -53,7 +55,7 @@ const schema = yup.object().shape({
 });
 
 interface PropsFromState {
-  currentProfile?: Profile;
+  profile?: ProfileDto;
   errorResponse?: AxiosResponse<HttpException>;
   loading: boolean;
 }
@@ -74,7 +76,7 @@ const statusOptions = [
 const FormLabelInput = withFormLabel(FormInput);
 const FormLabelSelect = withFormLabel(FormSelect);
 
-const EditProfilePage: React.FC<AllProps> = ({ currentProfile: profile, errorResponse, loading }: AllProps) => {
+const EditProfilePage: React.FC<AllProps> = ({ profile, errorResponse, loading }: AllProps) => {
   const {
     register,
     handleSubmit,
@@ -82,7 +84,7 @@ const EditProfilePage: React.FC<AllProps> = ({ currentProfile: profile, errorRes
     setError,
     setValue,
     reset,
-    formState: { errors },
+    formState: { errors, dirtyFields },
   } = useForm<EditProfileForm>({
     resolver: yupResolver(schema),
     defaultValues: { status: '' },
@@ -103,20 +105,7 @@ const EditProfilePage: React.FC<AllProps> = ({ currentProfile: profile, errorRes
 
   useEffect(() => {
     if (!loading && profile) {
-      const newFormValue: EditProfileForm = {
-        status: profile.status,
-        company: profile.company,
-        website: profile.website,
-        location: profile.location,
-        skills: profile.skills.join(', '),
-        bio: profile.bio,
-        githubUsername: profile.githubUsername,
-        youtube: profile.social?.youtube,
-        twitter: profile.social?.twitter,
-        facebook: profile.social?.facebook,
-        linkedin: profile.social?.linkedin,
-        instagram: profile.social?.instagram,
-      };
+      const newFormValue = mapDataToForm(profile);
       reset(newFormValue);
       if (profile.social) {
         setDisplaySocialInputs(true);
@@ -128,12 +117,58 @@ const EditProfilePage: React.FC<AllProps> = ({ currentProfile: profile, errorRes
     if (isNotNilOrEmpty(formState.errors)) {
       return;
     }
+
+    if (profile) {
+      const changedFormData = R.pick(Object.keys(dirtyFields), formData);
+      const profileData: PatchProfileDto = mapFormToPatchProfile(changedFormData);
+      dispatch(profileActions.updateProfile.request(profileData));
+    } else {
+      const profilePatchData = mapFormToPatchProfile(formData);
+      const profileData: CreateProfileDto = {
+        ...profilePatchData,
+        status: profilePatchData.status || '',
+        skills: profilePatchData.skills || [],
+      };
+      dispatch(profileActions.createProfile.request(profileData));
+    }
     setFormErrorMessage('');
-    const profileData: CreateProfileDto = {
-      ...formData,
-      skills: formData.skills.split(',').map((skill) => skill.trim()),
+  }
+
+  function mapDataToForm(userProfile: ProfileDto): EditProfileForm {
+    return {
+      status: userProfile.status,
+      company: userProfile.company,
+      website: userProfile.website,
+      location: userProfile.location,
+      skills: userProfile.skills.join(', '),
+      bio: userProfile.bio,
+      githubUsername: userProfile.githubUsername,
+      youtube: userProfile.social?.youtube,
+      twitter: userProfile.social?.twitter,
+      facebook: userProfile.social?.facebook,
+      linkedin: userProfile.social?.linkedin,
+      instagram: userProfile.social?.instagram,
     };
-    dispatch(profileActions.createProfile.request(profileData));
+  }
+
+  function mapFormToPatchProfile(formData: Partial<EditProfileForm>): PatchProfileDto {
+    const profileData: PatchProfileDto = {
+      status: formData.status,
+      company: formData.company,
+      website: formData.website,
+      location: formData.location,
+      skills: formData.skills?.split(',').map((skill) => skill.trim()),
+      bio: formData.bio,
+      githubUsername: formData.githubUsername,
+      social: {
+        youtube: formData.youtube,
+        twitter: formData.twitter,
+        facebook: formData.facebook,
+        linkedin: formData.linkedin,
+        instagram: formData.instagram,
+      },
+    };
+    return deleteNilProperties(profileData);
   }
 
   return (
@@ -195,7 +230,7 @@ const EditProfilePage: React.FC<AllProps> = ({ currentProfile: profile, errorRes
 };
 
 const mapStateToProps: StateToPropsFunc<PropsFromState> = ({ profile }) => ({
-  currentProfile: profile.currentProfile,
+  profile: profile.currentProfile,
   errorResponse: profile.errorResponse,
   loading: profile.loading,
 });

@@ -49,4 +49,5 @@ export const profileMappingProfile: MappingProfile = (mapper: Mapper) => {
     .forMember((source) => source.educations, ignore());
   mapper.createMap(PatchProfileExperienceDto, ProfileExperience);
   mapper.createMap(PatchProfileEducationDto, ProfileEducation);
+  mapper.createMap(ProfileSocial, ProfileSocial);
 };

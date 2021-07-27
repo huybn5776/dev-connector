@@ -29,3 +29,13 @@ export function isNestedEmpty<T>(value: T): boolean {
   }
   return Object.values(value).every((v) => isNilOrEmpty(v) && isNestedEmpty(v));
 }
+
+export function deleteNilProperties<T>(obj: T): Partial<T> {
+  const newObj = { ...obj };
+  (Object.keys(newObj) as (keyof T)[]).forEach((key) => {
+    if (R.isNil(newObj[key]) || isNestedEmpty(newObj[key])) {
+      delete newObj[key];
+    }
+  });
+  return newObj;
+}

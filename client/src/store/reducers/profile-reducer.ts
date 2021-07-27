@@ -20,22 +20,42 @@ export const initialState: ProfileState = {
 };
 
 const profileReducer = createReducer(initialState)
-  .handleAction([profileActions.getCurrentProfile.request, profileActions.createProfile.request], (state) => ({
-    ...state,
-    errorResponse: undefined,
-    loading: true,
-  }))
-  .handleAction([profileActions.getCurrentProfile.success, profileActions.createProfile.success], (state, action) => ({
-    ...state,
-    currentProfile: action.payload,
-    errorResponse: undefined,
-    loading: false,
-  }))
-  .handleAction([profileActions.getCurrentProfile.failure, profileActions.createProfile.failure], (state, action) => ({
-    ...state,
-    errorResponse: action.payload,
-    loading: true,
-  }))
+  .handleAction(
+    [
+      profileActions.getCurrentProfile.request,
+      profileActions.createProfile.request,
+      profileActions.updateProfile.request,
+    ],
+    (state) => ({
+      ...state,
+      errorResponse: undefined,
+      loading: true,
+    }),
+  )
+  .handleAction(
+    [
+      profileActions.getCurrentProfile.success,
+      profileActions.createProfile.success,
+      profileActions.updateProfile.success,
+    ],
+    (state, action) => ({
+      ...state,
+      currentProfile: action.payload,
+      errorResponse: undefined,
+      loading: false,
+    }),
+  )
+  .handleAction(
+    [
+      profileActions.getCurrentProfile.failure,
+      profileActions.createProfile.failure,
+    ],
+    (state, action) => ({
+      ...state,
+      errorResponse: action.payload,
+      loading: false,
+    }),
+  )
   .handleAction(profileActions.clearProfile, (state) => ({
     ...state,
     currentProfile: undefined,

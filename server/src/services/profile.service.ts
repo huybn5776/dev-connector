@@ -5,6 +5,7 @@ import { Document } from 'mongoose';
 import { CreateProfileEducationDto } from '@dtos/create-profile-education.dto';
 import { CreateProfileExperienceDto } from '@dtos/create-profile-experience.dto';
 import { CreateProfileDto } from '@dtos/create-profile.dto';
+import { PatchProfileDto } from '@dtos/patch-profile.dto';
 import { Profile } from '@entities/profile';
 import { ProfileEducation } from '@entities/profile-education';
 import { ProfileExperience } from '@entities/profile-experience';
@@ -31,12 +32,19 @@ class ProfileService {
     return profile.toObject();
   }
 
-  async patchUserProfile(userId: string, profileData: CreateProfileDto): Promise<Profile> {
-    const profile: (Profile & Document) | null =
-      (await this.profiles.findOne({ user: new UserModel({ _id: userId }) })) ?? new ProfileModel({ user: userId });
+  async updateUserProfile(userId: string, profileData: CreateProfileDto): Promise<Profile> {
+    const user = new UserModel({ _id: userId });
+    const profile = { ...mapper.map(profileData, Profile, CreateProfileDto), user } as ProfileDocument;
+    await this.profiles.findOneAndUpdate({ user }, profile, { new: true, upsert: true });
+    return profile.toObject();
+  }
 
-    mapper.map(profileData, Profile, CreateProfileDto, profile);
-
+  async patchUserProfile(userId: string, profileData: PatchProfileDto): Promise<Profile> {
+    const profile: (Profile & Document) | null = await this.profiles.findOne({ user: new UserModel({ _id: userId }) });
+    if (!profile) {
+      throw new HttpException(404);
+    }
+    mapper.map(profileData, Profile, PatchProfileDto, profile);
     await profile.save();
     return profile.toObject();
   }
