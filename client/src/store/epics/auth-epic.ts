@@ -5,9 +5,9 @@ import { of, EMPTY } from 'rxjs';
 import { catchError, filter, map, switchMap } from 'rxjs/operators';
 import { isActionOf, RootAction, RootState, Services } from 'typesafe-actions';
 
+import { navigateTo } from '@/utils/navigate-utils';
 import { authActions, userActions } from '@actions';
 import HttpException from '@exceptions/http-exception';
-import { navigateTo } from '@utils/navigate-utils';
 
 type EpicType = Epic<RootAction, RootAction, RootState, Services>;
 

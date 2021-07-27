@@ -16,6 +16,7 @@
       "@/*": ["src/*"],
       "@core/*": ["../core/src/*"],
       "@dtos/*": ["../core/src/dtos/*"],
+      "@utils/*": ["../core/src/utils/*"],
       "@exceptions/*": ["../core/src/exceptions/*"],
       "@exceptions": ["../core/src/exceptions"],
       "@interfaces/*": ["../core/src/interfaces/*"],
@@ -24,8 +25,7 @@
       "@selectors": ["src/store/selectors"],
       "@services/*": ["src/services/*"],
       "@store": ["src/store"],
-      "@styles/*": ["src/styles/*"],
-      "@utils/*": ["src/utils/*"]
+      "@styles/*": ["src/styles/*"]
     }
   },
   "include": [

@@ -10,9 +10,11 @@
     "@automapper/core": "^5.0.0",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
+    "ramda": "^0.27.1",
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
-    "@types/jest": "^26.0.23"
+    "@types/jest": "^26.0.23",
+    "@types/ramda": "^0.27.44"
   }
 }
