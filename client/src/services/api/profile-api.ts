@@ -7,7 +7,7 @@ import { ProfileDto } from '@dtos/profile.dto';
 
 import { AxiosProxy } from './api-utils';
 
-const axiosInstance = axios.create({ baseURL: 'api/profile' });
+const axiosInstance = axios.create({ baseURL: '/api/profile' });
 const axiosProxy = new AxiosProxy(axiosInstance);
 
 export function getCurrentProfile(): Observable<ProfileDto> {

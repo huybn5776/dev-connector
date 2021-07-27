@@ -6,7 +6,7 @@ import { AuthToken } from '@interfaces/auth-token';
 
 import { AxiosProxy } from './api-utils';
 
-const axiosInstance = axios.create({ baseURL: 'api/oauth' });
+const axiosInstance = axios.create({ baseURL: '/api/oauth' });
 const axiosProxy = new AxiosProxy(axiosInstance);
 
 export function login(username: string, password: string): Observable<AuthToken> {
