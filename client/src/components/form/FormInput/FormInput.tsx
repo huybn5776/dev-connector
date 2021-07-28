@@ -14,13 +14,14 @@ const FormInput = <T extends FieldValues>({
   name,
   errors,
   placeholder,
+  required,
   ...rest
 }: AllProps<T>): ReturnType<React.FC> => {
   return (
     <>
       <input
         className={formStyles.formInput}
-        placeholder={placeholder ?? capitalize(name)}
+        placeholder={(placeholder ?? capitalize(name)) + (required && '*' || '')}
         {...rest}
         {...register(name)}
       />

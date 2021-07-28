@@ -177,11 +177,11 @@ const EditProfilePage: React.FC<AllProps> = ({ profile, errorResponse, loading }
         <h1 className={formStyles.formTitle}>Edit profile</h1>
 
         <form className={formStyles.form} onSubmit={handleSubmit(onSubmit)}>
-          <FormLabelSelect name="status" options={statusOptions} register={register} errors={errors} />
+          <FormLabelSelect name="status" required options={statusOptions} register={register} errors={errors} />
           <FormLabelInput name="company" register={register} errors={errors} />
           <FormLabelInput name="website" type="url" register={register} errors={errors} />
           <FormLabelInput name="location" register={register} errors={errors} />
-          <FormLabelInput name="skills" register={register} errors={errors} />
+          <FormLabelInput name="skills" required register={register} errors={errors} />
           <FormLabelInput name="bio" register={register} errors={errors} />
           <FormLabelInput name="githubUsername" placeholder="Github username" register={register} errors={errors} />
 

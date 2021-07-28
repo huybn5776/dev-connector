@@ -72,17 +72,25 @@ const RegisterPage: React.FC<AllProps> = ({ errorResponse, loading }: AllProps) 
         <h1 className={formStyles.formTitle}>Sign up</h1>
 
         <form className={formStyles.form} onSubmit={handleSubmit(onSubmit)}>
-          <FormInput name="name" register={register} errors={errors} />
-          <FormInput name="email" placeholder="Email address" type="email" register={register} errors={errors} />
+          <FormInput name="name" required register={register} errors={errors} />
+          <FormInput
+            name="email"
+            required
+            placeholder="Email address"
+            type="email"
+            register={register}
+            errors={errors}
+          />
           <p className={formStyles.formFieldAnnotation}>
             This site uses Gravatar so if you want a profile image, use a Gravatar email
           </p>
 
-          <FormInput name="password" type="password" register={register} errors={errors} />
+          <FormInput name="password" type="password" required register={register} errors={errors} />
           <FormInput
             name="confirmPassword"
             type="password"
             placeholder="Confirm password"
+            required
             register={register}
             errors={errors}
           />

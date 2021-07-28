@@ -17,12 +17,12 @@ type AllProps<T extends FieldValues, P extends FieldProps> = FormField<T> & Omit
 
 export const withFormLabel =
   <P extends FieldProps>(Component: ComponentType<P>) =>
-  <T extends FieldValues>({ label, ...rest }: AllProps<T, P>): ReactElement => {
+  <T extends FieldValues>({ label, required, ...rest }: AllProps<T, P>): ReactElement => {
     const elementId = useMemo(() => rest.name + Math.random() * 1000, [rest.name]);
     return (
       <>
         <label className={formStyles.formLabel} htmlFor={elementId}>
-          {label || capitalize(rest.name)}
+          {`${label ?? capitalize(rest.name)}${(required && '*') || ''}`}
         </label>
         <Component {...(rest as P)} id={elementId} />
       </>

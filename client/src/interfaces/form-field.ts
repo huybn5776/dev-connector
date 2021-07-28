@@ -6,4 +6,5 @@ export interface FormField<T extends FieldValues> {
   register: UseFormRegister<T>;
   name: FieldPath<T>;
   errors: FieldErrors<T>;
+  required?: boolean;
 }
