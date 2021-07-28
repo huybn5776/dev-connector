@@ -86,3 +86,14 @@ export const updateExperience: EpicType = (action$, state$, { api }) =>
       ),
     ),
   );
+
+export const deleteExperience: EpicType = (action$, state$, { api }) =>
+  action$.pipe(
+    filter(isActionOf(profileActions.deleteExperience.request)),
+    switchMap(({ payload: id }) =>
+      api.profileApi.deleteExperience(id).pipe(
+        map(profileActions.deleteExperience.success),
+        catchError((error: AxiosResponse<HttpException>) => of(profileActions.deleteExperience.failure(error))),
+      ),
+    ),
+  );

@@ -27,6 +27,7 @@ const profileReducer = createReducer(initialState)
       profileActions.updateProfile.request,
       profileActions.addExperience.request,
       profileActions.updateExperience.request,
+      profileActions.deleteExperience.request,
     ],
     (state) => ({
       ...state,
@@ -53,6 +54,7 @@ const profileReducer = createReducer(initialState)
       profileActions.createProfile.failure,
       profileActions.addExperience.failure,
       profileActions.updateExperience.failure,
+      profileActions.deleteExperience.failure,
     ],
     (state, action) => ({
       ...state,
@@ -83,6 +85,12 @@ const profileReducer = createReducer(initialState)
       loading: false,
     };
   })
+  .handleAction(profileActions.deleteExperience.success, (state, { payload: experiences }) => ({
+    ...state,
+    currentProfile: { ...state.currentProfile, experiences } as ProfileDto,
+    errorResponse: undefined,
+    loading: false,
+  }))
   .handleAction(profileActions.clearProfile, (state) => ({
     ...state,
     currentProfile: undefined,

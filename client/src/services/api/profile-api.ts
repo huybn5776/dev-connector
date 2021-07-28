@@ -35,3 +35,7 @@ export function patchExperience(
 ): Observable<ProfileExperienceDto> {
   return axiosProxy.patch(`/me/experiences/${id}`, experienceData);
 }
+
+export function deleteExperience(id: string): Observable<ProfileExperienceDto[]> {
+  return axiosProxy.delete(`/me/experiences/${id}`);
+}

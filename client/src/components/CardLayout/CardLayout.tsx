@@ -44,13 +44,14 @@ export const CardTitle: React.FC<CardComponents> = ({ children, className }: Car
   <p className={clsx(styles.cardTitle, className)}>{children}</p>
 );
 
-interface CardHeaderActionIconProps {
+type CardHeaderActionIconProps = React.HTMLAttributes<HTMLElement> & {
   className?: string;
-}
+};
 
-export const CardHeaderActionIcon: React.FC<CardHeaderActionIconProps> = ({ className }: CardHeaderActionIconProps) => (
-  <i className={clsx('icon', styles.cardHeaderActionIcon, className)} />
-);
+export const CardHeaderActionIcon: React.FC<CardHeaderActionIconProps> = ({
+  className,
+  ...rest
+}: CardHeaderActionIconProps) => <i {...rest} className={clsx('icon', styles.cardHeaderActionIcon, className)} />;
 
 interface CardHeaderLinkProps {
   to: string;
@@ -79,8 +80,8 @@ export const CardActions: React.FC<CardComponents> = ({ children, className }: C
 interface CardRowProps {
   children: ReactNode;
 }
-export const CardRow: React.FC<CardRowProps> = ( {children} :CardRowProps)=>(
- <div className={styles.cardRow}>{children}</div>
+export const CardRow: React.FC<CardRowProps> = ({ children }: CardRowProps) => (
+  <div className={styles.cardRow}>{children}</div>
 );
 
 interface CardRowToolbarProps {

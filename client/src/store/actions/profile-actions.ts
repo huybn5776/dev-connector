@@ -44,3 +44,9 @@ export const updateExperience = createAsyncAction(...asyncActionNames('Update ex
   ProfileExperienceDto,
   AxiosResponse<HttpException>
 >();
+
+export const deleteExperience = createAsyncAction(...asyncActionNames('Delete experience'))<
+  string,
+  ProfileExperienceDto[],
+  AxiosResponse<HttpException>
+>();

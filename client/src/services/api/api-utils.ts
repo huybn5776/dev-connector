@@ -36,6 +36,11 @@ export class AxiosProxy {
     const source = CancelToken.source();
     return toObservable(() => this.axiosInstance.patch<T>(url, data, { cancelToken: source.token, ...config }), source);
   }
+
+  delete<T>(url: string, config?: AxiosRequestConfig): Observable<T> {
+    const source = CancelToken.source();
+    return toObservable(() => this.axiosInstance.delete<T>(url, { cancelToken: source.token, ...config }), source);
+  }
 }
 
 export function toObservable<T>(

@@ -2,7 +2,9 @@ import React from 'react';
 
 import clsx from 'clsx';
 import { format } from 'date-fns';
+import { useDispatch } from 'react-redux';
 
+import { profileActions } from '@actions';
 import CardLayout, {
   CardHeader,
   CardTitle,
@@ -22,21 +24,26 @@ interface Props {
 
 const dateFormat = 'yyyy-MM-dd';
 const ExperienceList: React.FC<Props> = ({ experiences }: Props) => {
+  const dispatch = useDispatch();
+
   function renderExperience(experience: ProfileExperienceDto): JSX.Element {
     return (
       <CardRow key={experience.id}>
         <h3 className={styles.experienceTitle}>{experience.title}</h3>
         <h3 className={styles.experienceCompany}>{experience.company}</h3>
-        <p >
+        <p>
           {format(new Date(experience.from), dateFormat)} ~
           {experience.current || !experience.to ? 'Now' : format(new Date(experience.to), dateFormat)}
         </p>
         {experience.location && <p>{experience.location}</p>}
-        {experience.description && <p  className={styles.experienceDescription}>{experience.description}</p>}
+        {experience.description && <p className={styles.experienceDescription}>{experience.description}</p>}
 
         <CardRowToolbar>
           <CardHeaderLink to={`/edit-experience/${experience.id}`} iconClassName={clsx('edit', 'outline')} />
-          <CardHeaderActionIcon className={clsx('trash', 'alternate')} />
+          <CardHeaderActionIcon
+            className={clsx('trash', 'alternate')}
+            onClick={() => dispatch(profileActions.deleteExperience.request(experience.id))}
+          />
         </CardRowToolbar>
       </CardRow>
     );
