@@ -34,10 +34,10 @@ const ExperienceList: React.FC<Props> = ({ experiences }: Props) => {
         {experience.location && <p>{experience.location}</p>}
         {experience.description && <p  className={styles.experienceDescription}>{experience.description}</p>}
 
-       <CardRowToolbar>
-         <CardHeaderLink to="/edit-experience" iconClassName={clsx('edit', 'outline')} />
-         <CardHeaderActionIcon className={clsx('trash', 'alternate')} />
-       </CardRowToolbar>
+        <CardRowToolbar>
+          <CardHeaderLink to={`/edit-experience/${experience.id}`} iconClassName={clsx('edit', 'outline')} />
+          <CardHeaderActionIcon className={clsx('trash', 'alternate')} />
+        </CardRowToolbar>
       </CardRow>
     );
   }

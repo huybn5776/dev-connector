@@ -49,11 +49,40 @@ export const updateProfile: EpicType = (action$, state$, { api }) =>
     ),
   );
 
-export const redirectAfterCreateOrEditProfile: EpicType = (action$) =>
+export const redirectAfterCreateOrEdit: EpicType = (action$) =>
   action$.pipe(
-    filter(isActionOf([profileActions.createProfile.success, profileActions.updateProfile.success])),
+    filter(
+      isActionOf([
+        profileActions.createProfile.success,
+        profileActions.updateProfile.success,
+        profileActions.addExperience.success,
+        profileActions.updateExperience.success,
+      ]),
+    ),
     switchMap(() => {
       navigateTo('/dashboard');
       return EMPTY;
     }),
+  );
+
+export const addExperience: EpicType = (action$, state$, { api }) =>
+  action$.pipe(
+    filter(isActionOf(profileActions.addExperience.request)),
+    switchMap(({ payload }) =>
+      api.profileApi.addExperience(payload).pipe(
+        map(profileActions.addExperience.success),
+        catchError((error: AxiosResponse<HttpException>) => of(profileActions.addExperience.failure(error))),
+      ),
+    ),
+  );
+
+export const updateExperience: EpicType = (action$, state$, { api }) =>
+  action$.pipe(
+    filter(isActionOf(profileActions.updateExperience.request)),
+    switchMap(({ payload: { id, experience } }) =>
+      api.profileApi.patchExperience(id, experience).pipe(
+        map(profileActions.updateExperience.success),
+        catchError((error: AxiosResponse<HttpException>) => of(profileActions.updateExperience.failure(error))),
+      ),
+    ),
   );

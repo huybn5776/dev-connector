@@ -7,6 +7,7 @@ import './App.scss';
 
 import AuthenticatedRoute from '@components/AuthenticatedRoute/AuthenticatedRoute';
 import DashboardPage from '@components/DashboardPage/DashboardPage';
+import EditExperiencePage from '@components/EditExperiencePage/EditExperiencePage';
 import EditProfilePage from '@components/EditProfilePage/EditProfilePage';
 import LandingPage from '@components/LandingPage/LandingPage';
 import LoginPage from '@components/LoginPage/LoginPage';
@@ -28,6 +29,8 @@ const App: React.FC = () => {
               <UnauthenticatedRoute path="/register" exact component={RegisterPage} fallbackTo="/dashboard" />
               <AuthenticatedRoute path="/dashboard" exact component={DashboardPage} />
               <AuthenticatedRoute path="/edit-profile" exact component={EditProfilePage} />
+              <AuthenticatedRoute path="/add-experience" exact render={() => <EditExperiencePage />} />
+              <AuthenticatedRoute path="/edit-experience/:id?" exact render={() => <EditExperiencePage edit />} />
               <Redirect to="/" />
             </Switch>
           </div>
