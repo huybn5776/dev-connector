@@ -34,19 +34,23 @@ const DashboardPage: React.FC<AllProps> = ({ user, profile, loading }: AllProps)
 
   function renderProfile(): JSX.Element {
     return (
-      <div className={styles.DashboardPage}>
-        <h1>Dashboard</h1>
+      <>
         {user && profile ? (
           <>
             <ProfileView user={user} profile={profile} />
             <ExperienceList experiences={profile.experiences} />
           </>
         ) : null}
-      </div>
+      </>
     );
   }
 
-  return <div>{loading ? <Loader /> : renderProfile()}</div>;
+  return (
+    <div className={styles.DashboardPage}>
+      <h1>Dashboard</h1>
+      {loading && !profile ? <Loader /> : renderProfile()}
+    </div>
+  );
 };
 
 const mapStateToProps: StateToPropsFunc<PropsFromState> = ({ auth, profile }) => ({
