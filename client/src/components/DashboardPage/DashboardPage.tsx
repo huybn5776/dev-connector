@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
+import { AxiosResponse } from 'axios';
 import { useDispatch, connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 
 import { profileActions } from '@actions';
 import ProfileView from '@components/DashboardPage/ProfileView/ProfileView';
@@ -17,11 +19,12 @@ interface PropsFromState {
   user?: UserDto;
   profile?: ProfileDto;
   loading: boolean;
+  errorResponse?: AxiosResponse<HttpException>;
 }
 
 type AllProps = PropsFromState;
 
-const DashboardPage: React.FC<AllProps> = ({ user, profile, loading }: AllProps) => {
+const DashboardPage: React.FC<AllProps> = ({ user, profile, loading, errorResponse }: AllProps) => {
   const [profileLoaded, setProfileLoaded] = useState(!!profile);
   const dispatch = useDispatch();
 
@@ -40,6 +43,11 @@ const DashboardPage: React.FC<AllProps> = ({ user, profile, loading }: AllProps)
             <ProfileView user={user} profile={profile} />
             <ExperienceList experiences={profile.experiences} />
           </>
+        ) : null}
+        {errorResponse?.status === 404 ? (
+          <p className={styles.noProfileMessage}>
+            You haven&apos;t created profile yet, <Link to="edit-profile">create now?</Link>
+          </p>
         ) : null}
       </>
     );
