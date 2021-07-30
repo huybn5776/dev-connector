@@ -56,7 +56,7 @@ const DashboardPage: React.FC<AllProps> = ({ user, profile, loading, errorRespon
   }
 
   return (
-    <div className={styles.DashboardPage}>
+    <div className="page-layout">
       <h1>Dashboard</h1>
       {loading && !profile ? <Loader /> : renderProfile()}
     </div>
