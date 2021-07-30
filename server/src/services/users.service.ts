@@ -3,6 +3,7 @@ import * as gravatar from 'gravatar';
 import * as R from 'ramda';
 
 import { CreateUserDto } from '@dtos/create-user.dto';
+import { PatchUserDto } from '@dtos/patch-user.dto';
 import { User } from '@entities/user';
 import HttpException from '@exceptions/http-exception';
 import { UserDocument, UserModel } from '@models/user.model';
@@ -28,41 +29,38 @@ class UserService {
     if (existingUser) {
       throw new HttpException(409, `This email address is already being used`);
     }
-    const avatar = gravatar.url(userData.email, {
-      s: '200',
-      r: 'pg',
-      d: 'mm',
-    });
+    const avatar = this.generateGravatarUrl(userData.email);
     const hashedPassword = await bcrypt.hash(userData.password, 10);
     const userDocument = await this.users.create({ ...userData, password: hashedPassword, avatar });
     const user = userDocument.toObject();
     return R.omit(['password', '__v'], user) as User;
   }
 
-  public async updateUser(userId: string, userData: CreateUserDto): Promise<UserDocument> {
-    let updatingUserData = { ...userData };
-    if (updatingUserData.email) {
-      const userWithSameEmail = await this.users.findOne({ email: updatingUserData.email });
-      if (userWithSameEmail && userWithSameEmail._id !== userId) {
-        throw new HttpException(409, `This email address is already being used`);
-      }
-    }
-
-    if (updatingUserData.password) {
-      const hashedPassword = await bcrypt.hash(updatingUserData.password, 10);
-      updatingUserData = { ...updatingUserData, password: hashedPassword };
-    }
-
-    const updatedUser = await this.users.findByIdAndUpdate(
-      userId,
-      { userData: updatingUserData },
-      { runValidators: true },
-    );
-    if (!updatedUser) {
+  public async patchUser(userId: string, userData: PatchUserDto): Promise<UserDocument> {
+    const userDocument: UserDocument | null = await this.users.findById(userId);
+    if (!userDocument) {
       throw new HttpException(404);
     }
 
-    return updatedUser;
+    if (userData.name) {
+      userDocument.name = userData.name;
+    }
+
+    if (userData.email && userData.email !== userDocument.email) {
+      const userWithSameEmail = await this.users.findOne({ email: userData.email });
+      if (userWithSameEmail && userWithSameEmail._id !== userId) {
+        throw new HttpException(409, `This email address is already being used`);
+      }
+      userDocument.email = userData.email;
+      userDocument.avatar = this.generateGravatarUrl(userData.email);
+    }
+
+    if (userData.password) {
+      userDocument.password = await bcrypt.hash(userData.password, 10);
+    }
+
+    await userDocument.save();
+    return userDocument;
   }
 
   public async deleteUser(userId: string): Promise<UserDocument> {
@@ -71,6 +69,10 @@ class UserService {
       throw new HttpException(404);
     }
     return deletingUser;
+  }
+
+  private generateGravatarUrl(email: string): string {
+    return gravatar.url(email, { s: '200', r: 'pg', d: 'mm' });
   }
 }
 

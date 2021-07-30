@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 
 import { CreateUserDto } from '@dtos/create-user.dto';
+import { PatchUserDto } from '@dtos/patch-user.dto';
 import { UserDto } from '@dtos/user.dto';
 import { User } from '@entities/user';
 import { mapper } from '@mappers';
@@ -42,11 +43,11 @@ class UsersController {
     res.status(201).json(token);
   };
 
-  public updateUser = async (req: Request, res: Response): Promise<void> => {
-    const userId: string = req.params.id;
-    const userData: CreateUserDto = req.body;
-    const updatedUserDocument = await this.userService.updateUser(userId, userData);
-    const userDto = mapper.map(updatedUserDocument.toObject() as User, UserDto, User);
+  public patchCurrentUser = async (req: Request, res: Response): Promise<void> => {
+    const userId: string = req.user.claims().id;
+    const userData: PatchUserDto = req.body;
+    const updatedUserDocument = await this.userService.patchUser(userId, userData);
+    const userDto = mapper.map(updatedUserDocument.toObject(), UserDto, User);
 
     res.status(200).json(userDto);
   };
