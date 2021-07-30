@@ -37,6 +37,9 @@ export const profileMappingProfile: MappingProfile = (mapper: Mapper) => {
 
   mapper
     .createMap(CreateProfileDto, Profile)
+    .forMember((source) => source._id, ignore())
+    .forMember((source) => source.createdAt, ignore())
+    .forMember((source) => source.updatedAt, ignore())
     .forMember((source) => source.user, ignore())
     .forMember((source) => source.experiences, fromValue([]))
     .forMember((source) => source.educations, fromValue([]));

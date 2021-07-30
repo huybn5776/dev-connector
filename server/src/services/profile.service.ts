@@ -1,6 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 import config from 'config';
 import { Document } from 'mongoose';
+import * as R from 'ramda';
 
 import { CreateProfileEducationDto } from '@dtos/create-profile-education.dto';
 import { CreateProfileExperienceDto } from '@dtos/create-profile-experience.dto';
@@ -34,13 +35,21 @@ class ProfileService {
 
   async updateUserProfile(userId: string, profileData: CreateProfileDto): Promise<Profile> {
     const user = new UserModel({ _id: userId });
-    const profile = { ...mapper.map(profileData, Profile, CreateProfileDto), user } as ProfileDocument;
-    await this.profiles.findOneAndUpdate({ user }, profile, { new: true, upsert: true });
-    return profile.toObject();
+    const profile = R.pipe(
+      () => mapper.map(profileData, Profile, CreateProfileDto),
+      R.mergeLeft({ user }),
+      R.omit(['_id', 'createdAt', 'updatedAt']),
+    )() as ProfileDocument;
+    const profileDocument = await this.profiles
+      .findOneAndUpdate({ user }, profile, { new: true, upsert: true })
+      .populate('user');
+    return profileDocument.toObject();
   }
 
   async patchUserProfile(userId: string, profileData: PatchProfileDto): Promise<Profile> {
-    const profile: (Profile & Document) | null = await this.profiles.findOne({ user: new UserModel({ _id: userId }) });
+    const profile: (Profile & Document) | null = await this.profiles
+      .findOne({ user: new UserModel({ _id: userId }) })
+      .populate('user');
     if (!profile) {
       throw new HttpException(404);
     }
