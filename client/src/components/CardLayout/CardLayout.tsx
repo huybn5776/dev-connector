@@ -16,12 +16,13 @@ const CardLayout: React.FC<Props> = ({ title, children }: Props) => {
   const actions = Array.isArray(children) ? children.find(({ type }) => type === CardActions) : null;
 
   return (
-    <div className={styles.CardLayout}>
-      {header ?? (
-        <CardHeader>
-          <CardTitle>{title}</CardTitle>
-        </CardHeader>
-      )}
+    <div className={clsx(styles.CardLayout, ( !header && !title ) && styles.noHeader)}>
+      {header ??
+        (title && (
+          <CardHeader>
+            <CardTitle>{title}</CardTitle>
+          </CardHeader>
+        ))}
 
       {content}
       {actions}
