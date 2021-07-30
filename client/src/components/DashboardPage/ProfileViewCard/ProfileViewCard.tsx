@@ -6,14 +6,14 @@ import CardLayout, { CardContent, CardHeader, CardTitle, CardHeaderLink } from '
 import { ProfileDto } from '@dtos/profile.dto';
 import { UserDto } from '@dtos/user.dto';
 
-import styles from './ProfileView.module.scss';
+import styles from './ProfileViewCard.module.scss';
 
 interface Props {
   user: UserDto;
   profile: ProfileDto;
 }
 
-const ProfileView: React.FC<Props> = ({ user, profile }: Props) => {
+const ProfileViewCard: React.FC<Props> = ({ user, profile }: Props) => {
   function renderProfileSocial(name: keyof NonNullable<typeof profile.social>): JSX.Element | null {
     if (!profile.social?.[name]) {
       return null;
@@ -73,4 +73,4 @@ const ProfileView: React.FC<Props> = ({ user, profile }: Props) => {
   );
 };
 
-export default ProfileView;
+export default ProfileViewCard;

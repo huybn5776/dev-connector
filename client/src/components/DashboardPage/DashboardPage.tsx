@@ -5,7 +5,7 @@ import { useDispatch, connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import { profileActions } from '@actions';
-import ProfileView from '@components/DashboardPage/ProfileView/ProfileView';
+import ProfileViewCard from '@components/DashboardPage/ProfileViewCard/ProfileViewCard';
 import ExperienceList from '@components/ExperienceList/ExperienceList';
 import Loader from '@components/Loader/Loader';
 import { ProfileDto } from '@dtos/profile.dto';
@@ -41,7 +41,7 @@ const DashboardPage: React.FC<AllProps> = ({ user, profile, loading, errorRespon
       <>
         {user && profile ? (
           <>
-            <ProfileView user={user} profile={profile} />
+            <ProfileViewCard user={user} profile={profile} />
             <ExperienceList experiences={profile.experiences} />
             <EducationList educations={profile.educations} />
           </>
