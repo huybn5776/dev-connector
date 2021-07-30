@@ -7,6 +7,7 @@ import './App.scss';
 
 import AuthenticatedRoute from '@components/AuthenticatedRoute/AuthenticatedRoute';
 import DashboardPage from '@components/DashboardPage/DashboardPage';
+import EditEducationPage from '@components/EditEducationPage/EditEducationPage';
 import EditExperiencePage from '@components/EditExperiencePage/EditExperiencePage';
 import EditProfilePage from '@components/EditProfilePage/EditProfilePage';
 import LandingPage from '@components/LandingPage/LandingPage';
@@ -31,6 +32,8 @@ const App: React.FC = () => {
               <AuthenticatedRoute path="/edit-profile" exact component={EditProfilePage} />
               <AuthenticatedRoute path="/add-experience" exact render={() => <EditExperiencePage />} />
               <AuthenticatedRoute path="/edit-experience/:id?" exact render={() => <EditExperiencePage edit />} />
+              <AuthenticatedRoute path="/add-education" exact render={() => <EditEducationPage />} />
+              <AuthenticatedRoute path="/edit-education/:id?" exact render={() => <EditEducationPage edit />} />
               <Redirect to="/" />
             </Switch>
           </div>

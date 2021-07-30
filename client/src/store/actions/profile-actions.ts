@@ -2,8 +2,10 @@ import { AxiosResponse } from 'axios';
 import { createAsyncAction, createAction } from 'typesafe-actions';
 
 import { actionNameCreator } from '@/utils/action-utils';
+import { CreateProfileEducationDto } from '@dtos/create-profile-education.dto';
 import { CreateProfileExperienceDto } from '@dtos/create-profile-experience.dto';
 import { CreateProfileDto } from '@dtos/create-profile.dto';
+import { PatchProfileEducationDto } from '@dtos/patch-profile-education.dto';
 import { PatchProfileExperienceDto } from '@dtos/patch-profile-experience.dto';
 import { PatchProfileDto } from '@dtos/patch-profile.dto';
 import { ProfileEducationDto } from '@dtos/profile-education.dto';
@@ -51,6 +53,18 @@ export const deleteExperience = createAsyncAction(...asyncActionNames('Delete ex
   ProfileExperienceDto[],
   AxiosResponse<HttpException>
 >();
+
+export const addEducation = createAsyncAction(...asyncActionNames('Add education'))<
+  CreateProfileEducationDto,
+  ProfileEducationDto,
+  AxiosResponse<HttpException>
+  >();
+
+export const updateEducation = createAsyncAction(...asyncActionNames('Update education'))<
+  { id: string; education: PatchProfileEducationDto },
+  ProfileEducationDto,
+  AxiosResponse<HttpException>
+  >();
 
 export const deleteEducation = createAsyncAction(...asyncActionNames('Delete education'))<
   string,

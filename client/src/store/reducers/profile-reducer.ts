@@ -91,6 +91,29 @@ const profileReducer = createReducer(initialState)
     errorResponse: undefined,
     loading: false,
   }))
+  .handleAction(profileActions.addEducation.success, (state, { payload: education }) => ({
+    ...state,
+    currentProfile: {
+      ...state.currentProfile,
+      educations: [...(state.currentProfile?.educations || []), education],
+    } as ProfileDto,
+    errorResponse: undefined,
+    loading: false,
+  }))
+  .handleAction(profileActions.updateEducation.success, (state, { payload: education }) => {
+    const educations = [...(state.currentProfile?.educations || [])];
+    const targetEducationIndex = educations.findIndex((e) => e.id === education.id);
+    if (targetEducationIndex !== -1) {
+      educations[targetEducationIndex] = education;
+    }
+
+    return {
+      ...state,
+      currentProfile: { ...state.currentProfile, educations } as ProfileDto,
+      errorResponse: undefined,
+      loading: false,
+    };
+  })
   .handleAction(profileActions.deleteEducation.success, (state, { payload: educations }) => ({
     ...state,
     currentProfile: { ...state.currentProfile, educations } as ProfileDto,

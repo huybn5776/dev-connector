@@ -57,6 +57,8 @@ export const redirectAfterCreateOrEdit: EpicType = (action$) =>
         profileActions.updateProfile.success,
         profileActions.addExperience.success,
         profileActions.updateExperience.success,
+        profileActions.addEducation.success,
+        profileActions.updateEducation.success,
       ]),
     ),
     switchMap(() => {
@@ -94,6 +96,28 @@ export const deleteExperience: EpicType = (action$, state$, { api }) =>
       api.profileApi.deleteExperience(id).pipe(
         map(profileActions.deleteExperience.success),
         catchError((error: AxiosResponse<HttpException>) => of(profileActions.deleteExperience.failure(error))),
+      ),
+    ),
+  );
+
+export const addEducation: EpicType = (action$, state$, { api }) =>
+  action$.pipe(
+    filter(isActionOf(profileActions.addEducation.request)),
+    switchMap(({ payload }) =>
+      api.profileApi.addEducation(payload).pipe(
+        map(profileActions.addEducation.success),
+        catchError((error: AxiosResponse<HttpException>) => of(profileActions.addEducation.failure(error))),
+      ),
+    ),
+  );
+
+export const updateEducation: EpicType = (action$, state$, { api }) =>
+  action$.pipe(
+    filter(isActionOf(profileActions.updateEducation.request)),
+    switchMap(({ payload: { id, education } }) =>
+      api.profileApi.patchEducation(id, education).pipe(
+        map(profileActions.updateEducation.success),
+        catchError((error: AxiosResponse<HttpException>) => of(profileActions.updateEducation.failure(error))),
       ),
     ),
   );
