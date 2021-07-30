@@ -91,6 +91,12 @@ const profileReducer = createReducer(initialState)
     errorResponse: undefined,
     loading: false,
   }))
+  .handleAction(profileActions.deleteEducation.success, (state, { payload: educations }) => ({
+    ...state,
+    currentProfile: { ...state.currentProfile, educations } as ProfileDto,
+    errorResponse: undefined,
+    loading: false,
+  }))
   .handleAction(profileActions.clearProfile, (state) => ({
     ...state,
     currentProfile: undefined,

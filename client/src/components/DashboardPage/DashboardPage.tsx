@@ -13,6 +13,7 @@ import { UserDto } from '@dtos/user.dto';
 import { HttpException } from '@exceptions';
 import { StateToPropsFunc } from '@store';
 
+import EducationList from '../EducationList/EducationList';
 import styles from './DashboardPage.module.scss';
 
 interface PropsFromState {
@@ -42,6 +43,7 @@ const DashboardPage: React.FC<AllProps> = ({ user, profile, loading, errorRespon
           <>
             <ProfileView user={user} profile={profile} />
             <ExperienceList experiences={profile.experiences} />
+            <EducationList educations={profile.educations} />
           </>
         ) : null}
         {errorResponse?.status === 404 ? (

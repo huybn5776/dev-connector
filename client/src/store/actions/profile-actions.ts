@@ -6,6 +6,7 @@ import { CreateProfileExperienceDto } from '@dtos/create-profile-experience.dto'
 import { CreateProfileDto } from '@dtos/create-profile.dto';
 import { PatchProfileExperienceDto } from '@dtos/patch-profile-experience.dto';
 import { PatchProfileDto } from '@dtos/patch-profile.dto';
+import { ProfileEducationDto } from '@dtos/profile-education.dto';
 import { ProfileExperienceDto } from '@dtos/profile-experience.dto';
 import { ProfileDto } from '@dtos/profile.dto';
 import HttpException from '@exceptions/http-exception';
@@ -50,3 +51,9 @@ export const deleteExperience = createAsyncAction(...asyncActionNames('Delete ex
   ProfileExperienceDto[],
   AxiosResponse<HttpException>
 >();
+
+export const deleteEducation = createAsyncAction(...asyncActionNames('Delete education'))<
+  string,
+  ProfileEducationDto[],
+  AxiosResponse<HttpException>
+  >();

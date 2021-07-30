@@ -97,3 +97,14 @@ export const deleteExperience: EpicType = (action$, state$, { api }) =>
       ),
     ),
   );
+
+export const deleteEducation: EpicType = (action$, state$, { api }) =>
+  action$.pipe(
+    filter(isActionOf(profileActions.deleteEducation.request)),
+    switchMap(({ payload: id }) =>
+      api.profileApi.deleteEducation(id).pipe(
+        map(profileActions.deleteEducation.success),
+        catchError((error: AxiosResponse<HttpException>) => of(profileActions.deleteEducation.failure(error))),
+      ),
+    ),
+  );

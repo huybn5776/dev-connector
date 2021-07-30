@@ -5,6 +5,7 @@ import { CreateProfileExperienceDto } from '@dtos/create-profile-experience.dto'
 import { CreateProfileDto } from '@dtos/create-profile.dto';
 import { PatchProfileExperienceDto } from '@dtos/patch-profile-experience.dto';
 import { PatchProfileDto } from '@dtos/patch-profile.dto';
+import { ProfileEducationDto } from '@dtos/profile-education.dto';
 import { ProfileExperienceDto } from '@dtos/profile-experience.dto';
 import { ProfileDto } from '@dtos/profile.dto';
 
@@ -38,4 +39,8 @@ export function patchExperience(
 
 export function deleteExperience(id: string): Observable<ProfileExperienceDto[]> {
   return axiosProxy.delete(`/me/experiences/${id}`);
+}
+
+export function deleteEducation(id: string): Observable<ProfileEducationDto[]> {
+  return axiosProxy.delete(`/me/educations/${id}`);
 }
