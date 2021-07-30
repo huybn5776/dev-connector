@@ -22,6 +22,7 @@ export const initialState: ProfileState = {
 const profileReducer = createReducer(initialState)
   .handleAction(
     [
+      profileActions.getProfiles.request,
       profileActions.getCurrentProfile.request,
       profileActions.createProfile.request,
       profileActions.updateProfile.request,
@@ -35,6 +36,12 @@ const profileReducer = createReducer(initialState)
       loading: true,
     }),
   )
+  .handleAction(profileActions.getProfiles.success, (state, action) => ({
+    ...state,
+    profiles: action.payload,
+    errorResponse: undefined,
+    loading: false,
+  }))
   .handleAction(
     [
       profileActions.getCurrentProfile.success,

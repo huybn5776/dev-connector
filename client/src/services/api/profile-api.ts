@@ -16,6 +16,10 @@ import { AxiosProxy } from './api-utils';
 const axiosInstance = axios.create({ baseURL: '/api/profile' });
 const axiosProxy = new AxiosProxy(axiosInstance);
 
+export function getProfiles(): Observable<ProfileDto[]> {
+  return axiosProxy.get('/');
+}
+
 export function getCurrentProfile(): Observable<ProfileDto> {
   return axiosProxy.get('/me');
 }

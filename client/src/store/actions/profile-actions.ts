@@ -16,6 +16,12 @@ import HttpException from '@exceptions/http-exception';
 const stateName = 'Profile';
 const { asyncActionNames, actionName } = actionNameCreator(stateName);
 
+export const getProfiles = createAsyncAction(...asyncActionNames('Get profiles'))<
+  undefined,
+  ProfileDto[],
+  AxiosResponse<HttpException>
+>();
+
 export const getCurrentProfile = createAsyncAction(...asyncActionNames('Get current profile'))<
   undefined,
   ProfileDto,
@@ -58,16 +64,16 @@ export const addEducation = createAsyncAction(...asyncActionNames('Add education
   CreateProfileEducationDto,
   ProfileEducationDto,
   AxiosResponse<HttpException>
-  >();
+>();
 
 export const updateEducation = createAsyncAction(...asyncActionNames('Update education'))<
   { id: string; education: PatchProfileEducationDto },
   ProfileEducationDto,
   AxiosResponse<HttpException>
-  >();
+>();
 
 export const deleteEducation = createAsyncAction(...asyncActionNames('Delete education'))<
   string,
   ProfileEducationDto[],
   AxiosResponse<HttpException>
-  >();
+>();

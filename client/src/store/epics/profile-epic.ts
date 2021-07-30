@@ -10,6 +10,17 @@ import HttpException from '@exceptions/http-exception';
 
 type EpicType = Epic<RootAction, RootAction, RootState, Services>;
 
+export const getProfiles: EpicType = (action$, state$, { api }) =>
+  action$.pipe(
+    filter(isActionOf(profileActions.getProfiles.request)),
+    switchMap(() =>
+      api.profileApi.getProfiles().pipe(
+        map(profileActions.getProfiles.success),
+        catchError((error: AxiosResponse<HttpException>) => of(profileActions.getProfiles.failure(error))),
+      ),
+    ),
+  );
+
 export const getCurrentProfile: EpicType = (action$, state$, { api }) =>
   action$.pipe(
     filter(isActionOf(profileActions.getCurrentProfile.request)),
