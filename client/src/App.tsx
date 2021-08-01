@@ -14,6 +14,7 @@ import LandingPage from '@components/LandingPage/LandingPage';
 import LoginPage from '@components/LoginPage/LoginPage';
 import NavBar from '@components/NavBar/NavBar';
 import ProfilesPage from '@components/ProfilesPage/ProfilesPage';
+import ProfileViewPage from '@components/ProfileViewPage/ProfileViewPage';
 import RegisterPage from '@components/RegisterPage/RegisterPage';
 import UnauthenticatedRoute from '@components/UnauthenticatedRoute/UnauthenticatedRoute';
 import store from '@store';
@@ -36,6 +37,7 @@ const App: React.FC = () => {
               <AuthenticatedRoute path="/add-education" exact render={() => <EditEducationPage />} />
               <AuthenticatedRoute path="/edit-education/:id?" exact render={() => <EditEducationPage edit />} />
               <Route path="/profiles" exact component={ProfilesPage} />
+              <Route path="/profiles/:id" exact component={ProfileViewPage} />
               <Redirect to="/" />
             </Switch>
           </div>

@@ -21,6 +21,17 @@ export const getProfiles: EpicType = (action$, state$, { api }) =>
     ),
   );
 
+export const getUserProfile: EpicType = (action$, state$, { api }) =>
+  action$.pipe(
+    filter(isActionOf(profileActions.getUserProfile.request)),
+    switchMap(({ payload }) =>
+      api.profileApi.getUserProfile(payload).pipe(
+        map(profileActions.getUserProfile.success),
+        catchError((error: AxiosResponse<HttpException>) => of(profileActions.getUserProfile.failure(error))),
+      ),
+    ),
+  );
+
 export const getCurrentProfile: EpicType = (action$, state$, { api }) =>
   action$.pipe(
     filter(isActionOf(profileActions.getCurrentProfile.request)),

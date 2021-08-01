@@ -22,6 +22,12 @@ export const getProfiles = createAsyncAction(...asyncActionNames('Get profiles')
   AxiosResponse<HttpException>
 >();
 
+export const getUserProfile = createAsyncAction(...asyncActionNames('Get user profile'))<
+  string,
+  ProfileDto,
+  AxiosResponse<HttpException>
+>();
+
 export const getCurrentProfile = createAsyncAction(...asyncActionNames('Get current profile'))<
   undefined,
   ProfileDto,

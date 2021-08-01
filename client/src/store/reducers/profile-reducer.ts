@@ -42,6 +42,22 @@ const profileReducer = createReducer(initialState)
     errorResponse: undefined,
     loading: false,
   }))
+  .handleAction(profileActions.getUserProfile.success, (state, { payload: profile }) => {
+    let { profiles } = state;
+    const targetProfileIndex = profiles.findIndex((p) => p.id === profile.id);
+    if (targetProfileIndex === -1) {
+      profiles = [...profiles, profile];
+    } else {
+      profiles = [...profiles];
+      profiles[targetProfileIndex] = profile;
+    }
+    return {
+      ...state,
+      profiles,
+      errorResponse: undefined,
+      loading: false,
+    };
+  })
   .handleAction(
     [
       profileActions.getCurrentProfile.success,

@@ -1,0 +1,49 @@
+.ProfileTop {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  width: 100%;
+  padding: 24px;
+  background-color: #3f4345;
+}
+
+.profile-view-avatar {
+  width: 250px;
+  height: 250px;
+  clip-path: circle(50%);
+}
+
+.profile-view-name {
+  margin: 8px 0;
+  font-size: 32px;
+}
+
+.profile-view-text {
+  margin: 0;
+  font-size: 20px;
+}
+
+.profile-view-summary {
+  font-size: 24px;
+}
+
+.profile-view-socials {
+  display: flex;
+  margin-top: 8px;
+}
+
+.profile-view-social-link {
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.profile-view-social-icon {
+  color: lightgray;
+  font-size: 28px;
+
+  &:hover {
+    color: white;
+  }
+}

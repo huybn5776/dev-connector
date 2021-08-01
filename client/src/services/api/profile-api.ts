@@ -20,6 +20,10 @@ export function getProfiles(): Observable<ProfileDto[]> {
   return axiosProxy.get('/');
 }
 
+export function getUserProfile(userId: string): Observable<ProfileDto> {
+  return axiosProxy.get(`/user/${userId}`);
+}
+
 export function getCurrentProfile(): Observable<ProfileDto> {
   return axiosProxy.get('/me');
 }
