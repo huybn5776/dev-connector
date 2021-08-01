@@ -10,6 +10,7 @@ import { connect, useDispatch } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
 import * as yup from 'yup';
 
+import { dateFormat } from '@/constants';
 import { useHandleFormError } from '@/hooks/use-handle-form-error';
 import { profileActions } from '@actions';
 import FormInput from '@components/form/FormInput/FormInput';
@@ -123,7 +124,6 @@ const EditExperiencePage: React.FC<AllProps> = ({ edit, profile, errorResponse, 
   }
 
   function mapDataToForm(experienceData: ProfileExperienceDto): ExperienceForm {
-    const dateFormat = 'yyyy-MM-dd';
     return {
       ...experienceData,
       from: format(new Date(experienceData.from), dateFormat),

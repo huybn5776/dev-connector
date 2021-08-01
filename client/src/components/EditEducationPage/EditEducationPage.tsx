@@ -10,6 +10,7 @@ import { connect, useDispatch } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
 import * as yup from 'yup';
 
+import { dateFormat } from '@/constants';
 import { useHandleFormError } from '@/hooks/use-handle-form-error';
 import { profileActions } from '@actions';
 import FormInput from '@components/form/FormInput/FormInput';
@@ -123,7 +124,6 @@ const EditEducationPage: React.FC<AllProps> = ({ edit, profile, errorResponse, l
   }
 
   function mapDataToForm(educationData: ProfileEducationDto): EducationForm {
-    const dateFormat = 'yyyy-MM-dd';
     return {
       ...educationData,
       from: format(new Date(educationData.from), dateFormat),

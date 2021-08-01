@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { format } from 'date-fns';
 import { useDispatch } from 'react-redux';
 
+import { dateFormat } from '@/constants';
 import { profileActions } from '@actions';
 import CardLayout, {
   CardRow,
@@ -22,7 +23,6 @@ interface Props {
   educations: ProfileEducationDto[];
 }
 
-const dateFormat = 'yyyy-MM-dd';
 const EducationList: React.FC<Props> = ({ educations }: Props) => {
   const dispatch = useDispatch();
 

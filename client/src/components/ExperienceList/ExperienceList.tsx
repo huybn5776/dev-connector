@@ -4,6 +4,7 @@ import clsx from 'clsx';
 import { format } from 'date-fns';
 import { useDispatch } from 'react-redux';
 
+import { dateFormat } from '@/constants';
 import { profileActions } from '@actions';
 import CardLayout, {
   CardHeader,
@@ -22,7 +23,6 @@ interface Props {
   experiences: ProfileExperienceDto[];
 }
 
-const dateFormat = 'yyyy-MM-dd';
 const ExperienceList: React.FC<Props> = ({ experiences }: Props) => {
   const dispatch = useDispatch();
 
