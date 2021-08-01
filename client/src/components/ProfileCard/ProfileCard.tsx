@@ -13,7 +13,16 @@ interface Props {
   profile: ProfileDto;
 }
 
-const ProfileCard: React.FC<Props> = ({ profile: { id, user, status, company, location, skills } }: Props) => {
+const ProfileCard: React.FC<Props> = ({
+  profile: {
+    user,
+    user: { id: userId },
+    status,
+    company,
+    location,
+    skills,
+  },
+}: Props) => {
   return (
     <CardLayout>
       <div className={styles.ProfileCard}>
@@ -28,7 +37,7 @@ const ProfileCard: React.FC<Props> = ({ profile: { id, user, status, company, lo
           <p className={styles.profileSummaryText}>{location}</p>
           <Link
             className={clsx('ui', 'button', buttonStyles.secondaryButton, styles.viewProfileButton)}
-            to={`/profiles/${id}`}
+            to={`/profiles/${userId}`}
           >
             View profile
           </Link>
