@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
 import { useDispatch, connect } from 'react-redux';
 
@@ -12,19 +12,18 @@ import styles from './ProfilesPage.module.scss';
 
 interface PropsFromState {
   profiles?: ProfileDto[];
+  profilesLoaded: boolean;
   loading: boolean;
 }
 
-const ProfilesPage: React.FC<PropsFromState> = ({ profiles, loading }: PropsFromState) => {
-  const [profileLoaded, setProfileLoaded] = useState(!!profiles?.length);
+const ProfilesPage: React.FC<PropsFromState> = ({ profiles, profilesLoaded, loading }: PropsFromState) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!profileLoaded) {
+    if (!profilesLoaded) {
       dispatch(profileActions.getProfiles.request());
-      setProfileLoaded(true);
     }
-  }, [profileLoaded, dispatch]);
+  }, [profilesLoaded, dispatch]);
 
   function renderProfiles(): JSX.Element | JSX.Element[] | undefined {
     if (profiles?.length) {
@@ -43,6 +42,7 @@ const ProfilesPage: React.FC<PropsFromState> = ({ profiles, loading }: PropsFrom
 
 const mapStateToProps: StateToPropsFunc<PropsFromState> = ({ profile }) => ({
   profiles: profile.profiles,
+  profilesLoaded: profile.profilesLoaded,
   loading: profile.loading,
 });
 

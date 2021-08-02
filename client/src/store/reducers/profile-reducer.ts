@@ -8,6 +8,7 @@ import HttpException from '@exceptions/http-exception';
 export interface ProfileState {
   currentProfile?: ProfileDto;
   profiles: ProfileDto[];
+  profilesLoaded: boolean;
   repos: string[];
   errorResponse?: AxiosResponse<HttpException>;
   loading: boolean;
@@ -15,6 +16,7 @@ export interface ProfileState {
 
 export const initialState: ProfileState = {
   profiles: [],
+  profilesLoaded: false,
   repos: [],
   loading: false,
 };
@@ -39,6 +41,7 @@ const profileReducer = createReducer(initialState)
   .handleAction(profileActions.getProfiles.success, (state, action) => ({
     ...state,
     profiles: action.payload,
+    profilesLoaded: true,
     errorResponse: undefined,
     loading: false,
   }))
