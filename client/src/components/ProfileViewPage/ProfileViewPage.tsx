@@ -7,10 +7,13 @@ import { Link, useParams } from 'react-router-dom';
 import { profileActions } from '@actions';
 import Loader from '@components/Loader/Loader';
 import ProfileAbout from '@components/ProfileViewPage/ProfileAbout/ProfileAbout';
+import ProfileEducationsView from '@components/ProfileViewPage/ProfileEducationsView/ProfileEducationsView';
+import ProfileExperiencesView from '@components/ProfileViewPage/ProfileExperiencesView/ProfileExperiencesView';
 import ProfileTop from '@components/ProfileViewPage/ProfileTop/ProfileTop';
 import { ProfileDto } from '@dtos/profile.dto';
 import { UserDto } from '@dtos/user.dto';
 import { StateToPropsFunc } from '@store';
+import { isNotNilOrEmpty } from '@utils/object-utils';
 
 import styles from './ProfileViewPage.module.scss';
 import buttonStyles from '@styles/button.module.scss';
@@ -38,6 +41,12 @@ const ProfileViewPage: React.FC<PropsFromState> = ({ profiles, loading, currentU
       <div className={styles.profileViewContent}>
         <ProfileTop profile={profile} />
         <ProfileAbout profile={profile} />
+        {isNotNilOrEmpty(profile.experiences) && isNotNilOrEmpty(profile.educations) && (
+          <div className={styles.profileExperienceAndEducation}>
+            {isNotNilOrEmpty(profile.experiences) && <ProfileExperiencesView experiences={profile.experiences} />}
+            {isNotNilOrEmpty(profile.educations) && <ProfileEducationsView educations={profile.educations} />}
+          </div>
+        )}
       </div>
     );
   }

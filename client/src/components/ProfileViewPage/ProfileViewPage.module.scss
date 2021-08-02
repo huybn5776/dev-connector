@@ -4,3 +4,9 @@
   gap: 24px;
   margin: 16px 0;
 }
+
+.profile-experience-and-education {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}

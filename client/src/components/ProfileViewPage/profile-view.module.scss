@@ -1,0 +1,16 @@
+.profile-view-segment {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 24px 32px;
+  background-color: #333;
+}
+
+.profile-view-row {
+  padding: 16px 0;
+  font-size: 16px;
+
+  & + & {
+    border-top: 1px solid dimgray;
+  }
+}
