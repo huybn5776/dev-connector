@@ -4,12 +4,13 @@ import { createReducer } from 'typesafe-actions';
 import { profileActions } from '@actions';
 import { ProfileDto } from '@dtos/profile.dto';
 import HttpException from '@exceptions/http-exception';
+import { GithubRepo } from '@interfaces/github-repo';
 
 export interface ProfileState {
   currentProfile?: ProfileDto;
   profiles: ProfileDto[];
   profilesLoaded: boolean;
-  repos: string[];
+  githubRepos: GithubRepo[];
   errorResponse?: AxiosResponse<HttpException>;
   loading: boolean;
 }
@@ -17,7 +18,7 @@ export interface ProfileState {
 export const initialState: ProfileState = {
   profiles: [],
   profilesLoaded: false,
-  repos: [],
+  githubRepos: [],
   loading: false,
 };
 
@@ -31,6 +32,7 @@ const profileReducer = createReducer(initialState)
       profileActions.addExperience.request,
       profileActions.updateExperience.request,
       profileActions.deleteExperience.request,
+      profileActions.getGithubRepos.request,
     ],
     (state) => ({
       ...state,
@@ -81,6 +83,7 @@ const profileReducer = createReducer(initialState)
       profileActions.addExperience.failure,
       profileActions.updateExperience.failure,
       profileActions.deleteExperience.failure,
+      profileActions.getGithubRepos.failure,
     ],
     (state, action) => ({
       ...state,
@@ -146,12 +149,17 @@ const profileReducer = createReducer(initialState)
     errorResponse: undefined,
     loading: false,
   }))
+  .handleAction(profileActions.getGithubRepos.success, (state, { payload }) => ({
+    ...state,
+    githubRepos: payload,
+    loading: false,
+  }))
   .handleAction(profileActions.clearProfile, (state) => ({
     ...state,
     currentProfile: undefined,
-    repos: [],
+    githubRepos: [],
     errorResponse: undefined,
-    loading: false,
-  }));
+  }))
+  .handleAction(profileActions.clearGithubRepos, (state) => ({ ...state, githubRepos: [] }));
 
 export default profileReducer;

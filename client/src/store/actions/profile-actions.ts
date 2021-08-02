@@ -12,6 +12,7 @@ import { ProfileEducationDto } from '@dtos/profile-education.dto';
 import { ProfileExperienceDto } from '@dtos/profile-experience.dto';
 import { ProfileDto } from '@dtos/profile.dto';
 import HttpException from '@exceptions/http-exception';
+import { GithubRepo } from '@interfaces/github-repo';
 
 const stateName = 'Profile';
 const { asyncActionNames, actionName } = actionNameCreator(stateName);
@@ -83,3 +84,11 @@ export const deleteEducation = createAsyncAction(...asyncActionNames('Delete edu
   ProfileEducationDto[],
   AxiosResponse<HttpException>
 >();
+
+export const getGithubRepos = createAsyncAction(...asyncActionNames('Get github repos'))<
+  string,
+  GithubRepo[],
+  AxiosResponse<HttpException>
+  >();
+
+export const clearGithubRepos = createAction(actionName('Clear github repos'))<undefined, undefined>();

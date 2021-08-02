@@ -154,3 +154,14 @@ export const deleteEducation: EpicType = (action$, state$, { api }) =>
       ),
     ),
   );
+
+export const getGithubRepos: EpicType = (action$, state$, { api }) =>
+  action$.pipe(
+    filter(isActionOf(profileActions.getGithubRepos.request)),
+    switchMap(({ payload: githubUsername }) =>
+      api.profileApi.getGithubRepos(githubUsername).pipe(
+        map(profileActions.getGithubRepos.success),
+        catchError((error: AxiosResponse<HttpException>) => of(profileActions.getGithubRepos.failure(error))),
+      ),
+    ),
+  );

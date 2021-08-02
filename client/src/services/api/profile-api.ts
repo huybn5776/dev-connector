@@ -10,6 +10,7 @@ import { PatchProfileDto } from '@dtos/patch-profile.dto';
 import { ProfileEducationDto } from '@dtos/profile-education.dto';
 import { ProfileExperienceDto } from '@dtos/profile-experience.dto';
 import { ProfileDto } from '@dtos/profile.dto';
+import { GithubRepo } from '@interfaces/github-repo';
 
 import { AxiosProxy } from './api-utils';
 
@@ -61,4 +62,8 @@ export function patchEducation(id: string, educationData: PatchProfileEducationD
 
 export function deleteEducation(id: string): Observable<ProfileEducationDto[]> {
   return axiosProxy.delete(`/me/educations/${id}`);
+}
+
+export function getGithubRepos(githubUsername:string): Observable<GithubRepo[]> {
+  return axiosProxy.get(`/githubRepos/${githubUsername}`);
 }

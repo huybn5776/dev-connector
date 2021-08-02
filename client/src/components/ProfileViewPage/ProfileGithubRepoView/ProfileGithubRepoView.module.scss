@@ -1,0 +1,51 @@
+.ProfileGithubRepoView {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.profile-github-title {
+  margin: 16px 0 0 0;
+}
+
+.github-row {
+  display: grid;
+  grid-template-columns: 1fr 100px;
+  padding: 16px 24px;
+  background-color: #333;
+}
+
+.github-text {
+  font-size: 16px;
+
+  * + * {
+    margin-top: 8px;
+  }
+}
+
+.github-repo-name {
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.github-status {
+  > * {
+    padding: 4px;
+    text-align: center;
+    border: 1px solid dimgray;
+  }
+}
+
+.github-starts {
+  color: black;
+  background-color: lightskyblue;
+}
+
+.github-watchers {
+  background-color: #111;
+}
+
+.github-forks {
+  background-color: #3f4345;
+}

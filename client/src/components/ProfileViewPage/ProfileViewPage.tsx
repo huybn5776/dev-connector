@@ -9,6 +9,7 @@ import Loader from '@components/Loader/Loader';
 import ProfileAbout from '@components/ProfileViewPage/ProfileAbout/ProfileAbout';
 import ProfileEducationsView from '@components/ProfileViewPage/ProfileEducationsView/ProfileEducationsView';
 import ProfileExperiencesView from '@components/ProfileViewPage/ProfileExperiencesView/ProfileExperiencesView';
+import ProfileGithubRepoView from '@components/ProfileViewPage/ProfileGithubRepoView/ProfileGithubRepoView';
 import ProfileTop from '@components/ProfileViewPage/ProfileTop/ProfileTop';
 import { ProfileDto } from '@dtos/profile.dto';
 import { UserDto } from '@dtos/user.dto';
@@ -47,6 +48,7 @@ const ProfileViewPage: React.FC<PropsFromState> = ({ profiles, loading, currentU
             {isNotNilOrEmpty(profile.educations) && <ProfileEducationsView educations={profile.educations} />}
           </div>
         )}
+        {profile.githubUsername ? <ProfileGithubRepoView githubUsername={profile.githubUsername} /> : null}
       </div>
     );
   }
