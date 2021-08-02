@@ -1,4 +1,4 @@
-import { ignore, fromValue, mapWith } from '@automapper/core';
+import { ignore, fromValue, mapFrom } from '@automapper/core';
 import type { MappingProfile, Mapper } from '@automapper/types';
 
 import { mapId } from '@/utils/mapper-utils';
@@ -24,11 +24,7 @@ export const profileMappingProfile: MappingProfile = (mapper: Mapper) => {
     .forMember(...mapId())
     .forMember(
       (destination) => destination.social,
-      mapWith(
-        () => ProfileSocialDto,
-        (source) => (isNestedEmpty(source.social) ? undefined : source.social),
-        () => ProfileSocial,
-      ),
+      mapFrom((source) => (isNestedEmpty(source.social) ? undefined : source.social)),
     );
 
   mapper.createMap(ProfileExperience, ProfileExperienceDto).forMember(...mapId());
