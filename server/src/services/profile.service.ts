@@ -11,6 +11,7 @@ import { Profile } from '@entities/profile';
 import { ProfileEducation } from '@entities/profile-education';
 import { ProfileExperience } from '@entities/profile-experience';
 import HttpException from '@exceptions/http-exception';
+import { GithubRepo } from '@interfaces/github-repo';
 import { mapper } from '@mappers';
 import { ProfileModel, ProfileDocument } from '@models/profile.model';
 import { UserModel } from '@models/user.model';
@@ -157,20 +158,53 @@ class ProfileService {
     return profile.toObject().educations.filter((education) => `${education._id}` !== educationId);
   }
 
-  async getGithubProfile(username: string): Promise<unknown> {
-    const githubClientId: string = config.get('githubClientId');
-    const githubSecret: string = config.get('githubSecret');
-    const githubProfile = await axios
-      .get(`https://api.github.com/users/${username}/repos`, {
-        params: {
-          per_page: 5,
-          sort: 'created:asc',
-          client_id: githubClientId,
-          client_secret: githubSecret,
+  async getGithubPinnedRepos(username: string): Promise<GithubRepo[]> {
+    const githubToken: string = config.get('githubToken');
+    const githubRepos = await axios
+      .post(
+        'https://api.github.com/graphql',
+        {
+          query: `
+query {
+  user(login: "${username}") {
+		pinnedItems(first: 10, types: [REPOSITORY]) {
+			totalCount
+			edges {
+				node {
+					... on Repository {
+						name
+						description
+						owner {
+							... on User {
+								login
+							}
+						}
+						stargazerCount
+						forkCount
+						watchers {
+							totalCount
+						}
+					}
+				}
+			}
+		}
+	}
+}
+`,
         },
-        headers: { 'user-agent': 'node.js' },
+        { headers: { Authorization: `Bearer ${githubToken}` } },
+      )
+      .then((response) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return response.data.data.user.pinnedItems.edges.map((edge: any) => ({
+          name: edge.node.name,
+          description: edge.node.description,
+          owner: edge.node.owner.login,
+          stargazerCount: edge.node.stargazerCount,
+          forkCount: edge.node.forkCount,
+          watcherCount: edge.node.watchers.totalCount,
+        }));
       })
-      .then((response) => response.data)
       .catch((error) => {
         const { status } = error.response as AxiosResponse;
         if (status === 404) {
@@ -178,11 +212,11 @@ class ProfileService {
         }
         throw error;
       });
-    if (!githubProfile) {
+    if (!githubRepos) {
       throw new HttpException(404);
     }
 
-    return githubProfile;
+    return githubRepos;
   }
 
   private async findUserProfile(userId: string): Promise<ProfileDocument> {

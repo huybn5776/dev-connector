@@ -103,10 +103,10 @@ class ProfileController {
     res.status(200).send(experienceDtoList);
   };
 
-  public getGithubProfile = async (req: Request, res: Response): Promise<void> => {
+  public getGithubPinnedRepos = async (req: Request, res: Response): Promise<void> => {
     const { username } = req.params;
-    const githubProfile = await this.profileService.getGithubProfile(username);
-    res.status(200).send(githubProfile);
+    const githubRepos = await this.profileService.getGithubPinnedRepos(username);
+    res.status(200).send(githubRepos);
   };
 
   private patchData<T, R>(

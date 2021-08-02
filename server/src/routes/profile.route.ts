@@ -71,7 +71,7 @@ class ProfileRoute implements Route {
       authMiddleware,
       asyncHandler(this.profileController.deleteCurrentUserProfileEducation),
     );
-    this.router.get(`${this.path}/github/:username`, asyncHandler(this.profileController.getGithubProfile));
+    this.router.get(`${this.path}/githubRepos/:username`, asyncHandler(this.profileController.getGithubPinnedRepos));
   }
 }
 
