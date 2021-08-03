@@ -79,7 +79,18 @@ const profileReducer = createReducer(initialState)
   .handleAction(
     [
       profileActions.getCurrentProfile.failure,
+    ],
+    (state, action) => ({
+      ...state,
+      currentProfile: undefined,
+      errorResponse: action.payload,
+      loading: false,
+    }),
+  )
+  .handleAction(
+    [
       profileActions.createProfile.failure,
+      profileActions.updateProfile.failure,
       profileActions.addExperience.failure,
       profileActions.updateExperience.failure,
       profileActions.deleteExperience.failure,
