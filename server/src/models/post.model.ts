@@ -6,7 +6,7 @@ import { UserDocument } from '@models/user.model';
 
 const postSchema = new Schema<Post>(
   {
-    user: { type: Schema.Types.ObjectId },
+    user: { type: Schema.Types.ObjectId, ref: 'User' },
     text: { type: String, required: true },
     name: { type: String },
     avatar: { type: String },
@@ -16,7 +16,6 @@ const postSchema = new Schema<Post>(
   { timestamps: true },
 );
 
-export type PostDocument = Post &
-  Document<ObjectId> & { user: UserDocument; comments: PostCommentDocument[] };
+export type PostDocument = Post & Document<ObjectId> & { user: UserDocument; comments: PostCommentDocument[] };
 
 export const PostModel = model<PostDocument>('Post', postSchema);

@@ -13,7 +13,11 @@ class PostsService {
   readonly comments = PostCommentModel;
 
   async getPosts(): Promise<Post[]> {
-    const postDocuments: PostDocument[] = await this.posts.find().sort({ created: -1 }).exec();
+    const postDocuments: PostDocument[] = await this.posts
+      .find()
+      .sort({ created: -1 })
+      .populate('user', ['name', 'avatar'])
+      .exec();
     return postDocuments.map((post) => post.toObject());
   }
 
@@ -109,6 +113,7 @@ class PostsService {
   private async getPostDocument(id: string): Promise<PostDocument> {
     const postDocument: PostDocument | null = await this.posts
       .findById(id)
+      .populate('user', ['name', 'avatar'])
       .populate('likes.user', ['name', 'avatar'])
       .populate('comments');
     if (!postDocument) {
