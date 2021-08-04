@@ -81,10 +81,11 @@ class PostsService {
   async addPostComment(user: User, postId: string, commentData: CreatePostCommentDto): Promise<PostComment[]> {
     const postDocument = await this.getPostDocument(postId);
     const comment = new PostCommentModel({
-      user: new UserModel({ _id: user._id }),
+      user: user._id,
       text: commentData.text,
       name: user.name,
       avatar: user.avatar,
+      post: postId,
     });
     await comment.save();
     postDocument.comments.unshift(comment);
@@ -115,7 +116,7 @@ class PostsService {
       .findById(id)
       .populate('user', ['name', 'avatar'])
       .populate('likes.user', ['name', 'avatar'])
-      .populate('comments');
+      .populate({ path: 'comments', populate: { path: 'user', select: ['name', 'avatar'] } });
     if (!postDocument) {
       throw new HttpException(404);
     }
