@@ -1,6 +1,7 @@
 import { AxiosResponse } from 'axios';
 import { createReducer } from 'typesafe-actions';
 
+import { upsertEntityWithSameId } from '@/utils/store-utils';
 import { profileActions } from '@actions';
 import { ProfileDto } from '@dtos/profile.dto';
 import HttpException from '@exceptions/http-exception';
@@ -47,22 +48,12 @@ const profileReducer = createReducer(initialState)
     errorResponse: undefined,
     loading: false,
   }))
-  .handleAction(profileActions.getUserProfile.success, (state, { payload: profile }) => {
-    let { profiles } = state;
-    const targetProfileIndex = profiles.findIndex((p) => p.id === profile.id);
-    if (targetProfileIndex === -1) {
-      profiles = [...profiles, profile];
-    } else {
-      profiles = [...profiles];
-      profiles[targetProfileIndex] = profile;
-    }
-    return {
-      ...state,
-      profiles,
-      errorResponse: undefined,
-      loading: false,
-    };
-  })
+  .handleAction(profileActions.getUserProfile.success, (state, { payload: profile }) => ({
+    ...state,
+    profiles: upsertEntityWithSameId(state.profiles, profile),
+    errorResponse: undefined,
+    loading: false,
+  }))
   .handleAction(
     [
       profileActions.getCurrentProfile.success,
@@ -76,17 +67,12 @@ const profileReducer = createReducer(initialState)
       loading: false,
     }),
   )
-  .handleAction(
-    [
-      profileActions.getCurrentProfile.failure,
-    ],
-    (state, action) => ({
-      ...state,
-      currentProfile: undefined,
-      errorResponse: action.payload,
-      loading: false,
-    }),
-  )
+  .handleAction([profileActions.getCurrentProfile.failure], (state, action) => ({
+    ...state,
+    currentProfile: undefined,
+    errorResponse: action.payload,
+    loading: false,
+  }))
   .handleAction(
     [
       profileActions.createProfile.failure,
@@ -112,12 +98,7 @@ const profileReducer = createReducer(initialState)
     loading: false,
   }))
   .handleAction(profileActions.updateExperience.success, (state, { payload: experience }) => {
-    const experiences = [...(state.currentProfile?.experiences || [])];
-    const targetExperienceIndex = experiences.findIndex((e) => e.id === experience.id);
-    if (targetExperienceIndex !== -1) {
-      experiences[targetExperienceIndex] = experience;
-    }
-
+    const experiences = upsertEntityWithSameId(state.currentProfile?.experiences || [], experience);
     return {
       ...state,
       currentProfile: { ...state.currentProfile, experiences } as ProfileDto,
@@ -141,12 +122,7 @@ const profileReducer = createReducer(initialState)
     loading: false,
   }))
   .handleAction(profileActions.updateEducation.success, (state, { payload: education }) => {
-    const educations = [...(state.currentProfile?.educations || [])];
-    const targetEducationIndex = educations.findIndex((e) => e.id === education.id);
-    if (targetEducationIndex !== -1) {
-      educations[targetEducationIndex] = education;
-    }
-
+    const educations = upsertEntityWithSameId(state.currentProfile?.educations || [], education);
     return {
       ...state,
       currentProfile: { ...state.currentProfile, educations } as ProfileDto,
