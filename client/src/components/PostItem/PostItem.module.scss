@@ -1,0 +1,106 @@
+.PostItem {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  max-width: 680px;
+  padding-bottom: 12px;
+  overflow: hidden;
+  background-color: #333;
+  border-radius: 12px;
+
+  & + & {
+    margin-top: 24px;
+  }
+}
+
+.post-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  font-size: 16px;
+}
+
+.post-avatar {
+  width: 40px;
+  height: 40px;
+  margin-right: 16px;
+  clip-path: circle(50%);
+}
+
+.post-info {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.post-timestamp {
+  color: gray;
+}
+
+.post-username {
+}
+
+.post-content {
+  padding: 0 16px;
+}
+
+.post-actions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.post-action {
+  display: flex;
+  justify-content: center;
+  padding: 12px 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color .1s;
+
+  &:hover {
+    background-color: rgba(white, .1);
+  }
+}
+
+.post-comments {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0 8px -2px 8px;
+  padding: 8px 8px 8px 16px;
+  background-color: #3f4345;
+  border-radius: 8px;
+}
+
+.post-comments-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.post-comments-title {
+  margin: 0;
+  color: gray;
+  font-size: 14px;
+}
+
+.post-comments-expand-button {
+  margin: 0;
+  padding: 8px;
+  color: white;
+  background: none;
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color .1s;
+
+  &:hover {
+    background-color: rgba(white, .1);
+  }
+}
+
+.post-comments-expand-icon {
+  margin: 0;
+}

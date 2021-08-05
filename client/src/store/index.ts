@@ -5,12 +5,14 @@ import { ActionType, RootAction, RootState, Services, StateType } from 'typesafe
 import services from '../services';
 import { rootReducer } from './reducers';
 import { AuthState } from './reducers/auth-reducer';
+import { PostState } from './reducers/post-reducer';
 import { ProfileState } from './reducers/profile-reducer';
 import { UserState } from './reducers/user-reducer';
 import rootEpic from './root-epic';
 
 export interface ApplicationState {
   auth: AuthState;
+  post: PostState,
   profile: ProfileState,
   user: UserState;
 }

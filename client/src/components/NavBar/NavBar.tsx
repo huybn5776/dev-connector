@@ -27,6 +27,9 @@ const NavBar: React.FC = () => {
       </Link>
       {isAuthenticated ? (
         <>
+          <Link to="posts" className={styles.headerLink}>
+            Posts
+          </Link>
           <Link to="dashboard" className={styles.headerLink}>
             Dashboard
           </Link>

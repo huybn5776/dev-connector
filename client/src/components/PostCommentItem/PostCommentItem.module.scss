@@ -1,0 +1,56 @@
+.PostComment {
+  display: flex;
+  gap: 8px;
+}
+
+.comment-avatar {
+  width: 32px;
+  height: 32px;
+  clip-path: circle(50%);
+
+  &:hover {
+    filter: brightness(1.1);
+  }
+}
+
+.comment-text {
+  margin: 0;
+}
+
+.comment-username {
+  color: white;
+  font-weight: bold;
+}
+
+.comment-content {
+  display: grid;
+  grid-template-rows: 20px 1fr auto;
+  min-height: 40px;
+}
+
+.comment-actions {
+  display: flex;
+  font-size: 14px;
+
+  * + *::before {
+    margin: 0 4px;
+    color: gray;
+    content: '．';
+  }
+}
+
+.comment-action {
+  padding: 0;
+  color: #58a6ff;
+  background: none;
+  border: 0;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.comment-timestamp {
+  color: gray;
+}
