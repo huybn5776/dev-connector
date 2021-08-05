@@ -53,13 +53,14 @@ class PostsService {
   }
 
   async deletePost(userId: string, postId: string): Promise<void> {
-    const deletedPostDocument: PostDocument | null = await this.posts.findOneAndDelete({
-      user: new UserModel({ _id: userId }),
-      id: postId,
-    });
-    if (!deletedPostDocument) {
+    const postDocument: PostDocument | null = await this.posts.findById(postId);
+    if (!postDocument) {
       throw new HttpException(404);
     }
+    if (`${postDocument.user._id}` !== userId) {
+      throw new HttpException(403);
+    }
+    await postDocument.delete();
   }
 
   async getPostLikes(id: string): Promise<PostLike[]> {
