@@ -1,4 +1,4 @@
-import { Document, model, Schema, SchemaDefinition, ObjectId } from 'mongoose';
+import { Document, model, Schema, SchemaDefinition } from 'mongoose';
 
 import { Profile } from '@entities/profile';
 import { UserDocument } from '@models/user.model';
@@ -46,6 +46,6 @@ const profileSchema = new Schema<Profile>(
   { timestamps: true },
 );
 
-export type ProfileDocument = Profile & Document<ObjectId> & { user: UserDocument };
+export type ProfileDocument = Profile & Document & { user: UserDocument };
 
 export const ProfileModel = model<ProfileDocument>('Profile', profileSchema);

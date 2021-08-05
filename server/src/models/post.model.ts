@@ -1,4 +1,4 @@
-import { Document, model, Schema, ObjectId } from 'mongoose';
+import { Document, model, Schema } from 'mongoose';
 
 import { Post } from '@entities/post';
 import { PostCommentDocument } from '@models/post-comment.model';
@@ -16,6 +16,6 @@ const postSchema = new Schema<Post>(
   { timestamps: true },
 );
 
-export type PostDocument = Post & Document<ObjectId> & { user: UserDocument; comments: PostCommentDocument[] };
+export type PostDocument = Post & Document & { user: UserDocument; comments: PostCommentDocument[] } & { _id: string };
 
 export const PostModel = model<PostDocument>('Post', postSchema);

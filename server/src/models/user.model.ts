@@ -1,4 +1,4 @@
-import { Document, model, ObjectId, Schema, SchemaDefinition } from 'mongoose';
+import { Document, model, Schema, SchemaDefinition } from 'mongoose';
 
 import { User } from '@entities/user';
 
@@ -24,6 +24,6 @@ const userSchema = new Schema<User>(
   { timestamps: true },
 );
 
-export type UserDocument = User & Document<ObjectId>;
+export type UserDocument = User & Document;
 
 export const UserModel = model<UserDocument>('User', userSchema);
