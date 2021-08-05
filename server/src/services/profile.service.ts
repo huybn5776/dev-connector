@@ -20,7 +20,11 @@ class ProfileService {
   readonly profiles = ProfileModel;
 
   async getProfiles(): Promise<Profile[]> {
-    const profileDocuments = await this.profiles.find().populate('user', ['name', 'avatar']).exec();
+    const profileDocuments = await this.profiles
+      .find()
+      .populate('user', ['name', 'avatar'])
+      .select('-experiences -educations')
+      .exec();
     return profileDocuments.map((profile) => profile.toObject() as Profile);
   }
 
