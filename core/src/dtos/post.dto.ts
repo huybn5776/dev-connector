@@ -19,6 +19,10 @@ export class PostDto {
   likes!: PostLikeDto[];
   @AutoMap({ typeFn: () => PostCommentDto })
   comments!: PostCommentDto[];
+  /**
+   * Listing api only
+   */
+  commentsCount?: number;
   @AutoMap()
   createdAt!: Date;
   @AutoMap()

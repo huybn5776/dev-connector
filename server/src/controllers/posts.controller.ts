@@ -16,7 +16,12 @@ class PostsController {
   getPosts = async (req: Request, res: Response): Promise<void> => {
     const posts = await this.postsService.getPosts();
     const postDtoList = mapper.mapArray(posts, PostDto, Post);
-    res.status(200).send(postDtoList);
+    const commentCountMap = await this.postsService.getPostsCommentsCount(postDtoList.map((post) => post.id));
+    const postsWithCommentsCount: PostDto[] = postDtoList.map((post) => ({
+      ...post,
+      commentsCount: commentCountMap[post.id],
+    }));
+    res.status(200).send(postsWithCommentsCount);
   };
 
   getPost = async (req: Request, res: Response): Promise<void> => {

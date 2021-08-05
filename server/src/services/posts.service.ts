@@ -18,8 +18,24 @@ class PostsService {
       .find()
       .sort({ created: -1 })
       .populate('user', ['name', 'avatar'])
+      .populate({ path: 'comments', limit: 1, populate: { path: 'user', select: ['name', 'avatar'] } })
       .exec();
     return postDocuments.map((post) => post.toObject());
+  }
+
+  async getPostsCommentsCount(postIds: string[]): Promise<Record<string, number>> {
+    const postDocuments: Pick<PostDocument, '_id' | 'comments'>[] | null = await this.posts
+      .find()
+      .where('_id')
+      .in(postIds)
+      .select('comments')
+      .exec();
+
+    const commentsCountMap = {} as Record<string, number>;
+    postDocuments.forEach((post) => {
+      commentsCountMap[post._id] = post.comments.length;
+    });
+    return commentsCountMap;
   }
 
   async getPost(id: string): Promise<Post> {
