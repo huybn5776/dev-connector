@@ -2,8 +2,8 @@ import { Request, Response } from 'express';
 
 import { CreatePostCommentDto } from '@dtos/create-post-comment.dto';
 import { PostCommentDto } from '@dtos/post-comment.dto';
-import { PostDto } from '@dtos/post.dto';
 import { PostLikeDto } from '@dtos/post-like.dto';
+import { PostDto } from '@dtos/post.dto';
 import { Post } from '@entities/post';
 import { PostComment } from '@entities/post-comment';
 import { PostLike } from '@entities/post-like';
@@ -41,25 +41,48 @@ class PostsController {
     res.status(200).send();
   };
 
-  getLikes = async (req: Request, res: Response): Promise<void> => {
+  getLikesOfPost = async (req: Request, res: Response): Promise<void> => {
     const postId = req.params.id;
-    const likes = await this.postsService.getLikes(postId);
+    const likes = await this.postsService.getPostLikes(postId);
     const likesDto = mapper.mapArray(likes, PostLikeDto, PostLike);
     res.status(200).send(likesDto);
   };
 
-  addLike = async (req: Request, res: Response): Promise<void> => {
+  addLikeToPost = async (req: Request, res: Response): Promise<void> => {
     const postId = req.params.id;
     const userId = req.user.claims().id;
-    const likes = await this.postsService.addLike(userId, postId);
+    const likes = await this.postsService.addLikeToPost(userId, postId);
     const likesDto = mapper.mapArray(likes, PostLikeDto, PostLike);
     res.status(201).send(likesDto);
   };
 
-  deleteLike = async (req: Request, res: Response): Promise<void> => {
+  deleteLikeOfPost = async (req: Request, res: Response): Promise<void> => {
     const postId = req.params.id;
     const userId = req.user.claims().id;
-    const likes = await this.postsService.deleteLike(userId, postId);
+    const likes = await this.postsService.deleteLikeOfPost(userId, postId);
+    const likesDto = mapper.mapArray(likes, PostLikeDto, PostLike);
+    res.status(200).send(likesDto);
+  };
+
+  getLikesOfComment = async (req: Request, res: Response): Promise<void> => {
+    const commentId = req.params.id;
+    const likes = await this.postsService.getCommentLikes(commentId);
+    const likesDto = mapper.mapArray(likes, PostLikeDto, PostLike);
+    res.status(200).send(likesDto);
+  };
+
+  addLikeToComment = async (req: Request, res: Response): Promise<void> => {
+    const commentId = req.params.id;
+    const userId = req.user.claims().id;
+    const likes = await this.postsService.addLikeToComment(userId, commentId);
+    const likesDto = mapper.mapArray(likes, PostLikeDto, PostLike);
+    res.status(201).send(likesDto);
+  };
+
+  deleteLikeOfComment = async (req: Request, res: Response): Promise<void> => {
+    const commentId = req.params.id;
+    const userId = req.user.claims().id;
+    const likes = await this.postsService.deleteLikeOfComment(userId, commentId);
     const likesDto = mapper.mapArray(likes, PostLikeDto, PostLike);
     res.status(200).send(likesDto);
   };

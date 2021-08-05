@@ -2,6 +2,7 @@ import { CreatePostCommentDto } from '@dtos/create-post-comment.dto';
 import { CreatePostDto } from '@dtos/create-post.dto';
 import { Post } from '@entities/post';
 import { PostComment } from '@entities/post-comment';
+import { PostLike } from '@entities/post-like';
 import { User } from '@entities/user';
 import HttpException from '@exceptions/http-exception';
 import { PostCommentModel, PostCommentDocument } from '@models/post-comment.model';
@@ -45,12 +46,23 @@ class PostsService {
     }
   }
 
-  async getLikes(id: string): Promise<{ user: User }[]> {
+  async getPostLikes(id: string): Promise<PostLike[]> {
     const post = await this.getPost(id);
     return post.likes;
   }
 
-  async addLike(userId: string, postId: string): Promise<{ user: User }[]> {
+  async getCommentLikes(id: string): Promise<PostLike[]> {
+    const comment: PostCommentDocument | null = await this.comments
+      .findById(id)
+      .select('likes')
+      .populate('likes.user', ['name', 'avatar']);
+    if (!comment) {
+      throw new HttpException(404);
+    }
+    return comment.likes;
+  }
+
+  async addLikeToPost(userId: string, postId: string): Promise<PostLike[]> {
     const postDocument = await this.getPostDocument(postId);
     const liked = postDocument.likes.find((like) => `${like.user._id}` === `${userId}`);
     if (liked) {
@@ -61,7 +73,7 @@ class PostsService {
     return postDocument.toObject().likes;
   }
 
-  async deleteLike(userId: string, postId: string): Promise<{ user: User }[]> {
+  async deleteLikeOfPost(userId: string, postId: string): Promise<PostLike[]> {
     const postDocument = await this.getPostDocument(postId);
     const liked = postDocument.likes.find((like) => `${like.user._id}` === `${userId}`);
     if (!liked) {
@@ -71,6 +83,29 @@ class PostsService {
 
     await postDocument.save();
     return postDocument.toObject().likes;
+  }
+
+  async addLikeToComment(userId: string, commentId: string): Promise<PostLike[]> {
+    const commentDocument = await this.getCommentDocument(commentId);
+    const liked = commentDocument?.likes.find((like) => `${like.user._id}` === `${userId}`);
+    if (liked) {
+      throw new HttpException(400, 'Already liked');
+    }
+    commentDocument.likes.unshift({ user: new UserModel({ _id: userId }) });
+    await commentDocument.save();
+    return commentDocument.toObject().likes;
+  }
+
+  async deleteLikeOfComment(userId: string, commentId: string): Promise<PostLike[]> {
+    const commentDocument = await this.getCommentDocument(commentId);
+    const liked = commentDocument?.likes.find((like) => `${like.user._id}` === `${userId}`);
+    if (!liked) {
+      throw new HttpException(400, 'Not yet been liked');
+    }
+    commentDocument.likes = commentDocument.likes.filter((like) => `${like.user._id}` !== `${userId}`);
+
+    await commentDocument.save();
+    return commentDocument.toObject().likes;
   }
 
   async getPostComments(id: string): Promise<PostComment[]> {
@@ -121,6 +156,14 @@ class PostsService {
       throw new HttpException(404);
     }
     return postDocument;
+  }
+
+  private async getCommentDocument(id: string): Promise<PostCommentDocument> {
+    const commentDocument: PostCommentDocument | null = await this.comments.findById(id);
+    if (!commentDocument) {
+      throw new HttpException(404);
+    }
+    return commentDocument;
   }
 }
 

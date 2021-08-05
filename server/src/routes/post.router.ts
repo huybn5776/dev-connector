@@ -28,9 +28,20 @@ class PostsRoute implements Route {
     );
     this.router.delete(`${this.path}/:id`, authMiddleware, asyncHandler(this.postsController.deletePost));
 
-    this.router.get(`${this.path}/:id/likes`, authMiddleware, asyncHandler(this.postsController.getLikes));
-    this.router.post(`${this.path}/:id/likes`, authMiddleware, asyncHandler(this.postsController.addLike));
-    this.router.delete(`${this.path}/:id/likes`, authMiddleware, asyncHandler(this.postsController.deleteLike));
+    this.router.get(`${this.path}/:id/likes`, asyncHandler(this.postsController.getLikesOfPost));
+    this.router.post(`${this.path}/:id/likes`, authMiddleware, asyncHandler(this.postsController.addLikeToPost));
+    this.router.delete(`${this.path}/:id/likes`, authMiddleware, asyncHandler(this.postsController.deleteLikeOfPost));
+    this.router.get(`${this.path}/comments/:id/likes`, asyncHandler(this.postsController.getLikesOfComment));
+    this.router.post(
+      `${this.path}/comments/:id/likes`,
+      authMiddleware,
+      asyncHandler(this.postsController.addLikeToComment),
+    );
+    this.router.delete(
+      `${this.path}/comments/:id/likes`,
+      authMiddleware,
+      asyncHandler(this.postsController.deleteLikeOfComment),
+    );
 
     this.router.get(`${this.path}/:id/comments`, authMiddleware, asyncHandler(this.postsController.getPostComments));
     this.router.post(
