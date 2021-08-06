@@ -55,14 +55,14 @@ const PostItem: React.FC<Props> = ({
       </div>
       <div className={styles.postContent}>{text}</div>
       <div className={styles.postActions}>
-        <div className={styles.postAction}>
+        <button className={styles.postAction} type="button">
           <i className={clsx('icon', 'heart', 'outline')} />
           <span>{likes.length || ''}</span>
-        </div>
-        <div className={styles.postAction}>
+        </button>
+        <button className={styles.postAction} type="button">
           <i className={clsx('icon', 'comment', 'alternate', 'outline')} />
           <span>{commentsCount || comments.length || ''}</span>
-        </div>
+        </button>
       </div>
       {commentsCount || comments.length ? (
         <div className={styles.postComments}>
