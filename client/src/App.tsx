@@ -27,21 +27,23 @@ const App: React.FC = () => {
         <BrowserRouter>
           <div className="main-layout">
             <NavBar />
-            <Switch>
-              <Route path="/" exact component={LandingPage} />
-              <Route path="/login" exact component={LoginPage} />
-              <UnauthenticatedRoute path="/register" exact component={RegisterPage} fallbackTo="/dashboard" />
-              <AuthenticatedRoute path="/dashboard" exact component={DashboardPage} />
-              <AuthenticatedRoute path="/edit-profile" exact component={EditProfilePage} />
-              <AuthenticatedRoute path="/add-experience" exact render={() => <EditExperiencePage />} />
-              <AuthenticatedRoute path="/edit-experience/:id?" exact render={() => <EditExperiencePage edit />} />
-              <AuthenticatedRoute path="/add-education" exact render={() => <EditEducationPage />} />
-              <AuthenticatedRoute path="/edit-education/:id?" exact render={() => <EditEducationPage edit />} />
-              <Route path="/profiles" exact component={ProfilesPage} />
-              <Route path="/profiles/:id" exact component={ProfileViewPage} />
-              <Route path="/posts" exact component={PostsPage} />
-              <Redirect to="/" />
-            </Switch>
+            <div className="page-content">
+              <Switch>
+                <Route path="/" exact component={LandingPage} />
+                <Route path="/login" exact component={LoginPage} />
+                <UnauthenticatedRoute path="/register" exact component={RegisterPage} fallbackTo="/dashboard" />
+                <AuthenticatedRoute path="/dashboard" exact component={DashboardPage} />
+                <AuthenticatedRoute path="/edit-profile" exact component={EditProfilePage} />
+                <AuthenticatedRoute path="/add-experience" exact render={() => <EditExperiencePage />} />
+                <AuthenticatedRoute path="/edit-experience/:id?" exact render={() => <EditExperiencePage edit />} />
+                <AuthenticatedRoute path="/add-education" exact render={() => <EditEducationPage />} />
+                <AuthenticatedRoute path="/edit-education/:id?" exact render={() => <EditEducationPage edit />} />
+                <Route path="/profiles" exact component={ProfilesPage} />
+                <Route path="/profiles/:id" exact component={ProfileViewPage} />
+                <Route path="/posts" exact component={PostsPage} />
+                <Redirect to="/" />
+              </Switch>
+            </div>
           </div>
         </BrowserRouter>
       </div>
