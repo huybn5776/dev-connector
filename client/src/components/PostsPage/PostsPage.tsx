@@ -14,17 +14,19 @@ import styles from './PostsPage.module.scss';
 interface PropsFromState {
   user?: UserDto;
   posts: PostDto[];
+  loadedPostId: Record<string, true>;
+  loadingPostId?: string;
   loading: boolean;
 }
 
-const PostsPage: React.FC<PropsFromState> = ({ user, posts, loading }: PropsFromState) => {
+const PostsPage: React.FC<PropsFromState> = ({ user, posts, loadedPostId, loadingPostId, loading }: PropsFromState) => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(postActions.getPosts.request());
   }, [dispatch]);
 
   return (
-    <div className='page-layout'>
+    <div className="page-layout">
       {loading ? (
         <Loader />
       ) : (
@@ -33,6 +35,8 @@ const PostsPage: React.FC<PropsFromState> = ({ user, posts, loading }: PropsFrom
             <PostItem
               key={post.id}
               post={post}
+              detailMode={loadedPostId[post.id]}
+              loading={loadingPostId === post.id}
             />
           ))}
         </div>
@@ -44,6 +48,8 @@ const PostsPage: React.FC<PropsFromState> = ({ user, posts, loading }: PropsFrom
 const mapStateToProps: StateToPropsFunc<PropsFromState> = ({ auth, post }) => ({
   user: auth.user,
   posts: post.posts,
+  loadedPostId: post.loadedPostId,
+  loadingPostId: post.loadingPostId,
   loading: post.loading,
 });
 

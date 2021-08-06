@@ -10,10 +10,15 @@ import styles from './PostCommentItem.module.scss';
 
 interface Props {
   comment: PostCommentDto;
+  detailMode?: boolean;
   editable?: boolean;
 }
 
-const PostCommentItem: React.FC<Props> = ({ comment: { user, text, name, avatar, updatedAt }, editable }: Props) => {
+const PostCommentItem: React.FC<Props> = ({
+  comment: { user, text, name, avatar, updatedAt },
+  detailMode,
+  editable,
+}: Props) => {
   return (
     <div className={styles.PostComment}>
       <Link to={`/profiles/${user?.id}`}>
@@ -24,17 +29,19 @@ const PostCommentItem: React.FC<Props> = ({ comment: { user, text, name, avatar,
           {name}
         </Link>
         <p className={styles.commentText}>{text}</p>
-        <div className={styles.commentActions}>
-          <button className={styles.commentAction} type="button">
-            Like
-          </button>
-          {editable && (
+        {detailMode ? (
+          <div className={styles.commentActions}>
             <button className={styles.commentAction} type="button">
-              Edit
+              Like
             </button>
-          )}
-          <span className={styles.commentTimestamp}>{format(new Date(updatedAt), dateFormat)}</span>
-        </div>
+            {editable && (
+              <button className={styles.commentAction} type="button">
+                Edit
+              </button>
+            )}
+            <span className={styles.commentTimestamp}>{format(new Date(updatedAt), dateFormat)}</span>
+          </div>
+        ) : null}
       </div>
     </div>
   );

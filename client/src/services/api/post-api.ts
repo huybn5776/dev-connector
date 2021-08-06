@@ -11,3 +11,7 @@ const axiosProxy = new AxiosProxy(axiosInstance);
 export function getPosts(): Observable<PostDto[]> {
   return axiosProxy.get('/');
 }
+
+export function getPost(id: string): Observable<PostDto> {
+  return axiosProxy.get(`/${id}`);
+}

@@ -19,3 +19,14 @@ export const getPosts: EpicType = (action$, state$, { api }) =>
       ),
     ),
   );
+
+export const getPost: EpicType = (action$, state$, { api }) =>
+  action$.pipe(
+    filter(isActionOf(postActions.getPost.request)),
+    switchMap(({ payload }) =>
+      api.postApi.getPost(payload).pipe(
+        map(postActions.getPost.success),
+        catchError((error: AxiosResponse<HttpException>) => of(postActions.getPost.failure(error))),
+      ),
+    ),
+  );

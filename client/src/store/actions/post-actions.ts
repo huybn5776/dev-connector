@@ -13,3 +13,9 @@ export const getPosts = createAsyncAction(...asyncActionNames('Get posts'))<
   PostDto[],
   AxiosResponse<HttpException>
 >();
+
+export const getPost = createAsyncAction(...asyncActionNames('Get post'))<
+  string,
+  PostDto,
+  AxiosResponse<HttpException>
+>();
