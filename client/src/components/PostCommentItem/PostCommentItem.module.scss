@@ -41,14 +41,17 @@
 
 .comment-action {
   padding: 0;
-  color: #58a6ff;
   background: none;
   border: 0;
   cursor: pointer;
 
-  &:hover {
+  &:hover > .comment-action-text {
     text-decoration: underline;
   }
+}
+
+.comment-action-text {
+  color: #58a6ff;
 }
 
 .comment-timestamp {

@@ -32,11 +32,11 @@ const PostCommentItem: React.FC<Props> = ({
         {detailMode ? (
           <div className={styles.commentActions}>
             <button className={styles.commentAction} type="button">
-              Like
+              <span className={styles.commentActionText}>Like</span>
             </button>
             {editable && (
               <button className={styles.commentAction} type="button">
-                Edit
+                <span className={styles.commentActionText}>Edit</span>
               </button>
             )}
             <span className={styles.commentTimestamp}>{format(new Date(updatedAt), dateFormat)}</span>
