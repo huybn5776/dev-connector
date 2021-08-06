@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import clsx from 'clsx';
 import { format } from 'date-fns';
-import { useDispatch } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import { dateFormat } from '@/constants';
@@ -10,8 +10,14 @@ import { postActions } from '@actions';
 import Loader from '@components/Loader/Loader';
 import PostCommentItem from '@components/PostCommentItem/PostCommentItem';
 import { PostDto } from '@dtos/post.dto';
+import { UserDto } from '@dtos/user.dto';
+import { StateToPropsFunc } from '@store';
 
 import styles from './PostItem.module.scss';
+
+interface PropsFromState {
+  currentUser?: UserDto;
+}
 
 interface Props {
   post: PostDto;
@@ -19,13 +25,17 @@ interface Props {
   loading?: boolean;
 }
 
-const PostItem: React.FC<Props> = ({
+type AllProps = Props & PropsFromState;
+
+const PostItem: React.FC<AllProps> = ({
   post: { id, user, text, name, avatar, likes, comments, commentsCount, createdAt, updatedAt },
+  currentUser,
   detailMode,
   loading,
-}: Props) => {
+}: AllProps) => {
   const dispatch = useDispatch();
   const [commentsExpanded, setCommentsExpanded] = useState<boolean | undefined>(undefined);
+  const liked = likes.some((like) => like.user.id === currentUser?.id);
 
   function expandComments(): void {
     if (!detailMode) {
@@ -36,6 +46,17 @@ const PostItem: React.FC<Props> = ({
 
   function collapseComments(): void {
     setCommentsExpanded(false);
+  }
+
+  function toggleLike(): void {
+    if (!currentUser) {
+      return;
+    }
+    if (liked) {
+      dispatch(postActions.unlikePost.request(id));
+    } else {
+      dispatch(postActions.likePost.request(id));
+    }
   }
 
   return (
@@ -55,8 +76,8 @@ const PostItem: React.FC<Props> = ({
       </div>
       <div className={styles.postContent}>{text}</div>
       <div className={styles.postActions}>
-        <button className={styles.postAction} type="button">
-          <i className={clsx('icon', 'heart', 'outline')} />
+        <button className={styles.postAction} type="button" onClick={toggleLike}>
+          <i className={clsx('icon', 'heart', liked ? '' : 'outline')} />
           <span>{likes.length || ''}</span>
         </button>
         <button className={styles.postAction} type="button">
@@ -82,11 +103,22 @@ const PostItem: React.FC<Props> = ({
           </div>
           {commentsExpanded === false
             ? null
-            : comments.map((comment) => <PostCommentItem key={comment.id} comment={comment} detailMode={detailMode} />)}
+            : comments.map((comment) => (
+                <PostCommentItem
+                  key={comment.id}
+                  comment={comment}
+                  detailMode={detailMode}
+                  editable={currentUser && currentUser.id === user?.id}
+                />
+              ))}
         </div>
       ) : null}
     </div>
   );
 };
 
-export default PostItem;
+const mapStateToProps: StateToPropsFunc<PropsFromState> = ({ auth }) => ({
+  currentUser: auth.user,
+});
+
+export default connect(mapStateToProps)(PostItem);

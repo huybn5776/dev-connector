@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { Observable } from 'rxjs';
 
+import { PostLikeDto } from '@dtos/post-like.dto';
 import { PostDto } from '@dtos/post.dto';
 
 import { AxiosProxy } from './api-utils';
@@ -14,4 +15,12 @@ export function getPosts(): Observable<PostDto[]> {
 
 export function getPost(id: string): Observable<PostDto> {
   return axiosProxy.get(`/${id}`);
+}
+
+export function likePost(id: string): Observable<PostLikeDto[]> {
+  return axiosProxy.post(`/${id}/likes`);
+}
+
+export function unlikePost(id: string): Observable<PostLikeDto[]> {
+  return axiosProxy.delete(`/${id}/likes`);
 }

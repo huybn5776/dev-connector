@@ -19,7 +19,7 @@ export class AxiosProxy {
     );
   }
 
-  post<T, D = unknown>(url: string, data: D, config?: AxiosRequestConfig): Observable<T> {
+  post<T, D = unknown>(url: string, data?: D, config?: AxiosRequestConfig): Observable<T> {
     const source = CancelToken.source();
 
     return toObservable(

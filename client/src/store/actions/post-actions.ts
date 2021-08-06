@@ -1,3 +1,4 @@
+import { PostLike } from '@core/entities/post-like';
 import { AxiosResponse } from 'axios';
 import { createAsyncAction } from 'typesafe-actions';
 
@@ -17,5 +18,17 @@ export const getPosts = createAsyncAction(...asyncActionNames('Get posts'))<
 export const getPost = createAsyncAction(...asyncActionNames('Get post'))<
   string,
   PostDto,
+  AxiosResponse<HttpException>
+>();
+
+export const likePost = createAsyncAction(...asyncActionNames('Like post'))<
+  string,
+  { postId: string; likes: PostLike[] },
+  AxiosResponse<HttpException>
+>();
+
+export const unlikePost = createAsyncAction(...asyncActionNames('Unlike post'))<
+  string,
+  { postId: string; likes: PostLike[] },
   AxiosResponse<HttpException>
 >();
