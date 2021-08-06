@@ -18,9 +18,13 @@ class PostsService {
       .find()
       .sort({ created: -1 })
       .populate('user', ['name', 'avatar'])
-      .populate({ path: 'comments', limit: 1, populate: { path: 'user', select: ['name', 'avatar'] } })
+      .populate({ path: 'comments', populate: { path: 'user', select: ['name', 'avatar'] } })
       .exec();
-    return postDocuments.map((post) => post.toObject());
+    return postDocuments.map((postDocument) => {
+      let post = postDocument.toObject();
+      post = { ...post, comments: post.comments.slice(0, 1) };
+      return post;
+    });
   }
 
   async getPostsCommentsCount(postIds: string[]): Promise<Record<string, number>> {
