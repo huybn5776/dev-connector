@@ -7,20 +7,20 @@ import Loader from '@components/Loader/Loader';
 import PostCommentItem from '@components/PostCommentItem/PostCommentItem';
 import PostItem from '@components/PostItem/PostItem';
 import { PostDto } from '@dtos/post.dto';
-import { UserDto } from '@dtos/user.dto';
-import { StateToPropsFunc } from '@store';
+import { ApplicationState, StateToPropsFunc } from '@store';
 
 import styles from './PostsPage.module.scss';
 
-interface PropsFromState {
-  user?: UserDto;
-  posts: PostDto[];
-  loadedPostId: Record<string, true>;
-  loadingPostId?: string;
-  loading: boolean;
-}
+type PropsFromState = Pick<ApplicationState['auth'], 'user'> &
+  Pick<ApplicationState['post'], 'posts' | 'loadedPostsId' | 'loadingPostsId' | 'loading'>;
 
-const PostsPage: React.FC<PropsFromState> = ({ user, posts, loadedPostId, loadingPostId, loading }: PropsFromState) => {
+const PostsPage: React.FC<PropsFromState> = ({
+  user,
+  posts,
+  loadedPostsId,
+  loadingPostsId,
+  loading,
+}: PropsFromState) => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(postActions.getPosts.request());
@@ -41,14 +41,14 @@ const PostsPage: React.FC<PropsFromState> = ({ user, posts, loadedPostId, loadin
               key={post.id}
               post={post}
               liked={isPostLiked(post)}
-              detailMode={loadedPostId[post.id]}
-              loading={loadingPostId === post.id}
+              detailMode={loadedPostsId[post.id]}
+              loading={loadingPostsId[post.id] || false}
             >
               {post.comments.map((comment) => (
                 <PostCommentItem
                   key={comment.id}
                   comment={comment}
-                  detailMode={loadedPostId[post.id]}
+                  detailMode={loadedPostsId[post.id]}
                   editable={user && user.id === user?.id}
                 />
               ))}
@@ -63,8 +63,8 @@ const PostsPage: React.FC<PropsFromState> = ({ user, posts, loadedPostId, loadin
 const mapStateToProps: StateToPropsFunc<PropsFromState> = ({ auth, post }) => ({
   user: auth.user,
   posts: post.posts,
-  loadedPostId: post.loadedPostId,
-  loadingPostId: post.loadingPostId,
+  loadedPostsId: post.loadedPostsId,
+  loadingPostsId: post.loadingPostsId,
   loading: post.loading,
 });
 

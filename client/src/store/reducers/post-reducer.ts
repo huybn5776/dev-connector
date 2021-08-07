@@ -1,4 +1,5 @@
 import { AxiosResponse } from 'axios';
+import * as R from 'ramda';
 import { createReducer } from 'typesafe-actions';
 
 import { upsertEntityWithSameId, updateEntityWithId } from '@/utils/store-utils';
@@ -9,16 +10,17 @@ import HttpException from '@exceptions/http-exception';
 export interface PostState {
   posts: PostDto[];
   postsLoaded: boolean;
-  loadedPostId: Record<string, true>;
-  errorResponse?: AxiosResponse<HttpException>;
+  loadingPostsId: Record<string, true>;
+  loadedPostsId: Record<string, true>;
   loading: boolean;
-  loadingPostId?: string;
+  errorResponse?: AxiosResponse<HttpException>;
 }
 
 export const initialState: PostState = {
   posts: [],
   postsLoaded: false,
-  loadedPostId: {} as Record<string, true>,
+  loadingPostsId: {} as PostState['loadingPostsId'],
+  loadedPostsId: {} as PostState['loadedPostsId'],
   loading: false,
 };
 
@@ -27,9 +29,9 @@ const postReducer = createReducer(initialState)
     ...state,
     loading: true,
   }))
-  .handleAction(postActions.getPost.request, (state, { payload }) => ({
+  .handleAction(postActions.getPost.request, (state, { payload: postId }) => ({
     ...state,
-    loadingPostId: payload,
+    loadingPostsId: { ...state.loadedPostsId, [postId]: true },
   }))
   .handleAction(
     [
@@ -55,9 +57,9 @@ const postReducer = createReducer(initialState)
     ...state,
     posts: upsertEntityWithSameId(state.posts, post),
     postsLoaded: true,
-    loadedPostId: { ...state.loadedPostId, [post.id]: true },
+    loadingPostsId: R.omit([post.id], state.loadedPostsId),
+    loadedPostsId: { ...state.loadedPostsId, [post.id]: true },
     errorResponse: undefined,
-    loadingPostId: undefined,
   }))
   .handleAction(
     [postActions.likePost.success, postActions.unlikePost.success],
