@@ -6,6 +6,7 @@ import { postActions } from '@actions';
 import Loader from '@components/Loader/Loader';
 import PostCommentItem from '@components/PostCommentItem/PostCommentItem';
 import PostItem from '@components/PostItem/PostItem';
+import { PostCommentDto } from '@dtos/post-comment.dto';
 import { PostDto } from '@dtos/post.dto';
 import { ApplicationState, StateToPropsFunc } from '@store';
 
@@ -27,8 +28,8 @@ const PostsPage: React.FC<PropsFromState> = ({
     dispatch(postActions.getPosts.request());
   }, [dispatch]);
 
-  function isPostLiked(post: PostDto): boolean {
-    return post.likes.some((like) => like.user.id === user?.id);
+  function isLiked(postOrComment: PostDto | PostCommentDto): boolean {
+    return postOrComment.likes.some((like) => like.user.id === user?.id);
   }
 
   return (
@@ -41,7 +42,7 @@ const PostsPage: React.FC<PropsFromState> = ({
             <PostItem
               key={post.id}
               post={post}
-              liked={isPostLiked(post)}
+              liked={isLiked(post)}
               likeLoading={updatingLikePostsId[post.id]}
               detailMode={loadedPostsId[post.id]}
               loading={loadingPostsId[post.id] || false}
@@ -50,6 +51,7 @@ const PostsPage: React.FC<PropsFromState> = ({
                 <PostCommentItem
                   key={comment.id}
                   comment={comment}
+                  liked={isLiked(comment)}
                   detailMode={loadedPostsId[post.id]}
                   editable={user && user.id === user?.id}
                 />

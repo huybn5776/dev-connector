@@ -1,5 +1,6 @@
 import React from 'react';
 
+import clsx from 'clsx';
 import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
 
@@ -10,12 +11,14 @@ import styles from './PostCommentItem.module.scss';
 
 interface Props {
   comment: PostCommentDto;
+  liked: boolean;
   detailMode?: boolean;
   editable?: boolean;
 }
 
 const PostCommentItem: React.FC<Props> = ({
-  comment: { user, text, name, avatar, updatedAt },
+  comment: { user, text, name, avatar, likes, updatedAt },
+  liked,
   detailMode,
   editable,
 }: Props) => {
@@ -32,7 +35,10 @@ const PostCommentItem: React.FC<Props> = ({
         {detailMode ? (
           <div className={styles.commentActions}>
             <button className={styles.commentAction} type="button">
-              <span className={styles.commentActionText}>Like</span>
+              <span className={clsx(styles.commentActionText, liked ? styles.liked : '')}>
+                {liked ? 'Liked' : 'Like'}
+              </span>
+              <span className={styles.commentLikesCount}>{likes.length ? likes.length : ''}</span>
             </button>
             {editable && (
               <button className={styles.commentAction} type="button">

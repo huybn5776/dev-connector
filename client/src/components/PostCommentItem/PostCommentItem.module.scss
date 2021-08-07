@@ -32,7 +32,7 @@
   display: flex;
   font-size: 14px;
 
-  * + *::before {
+  > * + *::before {
     margin: 0 4px;
     color: gray;
     content: '．';
@@ -50,8 +50,18 @@
   }
 }
 
+.comment-likes-count {
+  margin-left: 4px;
+  color: #bdb3b8;
+}
+
 .comment-action-text {
-  color: #58a6ff;
+  color: #bdb3b8;
+
+  &.liked {
+    color: #58a6ff;
+    font-weight: bold;
+  }
 }
 
 .comment-timestamp {
