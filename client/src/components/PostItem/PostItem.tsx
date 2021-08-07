@@ -2,40 +2,33 @@ import React, { useState } from 'react';
 
 import clsx from 'clsx';
 import { format } from 'date-fns';
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import { dateFormat } from '@/constants';
 import { postActions } from '@actions';
 import Loader from '@components/Loader/Loader';
-import PostCommentItem from '@components/PostCommentItem/PostCommentItem';
 import { PostDto } from '@dtos/post.dto';
-import { UserDto } from '@dtos/user.dto';
-import { StateToPropsFunc } from '@store';
 
 import styles from './PostItem.module.scss';
 
-interface PropsFromState {
-  currentUser?: UserDto;
-}
-
 interface Props {
   post: PostDto;
+  liked: boolean;
   detailMode: boolean;
   loading?: boolean;
+  children: JSX.Element[];
 }
 
-type AllProps = Props & PropsFromState;
-
-const PostItem: React.FC<AllProps> = ({
+const PostItem: React.FC<Props> = ({
   post: { id, user, text, name, avatar, likes, comments, commentsCount, createdAt, updatedAt },
-  currentUser,
+  liked,
   detailMode,
   loading,
-}: AllProps) => {
+  children,
+}: Props) => {
   const dispatch = useDispatch();
   const [commentsExpanded, setCommentsExpanded] = useState<boolean | undefined>(undefined);
-  const liked = likes.some((like) => like.user.id === currentUser?.id);
 
   function expandComments(): void {
     if (!detailMode) {
@@ -49,9 +42,6 @@ const PostItem: React.FC<AllProps> = ({
   }
 
   function toggleLike(): void {
-    if (!currentUser) {
-      return;
-    }
     if (liked) {
       dispatch(postActions.unlikePost.request(id));
     } else {
@@ -101,24 +91,11 @@ const PostItem: React.FC<AllProps> = ({
               </button>
             ) : null}
           </div>
-          {commentsExpanded === false
-            ? null
-            : comments.map((comment) => (
-                <PostCommentItem
-                  key={comment.id}
-                  comment={comment}
-                  detailMode={detailMode}
-                  editable={currentUser && currentUser.id === user?.id}
-                />
-              ))}
+          {commentsExpanded === false ? null : children}
         </div>
       ) : null}
     </div>
   );
 };
 
-const mapStateToProps: StateToPropsFunc<PropsFromState> = ({ auth }) => ({
-  currentUser: auth.user,
-});
-
-export default connect(mapStateToProps)(PostItem);
+export default PostItem;

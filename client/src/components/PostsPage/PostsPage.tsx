@@ -4,6 +4,7 @@ import { connect, useDispatch } from 'react-redux';
 
 import { postActions } from '@actions';
 import Loader from '@components/Loader/Loader';
+import PostCommentItem from '@components/PostCommentItem/PostCommentItem';
 import PostItem from '@components/PostItem/PostItem';
 import { PostDto } from '@dtos/post.dto';
 import { UserDto } from '@dtos/user.dto';
@@ -25,6 +26,10 @@ const PostsPage: React.FC<PropsFromState> = ({ user, posts, loadedPostId, loadin
     dispatch(postActions.getPosts.request());
   }, [dispatch]);
 
+  function isPostLiked(post: PostDto): boolean {
+    return post.likes.some((like) => like.user.id === user?.id);
+  }
+
   return (
     <div className="page-layout">
       {loading ? (
@@ -35,9 +40,19 @@ const PostsPage: React.FC<PropsFromState> = ({ user, posts, loadedPostId, loadin
             <PostItem
               key={post.id}
               post={post}
+              liked={isPostLiked(post)}
               detailMode={loadedPostId[post.id]}
               loading={loadingPostId === post.id}
-            />
+            >
+              {post.comments.map((comment) => (
+                <PostCommentItem
+                  key={comment.id}
+                  comment={comment}
+                  detailMode={loadedPostId[post.id]}
+                  editable={user && user.id === user?.id}
+                />
+              ))}
+            </PostItem>
           ))}
         </div>
       )}
