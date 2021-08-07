@@ -12,6 +12,7 @@ export interface PostState {
   postsLoaded: boolean;
   loadingPostsId: Record<string, true>;
   loadedPostsId: Record<string, true>;
+  updatingLikePostsId: Record<string, true>;
   loading: boolean;
   errorResponse?: AxiosResponse<HttpException>;
 }
@@ -21,6 +22,7 @@ export const initialState: PostState = {
   postsLoaded: false,
   loadingPostsId: {} as PostState['loadingPostsId'],
   loadedPostsId: {} as PostState['loadedPostsId'],
+  updatingLikePostsId: {} as PostState['updatingLikePostsId'],
   loading: false,
 };
 
@@ -61,12 +63,17 @@ const postReducer = createReducer(initialState)
     loadedPostsId: { ...state.loadedPostsId, [post.id]: true },
     errorResponse: undefined,
   }))
+  .handleAction([postActions.likePost.request, postActions.unlikePost.request], (state, { payload: postId }) => ({
+    ...state,
+    updatingLikePostsId: { ...state.updatingLikePostsId, [postId]: true },
+    errorResponse: undefined,
+  }))
   .handleAction(
     [postActions.likePost.success, postActions.unlikePost.success],
     (state, { payload: { postId, likes } }) => ({
       ...state,
       posts: updateEntityWithId<PostDto>(state.posts, postId, (post) => ({ ...post, likes })),
-      loading: false,
+      updatingLikePostsId: R.omit([postId], state.updatingLikePostsId),
       errorResponse: undefined,
     }),
   );

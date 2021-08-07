@@ -15,6 +15,7 @@ import styles from './PostItem.module.scss';
 interface Props {
   post: PostDto;
   liked: boolean;
+  likeLoading?: boolean;
   detailMode: boolean;
   loading?: boolean;
   children: JSX.Element[];
@@ -23,6 +24,7 @@ interface Props {
 const PostItem: React.FC<Props> = ({
   post: { id, user, text, name, avatar, likes, comments, commentsCount, createdAt, updatedAt },
   liked,
+  likeLoading,
   detailMode,
   loading,
   children,
@@ -67,7 +69,11 @@ const PostItem: React.FC<Props> = ({
       <div className={styles.postContent}>{text}</div>
       <div className={styles.postActions}>
         <button className={styles.postAction} type="button" onClick={toggleLike}>
-          <i className={clsx('icon', 'heart', liked ? '' : 'outline')} />
+          {likeLoading ? (
+            <Loader className={styles.postActionLoader} />
+          ) : (
+            <i className={clsx('icon', 'heart', liked ? '' : 'outline', styles.postActionIcon)} />
+          )}
           <span>{likes.length || ''}</span>
         </button>
         <button className={styles.postAction} type="button">

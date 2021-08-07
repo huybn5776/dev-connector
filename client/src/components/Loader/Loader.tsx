@@ -1,5 +1,13 @@
 import React from 'react';
 
-const Loader: React.FC = () => <div className="ui active inline loader" />;
+import clsx from 'clsx';
+
+interface Props {
+  className?: string;
+}
+
+const Loader: React.FC<Props> = ({ className }: Props) => (
+  <div className={clsx('ui', 'active', 'inline', 'loader', className)} />
+);
 
 export default Loader;

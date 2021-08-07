@@ -12,13 +12,14 @@ import { ApplicationState, StateToPropsFunc } from '@store';
 import styles from './PostsPage.module.scss';
 
 type PropsFromState = Pick<ApplicationState['auth'], 'user'> &
-  Pick<ApplicationState['post'], 'posts' | 'loadedPostsId' | 'loadingPostsId' | 'loading'>;
+  Pick<ApplicationState['post'], 'posts' | 'loadedPostsId' | 'loadingPostsId' | 'updatingLikePostsId' | 'loading'>;
 
 const PostsPage: React.FC<PropsFromState> = ({
   user,
   posts,
   loadedPostsId,
   loadingPostsId,
+  updatingLikePostsId,
   loading,
 }: PropsFromState) => {
   const dispatch = useDispatch();
@@ -41,6 +42,7 @@ const PostsPage: React.FC<PropsFromState> = ({
               key={post.id}
               post={post}
               liked={isPostLiked(post)}
+              likeLoading={updatingLikePostsId[post.id]}
               detailMode={loadedPostsId[post.id]}
               loading={loadingPostsId[post.id] || false}
             >
@@ -65,6 +67,7 @@ const mapStateToProps: StateToPropsFunc<PropsFromState> = ({ auth, post }) => ({
   posts: post.posts,
   loadedPostsId: post.loadedPostsId,
   loadingPostsId: post.loadingPostsId,
+  updatingLikePostsId: post.updatingLikePostsId,
   loading: post.loading,
 });
 
