@@ -172,7 +172,13 @@ class PostsService {
       .findById(id)
       .populate('user', ['name', 'avatar'])
       .populate('likes.user', ['name', 'avatar'])
-      .populate({ path: 'comments', populate: { path: 'user', select: ['name', 'avatar'] } });
+      .populate({
+        path: 'comments',
+        populate: [
+          { path: 'user', select: ['name', 'avatar'] },
+          { path: 'likes.user', select: ['id'] },
+        ],
+      });
     if (!postDocument) {
       throw new HttpException(404);
     }
