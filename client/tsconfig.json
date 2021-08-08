@@ -22,6 +22,7 @@
       "@interfaces/*": ["../core/src/interfaces/*"],
       "@actions": ["src/store/actions"],
       "@components/*": ["src/components/*"],
+      "@hooks/*": ["src/hooks/*"],
       "@selectors": ["src/store/selectors"],
       "@services/*": ["src/services/*"],
       "@store": ["src/store"],

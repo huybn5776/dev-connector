@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import { dateFormat } from '@/constants';
 import { postActions } from '@actions';
 import Loader from '@components/Loader/Loader';
+import RightMenu, { MenuItem } from '@components/RightMenu/RightMenu';
 import { PostDto } from '@dtos/post.dto';
 
 import styles from './PostItem.module.scss';
@@ -64,8 +65,11 @@ const PostItem: React.FC<Props> = ({
             {name}
           </Link>
         </div>
-        <i className={clsx('icon', 'ellipsis', 'horizontal')} />
+
+        <RightMenu>
+        </RightMenu>
       </div>
+
       <div className={styles.postContent}>{text}</div>
       <div className={styles.postActions}>
         <button className={styles.postAction} type="button" onClick={toggleLike}>

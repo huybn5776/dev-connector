@@ -40,7 +40,7 @@ module.exports = {
           },
           {
             pattern:
-              '@+(controllers|components|databases|dtos|entities|exceptions|interfaces|mappers|middlewares|models|routes|services|store|utils)/**',
+              '@+(controllers|components|databases|dtos|entities|exceptions|hooks|interfaces|mappers|middlewares|models|routes|services|store|utils)/**',
             group: 'internal',
           },
           {

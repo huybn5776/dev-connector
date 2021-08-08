@@ -1,0 +1,25 @@
+.RightMenu {
+  min-height: 30px;
+  margin: 0;
+  color: lightgray;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover:not(:global(.visible)) {
+    background-color: rgba(white, .1);
+  }
+}
+
+.menu-icon {
+  margin: 0;
+  color: lightgray;
+}
+
+.menu {
+  background-color: #3f4345;
+}
+
+.menu-item {
+  width: 100%;
+  color: white !important;
+}
