@@ -1,3 +1,5 @@
+import { PopulateOptions } from 'mongoose';
+
 import { CreatePostCommentDto } from '@dtos/create-post-comment.dto';
 import { CreatePostDto } from '@dtos/create-post.dto';
 import { Post } from '@entities/post';
@@ -12,6 +14,18 @@ import { UserDocument, UserModel } from '@models/user.model';
 class PostsService {
   readonly posts = PostModel;
   readonly comments = PostCommentModel;
+  readonly commentsPopulateOptions: PopulateOptions[] = [
+    { path: 'user', select: ['name', 'avatar'] },
+    { path: 'likes.user', select: ['id'] },
+  ];
+  readonly postPopulateOptions: PopulateOptions[] = [
+    { path: 'user', select: ['name', 'avatar'] },
+    { path: 'likes.user', select: ['name', 'avatar'] },
+    {
+      path: 'comments',
+      populate: this.commentsPopulateOptions,
+    },
+  ];
 
   async getPosts(): Promise<Post[]> {
     const postDocuments: PostDocument[] = await this.posts
@@ -168,17 +182,7 @@ class PostsService {
   }
 
   private async getPostDocument(id: string): Promise<PostDocument> {
-    const postDocument: PostDocument | null = await this.posts
-      .findById(id)
-      .populate('user', ['name', 'avatar'])
-      .populate('likes.user', ['name', 'avatar'])
-      .populate({
-        path: 'comments',
-        populate: [
-          { path: 'user', select: ['name', 'avatar'] },
-          { path: 'likes.user', select: ['id'] },
-        ],
-      });
+    const postDocument: PostDocument | null = await this.posts.findById(id).populate(this.postPopulateOptions);
     if (!postDocument) {
       throw new HttpException(404);
     }
