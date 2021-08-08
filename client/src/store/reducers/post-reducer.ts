@@ -38,19 +38,11 @@ const postReducer = createReducer(initialState)
     ...state,
     loadingPostsId: { ...state.loadedPostsId, [postId]: true },
   }))
-  .handleAction(
-    [
-      postActions.getPosts.failure,
-      postActions.getPost.failure,
-      postActions.likePost.failure,
-      postActions.unlikePost.failure,
-    ],
-    (state, action) => ({
-      ...state,
-      errorResponse: action.payload,
-      loading: false,
-    }),
-  )
+  .handleAction([postActions.getPosts.failure, postActions.getPost.failure], (state, action) => ({
+    ...state,
+    errorResponse: action.payload,
+    loading: false,
+  }))
   .handleAction(postActions.getPosts.success, (state, action) => ({
     ...state,
     posts: action.payload,
@@ -81,11 +73,27 @@ const postReducer = createReducer(initialState)
     }),
   )
   .handleAction(
+    [postActions.likePost.failure, postActions.unlikePost.failure],
+    (state, { payload: { postId, error } }) => ({
+      ...state,
+      updatingLikePostsId: R.omit([postId], state.updatingLikePostsId),
+      errorResponse: error,
+    }),
+  )
+  .handleAction(
     [postActions.likeComment.request, postActions.unlikeComment.request],
     (state, { payload: { commentId } }) => ({
       ...state,
       updatingLikeCommentsId: { ...state.updatingLikeCommentsId, [commentId]: true },
       errorResponse: undefined,
+    }),
+  )
+  .handleAction(
+    [postActions.likeComment.failure, postActions.unlikeComment.failure],
+    (state, { payload: { commentId, error } }) => ({
+      ...state,
+      updatingLikeCommentsId: R.omit([commentId], state.updatingLikePostsId),
+      errorResponse: error,
     }),
   )
   .handleAction(

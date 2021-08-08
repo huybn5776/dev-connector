@@ -34,10 +34,10 @@ export const getPost: EpicType = (action$, state$, { api }) =>
 export const likePost: EpicType = (action$, state$, { api }) =>
   action$.pipe(
     filter(isActionOf(postActions.likePost.request)),
-    mergeMap(({ payload: id }) =>
-      api.postApi.likePost(id).pipe(
-        map((likes) => postActions.likePost.success({ postId: id, likes })),
-        catchError((error: AxiosResponse<HttpException>) => of(postActions.likePost.failure(error))),
+    mergeMap(({ payload: postId }) =>
+      api.postApi.likePost(postId).pipe(
+        map((likes) => postActions.likePost.success({ postId, likes })),
+        catchError((error: AxiosResponse<HttpException>) => of(postActions.likePost.failure({ postId, error }))),
       ),
     ),
   );
@@ -45,10 +45,10 @@ export const likePost: EpicType = (action$, state$, { api }) =>
 export const unlikePost: EpicType = (action$, state$, { api }) =>
   action$.pipe(
     filter(isActionOf(postActions.unlikePost.request)),
-    mergeMap(({ payload: id }) =>
-      api.postApi.unlikePost(id).pipe(
-        map((likes) => postActions.unlikePost.success({ postId: id, likes })),
-        catchError((error: AxiosResponse<HttpException>) => of(postActions.unlikePost.failure(error))),
+    mergeMap(({ payload: postId }) =>
+      api.postApi.unlikePost(postId).pipe(
+        map((likes) => postActions.unlikePost.success({ postId, likes })),
+        catchError((error: AxiosResponse<HttpException>) => of(postActions.unlikePost.failure({ postId, error }))),
       ),
     ),
   );
@@ -59,7 +59,7 @@ export const likeComment: EpicType = (action$, state$, { api }) =>
     mergeMap(({ payload: { postId, commentId } }) =>
       api.postApi.likeComment(commentId).pipe(
         map((likes) => postActions.likeComment.success({ postId, commentId, likes })),
-        catchError((error: AxiosResponse<HttpException>) => of(postActions.likeComment.failure(error))),
+        catchError((error: AxiosResponse<HttpException>) => of(postActions.likeComment.failure({ commentId, error }))),
       ),
     ),
   );
@@ -70,7 +70,9 @@ export const unlikeComment: EpicType = (action$, state$, { api }) =>
     mergeMap(({ payload: { postId, commentId } }) =>
       api.postApi.unlikeComment(commentId).pipe(
         map((likes) => postActions.unlikeComment.success({ postId, commentId, likes })),
-        catchError((error: AxiosResponse<HttpException>) => of(postActions.unlikeComment.failure(error))),
+        catchError((error: AxiosResponse<HttpException>) =>
+          of(postActions.unlikeComment.failure({ commentId, error })),
+        ),
       ),
     ),
   );
