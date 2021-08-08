@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
 import { Epic } from 'redux-observable';
-import { of } from 'rxjs';
+import { of, mergeMap } from 'rxjs';
 import { catchError, filter, map, switchMap } from 'rxjs/operators';
 import { isActionOf, RootAction, RootState, Services } from 'typesafe-actions';
 
@@ -34,7 +34,7 @@ export const getPost: EpicType = (action$, state$, { api }) =>
 export const likePost: EpicType = (action$, state$, { api }) =>
   action$.pipe(
     filter(isActionOf(postActions.likePost.request)),
-    switchMap(({ payload: id }) =>
+    mergeMap(({ payload: id }) =>
       api.postApi.likePost(id).pipe(
         map((likes) => postActions.likePost.success({ postId: id, likes })),
         catchError((error: AxiosResponse<HttpException>) => of(postActions.likePost.failure(error))),
@@ -45,7 +45,7 @@ export const likePost: EpicType = (action$, state$, { api }) =>
 export const unlikePost: EpicType = (action$, state$, { api }) =>
   action$.pipe(
     filter(isActionOf(postActions.unlikePost.request)),
-    switchMap(({ payload: id }) =>
+    mergeMap(({ payload: id }) =>
       api.postApi.unlikePost(id).pipe(
         map((likes) => postActions.unlikePost.success({ postId: id, likes })),
         catchError((error: AxiosResponse<HttpException>) => of(postActions.unlikePost.failure(error))),
@@ -56,7 +56,7 @@ export const unlikePost: EpicType = (action$, state$, { api }) =>
 export const likeComment: EpicType = (action$, state$, { api }) =>
   action$.pipe(
     filter(isActionOf(postActions.likeComment.request)),
-    switchMap(({ payload: { postId, commentId } }) =>
+    mergeMap(({ payload: { postId, commentId } }) =>
       api.postApi.likeComment(commentId).pipe(
         map((likes) => postActions.likeComment.success({ postId, commentId, likes })),
         catchError((error: AxiosResponse<HttpException>) => of(postActions.likeComment.failure(error))),
@@ -67,7 +67,7 @@ export const likeComment: EpicType = (action$, state$, { api }) =>
 export const unlikeComment: EpicType = (action$, state$, { api }) =>
   action$.pipe(
     filter(isActionOf(postActions.unlikeComment.request)),
-    switchMap(({ payload: { postId, commentId } }) =>
+    mergeMap(({ payload: { postId, commentId } }) =>
       api.postApi.unlikeComment(commentId).pipe(
         map((likes) => postActions.unlikeComment.success({ postId, commentId, likes })),
         catchError((error: AxiosResponse<HttpException>) => of(postActions.unlikeComment.failure(error))),
