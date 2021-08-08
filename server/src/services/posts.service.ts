@@ -70,6 +70,16 @@ class PostsService {
     return postDocument.toObject();
   }
 
+  async patchPost(user: UserDocument, postId: string, postData: CreatePostDto): Promise<Post> {
+    const postDocument: PostDocument | null = await this.posts
+      .findByIdAndUpdate(postId, { text: postData.text }, { new: true })
+      .populate(this.postPopulateOptions);
+    if (!postDocument) {
+      throw new HttpException(404);
+    }
+    return postDocument.toObject();
+  }
+
   async deletePost(userId: string, postId: string): Promise<void> {
     const postDocument: PostDocument | null = await this.posts.findById(postId);
     if (!postDocument) {
@@ -161,6 +171,16 @@ class PostsService {
     postDocument.comments.unshift(comment);
     await postDocument.save();
     return postDocument.toObject().comments;
+  }
+
+  async patchPostComment(user: User, commentId: string, commentData: CreatePostCommentDto): Promise<PostComment> {
+    const commentDocument = await this.comments
+      .findByIdAndUpdate(commentId, { text: commentData.text }, { new: true })
+      .populate(this.commentsPopulateOptions);
+    if (!commentDocument) {
+      throw new HttpException(404);
+    }
+    return commentDocument.toObject();
   }
 
   async deleteComment(userId: string, postId: string, commentId: string): Promise<PostComment[]> {

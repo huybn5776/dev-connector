@@ -39,6 +39,15 @@ class PostsController {
     res.status(200).send(postDto);
   };
 
+  patchPost = async (req: Request, res: Response): Promise<void> => {
+    const { id } = req.params;
+    const user = await req.user.current();
+    const postData = req.body;
+    const post = await this.postsService.patchPost(user, id, postData);
+    const postDto = mapper.map(post, PostDto, Post);
+    res.status(200).send(postDto);
+  };
+
   deletePost = async (req: Request, res: Response): Promise<void> => {
     const postId = req.params.id;
     const userId = req.user.claims().id;
@@ -106,6 +115,15 @@ class PostsController {
     const comments = await this.postsService.addPostComment(user, postId, commentData);
     const commentDtoList = mapper.mapArray(comments, PostCommentDto, PostComment);
     res.status(201).send(commentDtoList);
+  };
+
+  patchPostComment = async (req: Request, res: Response): Promise<void> => {
+    const commentId = req.params.id;
+    const user = await req.user.current();
+    const commentData: CreatePostCommentDto = req.body;
+    const comments = await this.postsService.patchPostComment(user, commentId, commentData);
+    const commentDto = mapper.map(comments, PostCommentDto, PostComment);
+    res.status(200).send(commentDto);
   };
 
   deletePostComment = async (req: Request, res: Response): Promise<void> => {

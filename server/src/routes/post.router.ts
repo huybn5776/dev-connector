@@ -26,6 +26,12 @@ class PostsRoute implements Route {
       authMiddleware,
       asyncHandler(this.postsController.createPost),
     );
+    this.router.patch(
+      `${this.path}/:id`,
+      validationMiddleware(CreatePostDto, 'body', { skipMissingProperties: true }),
+      authMiddleware,
+      asyncHandler(this.postsController.patchPost),
+    );
     this.router.delete(`${this.path}/:id`, authMiddleware, asyncHandler(this.postsController.deletePost));
 
     this.router.get(`${this.path}/:id/likes`, asyncHandler(this.postsController.getLikesOfPost));
@@ -49,6 +55,12 @@ class PostsRoute implements Route {
       validationMiddleware(CreatePostCommentDto, 'body', { skipMissingProperties: true }),
       authMiddleware,
       asyncHandler(this.postsController.addPostComment),
+    );
+    this.router.patch(
+      `${this.path}/comments/:id`,
+      validationMiddleware(CreatePostCommentDto, 'body', { skipMissingProperties: true }),
+      authMiddleware,
+      asyncHandler(this.postsController.patchPostComment),
     );
     this.router.delete(
       `${this.path}/:postId/comments/:commentId`,
