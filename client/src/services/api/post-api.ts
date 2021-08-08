@@ -24,3 +24,11 @@ export function likePost(id: string): Observable<PostLikeDto[]> {
 export function unlikePost(id: string): Observable<PostLikeDto[]> {
   return axiosProxy.delete(`/${id}/likes`);
 }
+
+export function likeComment(id: string): Observable<PostLikeDto[]> {
+  return axiosProxy.post(`/comments/${id}/likes`);
+}
+
+export function unlikeComment(id: string): Observable<PostLikeDto[]> {
+  return axiosProxy.delete(`/comments/${id}/likes`);
+}

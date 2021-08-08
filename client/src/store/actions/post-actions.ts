@@ -32,3 +32,15 @@ export const unlikePost = createAsyncAction(...asyncActionNames('Unlike post'))<
   { postId: string; likes: PostLike[] },
   AxiosResponse<HttpException>
 >();
+
+export const likeComment = createAsyncAction(...asyncActionNames('Like comment'))<
+  { postId: string; commentId: string },
+  { postId: string; commentId: string; likes: PostLike[] },
+  AxiosResponse<HttpException>
+>();
+
+export const unlikeComment = createAsyncAction(...asyncActionNames('Unlike comment'))<
+  { postId: string; commentId: string },
+  { postId: string; commentId: string; likes: PostLike[] },
+  AxiosResponse<HttpException>
+>();

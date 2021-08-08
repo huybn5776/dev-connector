@@ -33,13 +33,14 @@
   font-size: 14px;
 
   > * + *::before {
-    margin: 0 4px;
     color: gray;
     content: '．';
   }
 }
 
 .comment-action {
+  display: flex;
+  align-items: center;
   padding: 0;
   background: none;
   border: 0;
@@ -50,7 +51,19 @@
   }
 }
 
+.comment-action-loader {
+  &::before,
+  &::after {
+    width: 14px;
+    height: 14px;
+    margin-left: -50%;
+  }
+}
+
+.comment-action-loader,
 .comment-likes-count {
+  width: 14px;
+  height: 14px;
   margin-left: 4px;
   color: #bdb3b8;
 }

@@ -13,7 +13,10 @@ import { ApplicationState, StateToPropsFunc } from '@store';
 import styles from './PostsPage.module.scss';
 
 type PropsFromState = Pick<ApplicationState['auth'], 'user'> &
-  Pick<ApplicationState['post'], 'posts' | 'loadedPostsId' | 'loadingPostsId' | 'updatingLikePostsId' | 'loading'>;
+  Pick<
+    ApplicationState['post'],
+    'posts' | 'loadedPostsId' | 'loadingPostsId' | 'updatingLikePostsId' | 'updatingLikeCommentsId' | 'loading'
+  >;
 
 const PostsPage: React.FC<PropsFromState> = ({
   user,
@@ -21,6 +24,7 @@ const PostsPage: React.FC<PropsFromState> = ({
   loadedPostsId,
   loadingPostsId,
   updatingLikePostsId,
+  updatingLikeCommentsId,
   loading,
 }: PropsFromState) => {
   const dispatch = useDispatch();
@@ -51,7 +55,9 @@ const PostsPage: React.FC<PropsFromState> = ({
                 <PostCommentItem
                   key={comment.id}
                   comment={comment}
+                  postId={post.id}
                   liked={isLiked(comment)}
+                  likeLoading={updatingLikeCommentsId[comment.id]}
                   detailMode={loadedPostsId[post.id]}
                   editable={user && user.id === user?.id}
                 />
@@ -70,6 +76,7 @@ const mapStateToProps: StateToPropsFunc<PropsFromState> = ({ auth, post }) => ({
   loadedPostsId: post.loadedPostsId,
   loadingPostsId: post.loadingPostsId,
   updatingLikePostsId: post.updatingLikePostsId,
+  updatingLikeCommentsId: post.updatingLikeCommentsId,
   loading: post.loading,
 });
 

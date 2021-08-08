@@ -4,6 +4,7 @@ import { createReducer } from 'typesafe-actions';
 
 import { upsertEntityWithSameId, updateEntityWithId } from '@/utils/store-utils';
 import { postActions } from '@actions';
+import { PostCommentDto } from '@dtos/post-comment.dto';
 import { PostDto } from '@dtos/post.dto';
 import HttpException from '@exceptions/http-exception';
 
@@ -13,6 +14,7 @@ export interface PostState {
   loadingPostsId: Record<string, true>;
   loadedPostsId: Record<string, true>;
   updatingLikePostsId: Record<string, true>;
+  updatingLikeCommentsId: Record<string, true>;
   loading: boolean;
   errorResponse?: AxiosResponse<HttpException>;
 }
@@ -23,6 +25,7 @@ export const initialState: PostState = {
   loadingPostsId: {} as PostState['loadingPostsId'],
   loadedPostsId: {} as PostState['loadedPostsId'],
   updatingLikePostsId: {} as PostState['updatingLikePostsId'],
+  updatingLikeCommentsId: {} as PostState['updatingLikeCommentsId'],
   loading: false,
 };
 
@@ -74,6 +77,26 @@ const postReducer = createReducer(initialState)
       ...state,
       posts: updateEntityWithId<PostDto>(state.posts, postId, (post) => ({ ...post, likes })),
       updatingLikePostsId: R.omit([postId], state.updatingLikePostsId),
+      errorResponse: undefined,
+    }),
+  )
+  .handleAction(
+    [postActions.likeComment.request, postActions.unlikeComment.request],
+    (state, { payload: { commentId } }) => ({
+      ...state,
+      updatingLikeCommentsId: { ...state.updatingLikeCommentsId, [commentId]: true },
+      errorResponse: undefined,
+    }),
+  )
+  .handleAction(
+    [postActions.likeComment.success, postActions.unlikeComment.success],
+    (state, { payload: { commentId, postId, likes } }) => ({
+      ...state,
+      posts: updateEntityWithId<PostDto>(state.posts, postId, (post) => ({
+        ...post,
+        comments: updateEntityWithId<PostCommentDto>(post.comments, commentId, (comment) => ({ ...comment, likes })),
+      })),
+      updatingLikeCommentsId: R.omit([commentId], state.updatingLikeCommentsId),
       errorResponse: undefined,
     }),
   );

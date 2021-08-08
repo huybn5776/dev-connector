@@ -52,3 +52,25 @@ export const unlikePost: EpicType = (action$, state$, { api }) =>
       ),
     ),
   );
+
+export const likeComment: EpicType = (action$, state$, { api }) =>
+  action$.pipe(
+    filter(isActionOf(postActions.likeComment.request)),
+    switchMap(({ payload: { postId, commentId } }) =>
+      api.postApi.likeComment(commentId).pipe(
+        map((likes) => postActions.likeComment.success({ postId, commentId, likes })),
+        catchError((error: AxiosResponse<HttpException>) => of(postActions.likeComment.failure(error))),
+      ),
+    ),
+  );
+
+export const unlikeComment: EpicType = (action$, state$, { api }) =>
+  action$.pipe(
+    filter(isActionOf(postActions.unlikeComment.request)),
+    switchMap(({ payload: { postId, commentId } }) =>
+      api.postApi.unlikeComment(commentId).pipe(
+        map((likes) => postActions.unlikeComment.success({ postId, commentId, likes })),
+        catchError((error: AxiosResponse<HttpException>) => of(postActions.unlikeComment.failure(error))),
+      ),
+    ),
+  );
