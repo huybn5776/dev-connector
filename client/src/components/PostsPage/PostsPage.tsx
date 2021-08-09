@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
 
+import clsx from 'clsx';
 import { connect, useDispatch } from 'react-redux';
 
 import { postActions } from '@actions';
 import Loader from '@components/Loader/Loader';
 import PostCommentItem from '@components/PostCommentItem/PostCommentItem';
+import PostForm from '@components/PostForm/PostForm';
 import PostItem from '@components/PostItem/PostItem';
 import { PostCommentDto } from '@dtos/post-comment.dto';
 import { PostDto } from '@dtos/post.dto';
@@ -16,6 +18,7 @@ type PropsFromState = Pick<ApplicationState['auth'], 'user'> &
   Pick<
     ApplicationState['post'],
     | 'posts'
+    | 'creatingPost'
     | 'loadedPostsId'
     | 'loadingPostsId'
     | 'updatingPostId'
@@ -28,6 +31,7 @@ type PropsFromState = Pick<ApplicationState['auth'], 'user'> &
 const PostsPage: React.FC<PropsFromState> = ({
   user,
   posts,
+  creatingPost,
   loadedPostsId,
   loadingPostsId,
   updatingPostId,
@@ -46,7 +50,15 @@ const PostsPage: React.FC<PropsFromState> = ({
   }
 
   return (
-    <div className="page-layout">
+    <div className={clsx('page-layout', styles.PostsPage)}>
+      <h1>Posts</h1>
+
+      {user ? (
+        <div className={styles.postFormContainer}>
+          <PostForm user={user} loading={creatingPost} />
+        </div>
+      ) : null}
+
       {loading ? (
         <Loader />
       ) : (
@@ -85,6 +97,7 @@ const PostsPage: React.FC<PropsFromState> = ({
 const mapStateToProps: StateToPropsFunc<PropsFromState> = ({ auth, post }) => ({
   user: auth.user,
   posts: post.posts,
+  creatingPost: post.creatingPost,
   loadedPostsId: post.loadedPostsId,
   loadingPostsId: post.loadingPostsId,
   updatingPostId: post.updatingPostId,

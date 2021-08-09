@@ -11,6 +11,7 @@ import HttpException from '@exceptions/http-exception';
 export interface PostState {
   posts: PostDto[];
   postsLoaded: boolean;
+  creatingPost: boolean;
   loadingPostsId: Record<string, true>;
   loadedPostsId: Record<string, true>;
   updatingPostId: Record<string, true>;
@@ -24,6 +25,7 @@ export interface PostState {
 export const initialState: PostState = {
   posts: [],
   postsLoaded: false,
+  creatingPost: false,
   loadingPostsId: {} as PostState['loadingPostsId'],
   loadedPostsId: {} as PostState['loadedPostsId'],
   updatingPostId: {} as PostState['updatingPostId'],
@@ -112,6 +114,21 @@ const postReducer = createReducer(initialState)
       errorResponse: undefined,
     }),
   )
+  .handleAction(postActions.createPost.request, (state) => ({
+    ...state,
+    creatingPost: true,
+    errorResponse: undefined,
+  }))
+  .handleAction(postActions.createPost.success, (state, { payload: post }) => ({
+    ...state,
+    posts: [post, ...state.posts],
+    creatingPost: false,
+  }))
+  .handleAction(postActions.createPost.failure, (state, { payload: error }) => ({
+    ...state,
+    creatingPost: false,
+    errorResponse: error,
+  }))
   .handleAction([postActions.updatePost.request, postActions.deletePost.request], (state, { payload: { postId } }) => ({
     ...state,
     updatingPostId: { ...state.updatingPostId, [postId]: true },

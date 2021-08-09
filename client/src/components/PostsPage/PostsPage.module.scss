@@ -1,5 +1,16 @@
+.PostsPage {
+  max-width: 680px;
+}
+
+.post-form-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
 .post-list {
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-bottom: 32px;
 }

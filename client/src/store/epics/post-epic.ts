@@ -77,6 +77,17 @@ export const unlikeComment: EpicType = (action$, state$, { api }) =>
     ),
   );
 
+export const createPost: EpicType = (action$, state$, { api }) =>
+  action$.pipe(
+    filter(isActionOf(postActions.createPost.request)),
+    mergeMap(({ payload: postData }) =>
+      api.postApi.createPost(postData).pipe(
+        map((post) => postActions.createPost.success(post)),
+        catchError((error: AxiosResponse<HttpException>) => of(postActions.createPost.failure(error))),
+      ),
+    ),
+  );
+
 export const updatePost: EpicType = (action$, state$, { api }) =>
   action$.pipe(
     filter(isActionOf(postActions.updatePost.request)),

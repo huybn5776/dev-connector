@@ -36,6 +36,10 @@ export function unlikeComment(id: string): Observable<PostLikeDto[]> {
   return axiosProxy.delete(`/comments/${id}/likes`);
 }
 
+export function createPost(postData: CreatePostDto): Observable<PostDto> {
+  return axiosProxy.post('/', postData);
+}
+
 export function patchPost(id: string, postData: CreatePostDto): Observable<PostDto> {
   return axiosProxy.patch(`/${id}`, postData);
 }

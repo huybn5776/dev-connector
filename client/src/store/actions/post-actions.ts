@@ -48,6 +48,12 @@ export const unlikeComment = createAsyncAction(...asyncActionNames('Unlike comme
   { commentId: string; error: AxiosResponse<HttpException> }
 >();
 
+export const createPost = createAsyncAction(...asyncActionNames('Create post'))<
+  CreatePostDto,
+  PostDto,
+  AxiosResponse<HttpException>
+>();
+
 export const updatePost = createAsyncAction(...asyncActionNames('Update post'))<
   { postId: string; postData: CreatePostDto },
   PostDto,
