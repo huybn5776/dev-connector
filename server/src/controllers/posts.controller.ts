@@ -129,7 +129,8 @@ class PostsController {
   deletePostComment = async (req: Request, res: Response): Promise<void> => {
     const userId = req.user.claims().id;
     const { postId, commentId } = req.params;
-    const comments = await this.postsService.deleteComment(userId, postId, commentId);
+    await this.postsService.deleteComment(userId, postId, commentId);
+    const comments = await this.postsService.getPostComments(postId);
     const commentDtoList = mapper.mapArray(comments, PostCommentDto, PostComment);
     res.status(200).send(commentDtoList);
   };

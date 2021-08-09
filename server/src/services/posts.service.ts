@@ -183,22 +183,15 @@ class PostsService {
     return commentDocument.toObject();
   }
 
-  async deleteComment(userId: string, postId: string, commentId: string): Promise<PostComment[]> {
-    const postDocument = await this.getPostDocument(postId);
-    const postComments: PostCommentDocument[] = postDocument.comments;
-    const deletingComment = postComments.find((comment) => `${comment._id}` === commentId);
-    if (!deletingComment) {
+  async deleteComment(userId: string, postId: string, commentId: string): Promise<void> {
+    const commentDocument: PostCommentDocument | null = await this.comments.findById(commentId);
+    if (!commentDocument) {
       throw new HttpException(404);
     }
-    if (`${deletingComment.user._id}` !== userId) {
+    if (`${commentDocument.user._id}` !== userId) {
       throw new HttpException(403);
     }
-    postDocument.comments = postDocument.comments.filter(
-      (comment) => comment !== deletingComment,
-    ) as PostCommentDocument[];
-    await deletingComment.delete();
-    await postDocument.save();
-    return postDocument.toObject().comments;
+    await commentDocument.delete();
   }
 
   private async getPostDocument(id: string): Promise<PostDocument> {
