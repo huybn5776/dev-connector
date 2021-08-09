@@ -6,11 +6,16 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-input {
+input,
+textarea {
   color: white;
 
   &::selection {
     color: white !important;
     background: #6983a8 !important;
+  }
+
+  &::placeholder {
+    color: #b0b3b8;
   }
 }

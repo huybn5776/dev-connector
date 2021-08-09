@@ -13,6 +13,7 @@ export interface PostState {
   postsLoaded: boolean;
   loadingPostsId: Record<string, true>;
   loadedPostsId: Record<string, true>;
+  updatingPostId: Record<string, true>;
   updatingLikePostsId: Record<string, true>;
   updatingLikeCommentsId: Record<string, true>;
   loading: boolean;
@@ -24,6 +25,7 @@ export const initialState: PostState = {
   postsLoaded: false,
   loadingPostsId: {} as PostState['loadingPostsId'],
   loadedPostsId: {} as PostState['loadedPostsId'],
+  updatingPostId: {} as PostState['updatingPostId'],
   updatingLikePostsId: {} as PostState['updatingLikePostsId'],
   updatingLikeCommentsId: {} as PostState['updatingLikeCommentsId'],
   loading: false,
@@ -107,6 +109,21 @@ const postReducer = createReducer(initialState)
       updatingLikeCommentsId: R.omit([commentId], state.updatingLikeCommentsId),
       errorResponse: undefined,
     }),
-  );
+  )
+  .handleAction(postActions.updatePost.request, (state, { payload: { postId } }) => ({
+    ...state,
+    updatingPostId: { ...state.updatingPostId, [postId]: true },
+    errorResponse: undefined,
+  }))
+  .handleAction(postActions.updatePost.success, (state, { payload: post }) => ({
+    ...state,
+    posts: upsertEntityWithSameId<PostDto>(state.posts, post),
+    updatingPostId: R.omit([post.id], state.updatingPostId),
+  }))
+  .handleAction(postActions.updatePost.failure, (state, { payload: { postId, error } }) => ({
+    ...state,
+    updatingPostId: R.omit([postId], state.updatingPostId),
+    errorResponse: error,
+  }));
 
 export default postReducer;

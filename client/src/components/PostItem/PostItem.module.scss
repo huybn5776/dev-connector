@@ -46,6 +46,21 @@
   padding: 0 16px;
 }
 
+.post-input {
+  margin: 0 16px;
+  background-color: #3f4345;
+  resize: none;
+}
+
+.post-edit-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.post-edit-button {
+  margin: 0 16px;
+}
+
 .post-actions {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
