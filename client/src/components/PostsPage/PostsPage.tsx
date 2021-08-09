@@ -106,7 +106,11 @@ const PostsPage: React.FC<PropsFromState> = ({
                   updating={updatingCommentId[comment.id]}
                 />
               ))}
-              {user && (loadedPostsId[post.id] || commentingPostsId[post.id]) ? (
+              {user &&
+              (post.commentsCount === 0 ||
+                post.comments.length === 0 ||
+                loadedPostsId[post.id] ||
+                commentingPostsId[post.id]) ? (
                 <PostCommentForm
                   user={user}
                   postId={post.id}

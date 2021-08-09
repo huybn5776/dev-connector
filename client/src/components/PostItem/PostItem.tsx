@@ -183,25 +183,23 @@ const PostItem: React.FC<Props> = ({
         </div>
       )}
 
-      {commentsCount || comments.length ? (
-        <div className={styles.postComments}>
-          <div className={styles.postCommentsHeading}>
-            <p className={styles.postCommentsTitle}>Comments</p>
-            {loading ? <Loader /> : null}
-            {commentsExpanded && !loading ? (
-              <button className={styles.postCommentsExpandButton} type="button" onClick={collapseComments}>
-                <i className={clsx('icon', 'comment', 'angle', 'up', styles.postCommentsExpandIcon)} />
-              </button>
-            ) : null}
-            {!commentsExpanded && !loading ? (
-              <button className={styles.postCommentsExpandButton} type="button" onClick={expandComments}>
-                <i className={clsx('icon', 'comment', 'angle', 'down', styles.postCommentsExpandIcon)} />
-              </button>
-            ) : null}
-          </div>
-          {commentsExpanded === false ? null : children}
+      <div className={styles.postComments}>
+        <div className={styles.postCommentsHeading}>
+          <p className={styles.postCommentsTitle}>Comments</p>
+          {loading ? <Loader /> : null}
+          {commentsExpanded && !loading ? (
+            <button className={styles.postCommentsExpandButton} type="button" onClick={collapseComments}>
+              <i className={clsx('icon', 'comment', 'angle', 'up', styles.postCommentsExpandIcon)} />
+            </button>
+          ) : null}
+          {!commentsExpanded && !loading ? (
+            <button className={styles.postCommentsExpandButton} type="button" onClick={expandComments}>
+              <i className={clsx('icon', 'comment', 'angle', 'down', styles.postCommentsExpandIcon)} />
+            </button>
+          ) : null}
         </div>
-      ) : null}
+        {commentsExpanded === false ? null : children}
+      </div>
     </div>
   );
 };
