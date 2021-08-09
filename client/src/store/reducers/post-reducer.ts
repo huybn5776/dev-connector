@@ -112,7 +112,7 @@ const postReducer = createReducer(initialState)
       errorResponse: undefined,
     }),
   )
-  .handleAction(postActions.updatePost.request, (state, { payload: { postId } }) => ({
+  .handleAction([postActions.updatePost.request, postActions.deletePost.request], (state, { payload: { postId } }) => ({
     ...state,
     updatingPostId: { ...state.updatingPostId, [postId]: true },
     errorResponse: undefined,
@@ -122,16 +122,27 @@ const postReducer = createReducer(initialState)
     posts: upsertEntityWithSameId<PostDto>(state.posts, post),
     updatingPostId: R.omit([post.id], state.updatingPostId),
   }))
-  .handleAction(postActions.updatePost.failure, (state, { payload: { postId, error } }) => ({
+  .handleAction(postActions.deletePost.success, (state, { payload: { postId } }) => ({
     ...state,
+    posts: state.posts.filter((post) => post.id !== postId),
     updatingPostId: R.omit([postId], state.updatingPostId),
-    errorResponse: error,
   }))
-  .handleAction(postActions.updateComment.request, (state, { payload: { commentId } }) => ({
-    ...state,
-    updatingCommentId: { ...state.updatingCommentId, [commentId]: true },
-    errorResponse: undefined,
-  }))
+  .handleAction(
+    [postActions.updatePost.failure, postActions.deletePost.failure],
+    (state, { payload: { postId, error } }) => ({
+      ...state,
+      updatingPostId: R.omit([postId], state.updatingPostId),
+      errorResponse: error,
+    }),
+  )
+  .handleAction(
+    [postActions.updateComment.request, postActions.deleteComment.request],
+    (state, { payload: { commentId } }) => ({
+      ...state,
+      updatingCommentId: { ...state.updatingCommentId, [commentId]: true },
+      errorResponse: undefined,
+    }),
+  )
   .handleAction(postActions.updateComment.success, (state, { payload: { postId, comment } }) => ({
     ...state,
     posts: updateEntityWithId<PostDto>(state.posts, postId, (post) => ({
@@ -140,10 +151,18 @@ const postReducer = createReducer(initialState)
     })),
     updatingCommentId: R.omit([comment.id], state.updatingCommentId),
   }))
-  .handleAction(postActions.updateComment.failure, (state, { payload: { commentId, error } }) => ({
+  .handleAction(postActions.deleteComment.success, (state, { payload: { postId, commentId, comments } }) => ({
     ...state,
+    posts: updateEntityWithId<PostDto>(state.posts, postId, (post) => ({ ...post, comments })),
     updatingCommentId: R.omit([commentId], state.updatingCommentId),
-    errorResponse: error,
-  }));
+  }))
+  .handleAction(
+    [postActions.updateComment.failure, postActions.deleteComment.failure],
+    (state, { payload: { commentId, error } }) => ({
+      ...state,
+      updatingCommentId: R.omit([commentId], state.updatingCommentId),
+      errorResponse: error,
+    }),
+  );
 
 export default postReducer;

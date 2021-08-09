@@ -93,6 +93,10 @@ const PostCommentItem: React.FC<Props> = ({
     }
   }
 
+  function deleteComment(): void {
+    dispatch(postActions.deleteComment.request({ postId, commentId: id }));
+  }
+
   return (
     <div className={styles.PostComment}>
       <Link to={`/profiles/${user?.id}`}>
@@ -127,12 +131,19 @@ const PostCommentItem: React.FC<Props> = ({
               )}
             </button>
             {editable && (
-              <button className={styles.commentAction} type="button" onClick={enterEditMode}>
-                <span className={styles.commentActionText}>Edit</span>
-                {updating ? <Loader className={styles.commentActionLoader} /> : null}
-              </button>
+              <>
+                <button className={styles.commentAction} type="button" onClick={enterEditMode}>
+                  <span className={styles.commentActionText}>Edit</span>
+                </button>
+                <button className={styles.commentAction} type="button" onClick={deleteComment}>
+                  <span className={styles.commentActionText}>Delete</span>
+                </button>
+              </>
             )}
-            <span className={styles.commentTimestamp}>{format(new Date(updatedAt), dateFormat)}</span>
+            <span className={styles.commentTimestamp}>
+              {format(new Date(updatedAt), dateFormat)}{' '}
+              {updating ? <Loader className={styles.commentActionLoader} /> : null}
+            </span>
           </div>
         ) : null}
       </div>

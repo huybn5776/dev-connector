@@ -88,6 +88,17 @@ export const updatePost: EpicType = (action$, state$, { api }) =>
     ),
   );
 
+export const deletePost: EpicType = (action$, state$, { api }) =>
+  action$.pipe(
+    filter(isActionOf(postActions.deletePost.request)),
+    mergeMap(({ payload: { postId } }) =>
+      api.postApi.deletePost(postId).pipe(
+        map(() => postActions.deletePost.success({ postId })),
+        catchError((error: AxiosResponse<HttpException>) => of(postActions.deletePost.failure({ postId, error }))),
+      ),
+    ),
+  );
+
 export const updateComment: EpicType = (action$, state$, { api }) =>
   action$.pipe(
     filter(isActionOf(postActions.updateComment.request)),
@@ -96,6 +107,19 @@ export const updateComment: EpicType = (action$, state$, { api }) =>
         map((comment) => postActions.updateComment.success({ postId, comment })),
         catchError((error: AxiosResponse<HttpException>) =>
           of(postActions.updateComment.failure({ commentId, error })),
+        ),
+      ),
+    ),
+  );
+
+export const deleteComment: EpicType = (action$, state$, { api }) =>
+  action$.pipe(
+    filter(isActionOf(postActions.deleteComment.request)),
+    mergeMap(({ payload: { postId, commentId } }) =>
+      api.postApi.deleteComment(postId, commentId).pipe(
+        map((comments) => postActions.deleteComment.success({ postId, commentId, comments })),
+        catchError((error: AxiosResponse<HttpException>) =>
+          of(postActions.deleteComment.failure({ commentId, error })),
         ),
       ),
     ),

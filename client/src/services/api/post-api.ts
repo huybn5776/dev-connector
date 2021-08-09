@@ -40,6 +40,14 @@ export function patchPost(id: string, postData: CreatePostDto): Observable<PostD
   return axiosProxy.patch(`/${id}`, postData);
 }
 
+export function deletePost(id: string): Observable<void> {
+  return axiosProxy.delete(`/${id}`);
+}
+
 export function patchComment(id: string, commentData: CreatePostCommentDto): Observable<PostCommentDto> {
   return axiosProxy.patch(`/comments/${id}`, commentData);
+}
+
+export function deleteComment(postId: string, commentId: string): Observable<PostCommentDto[]> {
+  return axiosProxy.delete(`/${postId}/comments/${commentId}`);
 }

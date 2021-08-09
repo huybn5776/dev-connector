@@ -102,6 +102,10 @@ const PostItem: React.FC<Props> = ({
     cancelHotkeySubscription.current?.unsubscribe();
   }
 
+  function deletePost(): void {
+    dispatch(postActions.deletePost.request({ postId: id }));
+  }
+
   return (
     <div className={styles.PostItem}>
       <div className={styles.postTop}>
@@ -123,6 +127,7 @@ const PostItem: React.FC<Props> = ({
             {editable ? (
               <>
                 <MenuItem onClick={enterEditMode}>Edit</MenuItem>
+                <MenuItem onClick={deletePost}>Delete</MenuItem>
               </>
             ) : null}
           </RightMenu>

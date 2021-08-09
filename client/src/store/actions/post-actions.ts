@@ -54,8 +54,20 @@ export const updatePost = createAsyncAction(...asyncActionNames('Update post'))<
   { postId: string; error: AxiosResponse<HttpException> }
 >();
 
+export const deletePost = createAsyncAction(...asyncActionNames('Delete post'))<
+  { postId: string },
+  { postId: string },
+  { postId: string; error: AxiosResponse<HttpException> }
+>();
+
 export const updateComment = createAsyncAction(...asyncActionNames('Update comment'))<
   { postId: string; commentId: string; commentData: CreatePostCommentDto },
   { postId: string; comment: PostCommentDto },
+  { commentId: string; error: AxiosResponse<HttpException> }
+>();
+
+export const deleteComment = createAsyncAction(...asyncActionNames('Delete comment'))<
+  { postId: string; commentId: string },
+  { postId: string; commentId: string; comments: PostCommentDto[] },
   { commentId: string; error: AxiosResponse<HttpException> }
 >();
