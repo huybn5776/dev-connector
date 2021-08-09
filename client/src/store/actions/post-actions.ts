@@ -66,6 +66,12 @@ export const deletePost = createAsyncAction(...asyncActionNames('Delete post'))<
   { postId: string; error: AxiosResponse<HttpException> }
 >();
 
+export const addComment = createAsyncAction(...asyncActionNames('Add comment'))<
+  { postId: string; commentData: CreatePostCommentDto },
+  { postId: string; comment: PostCommentDto },
+  { postId: string; error: AxiosResponse<HttpException> }
+>();
+
 export const updateComment = createAsyncAction(...asyncActionNames('Update comment'))<
   { postId: string; commentId: string; commentData: CreatePostCommentDto },
   { postId: string; comment: PostCommentDto },

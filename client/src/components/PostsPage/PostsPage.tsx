@@ -5,6 +5,7 @@ import { connect, useDispatch } from 'react-redux';
 
 import { postActions } from '@actions';
 import Loader from '@components/Loader/Loader';
+import PostCommentForm from '@components/PostCommentForm/PostCommentForm';
 import PostCommentItem from '@components/PostCommentItem/PostCommentItem';
 import PostForm from '@components/PostForm/PostForm';
 import PostItem from '@components/PostItem/PostItem';
@@ -25,6 +26,7 @@ type PropsFromState = Pick<ApplicationState['auth'], 'user'> &
     | 'updatingCommentId'
     | 'updatingLikePostsId'
     | 'updatingLikeCommentsId'
+    | 'addingCommentPostsId'
     | 'loading'
   >;
 
@@ -38,6 +40,7 @@ const PostsPage: React.FC<PropsFromState> = ({
   updatingCommentId,
   updatingLikePostsId,
   updatingLikeCommentsId,
+  addingCommentPostsId,
   loading,
 }: PropsFromState) => {
   const dispatch = useDispatch();
@@ -86,6 +89,13 @@ const PostsPage: React.FC<PropsFromState> = ({
                   updating={updatingCommentId[comment.id]}
                 />
               ))}
+              {user && (loadedPostsId[post.id]) ? (
+                <PostCommentForm
+                  user={user}
+                  postId={post.id}
+                  loading={addingCommentPostsId[post.id]}
+                />
+              ) : null}
             </PostItem>
           ))}
         </div>
@@ -104,6 +114,7 @@ const mapStateToProps: StateToPropsFunc<PropsFromState> = ({ auth, post }) => ({
   updatingCommentId: post.updatingCommentId,
   updatingLikePostsId: post.updatingLikePostsId,
   updatingLikeCommentsId: post.updatingLikeCommentsId,
+  addingCommentPostsId: post.addingCommentPostsId,
   loading: post.loading,
 });
 

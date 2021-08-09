@@ -18,6 +18,7 @@ export interface PostState {
   updatingCommentId: Record<string, true>;
   updatingLikePostsId: Record<string, true>;
   updatingLikeCommentsId: Record<string, true>;
+  addingCommentPostsId: Record<string, true>;
   loading: boolean;
   errorResponse?: AxiosResponse<HttpException>;
 }
@@ -32,6 +33,7 @@ export const initialState: PostState = {
   updatingCommentId: {} as PostState['updatingCommentId'],
   updatingLikePostsId: {} as PostState['updatingLikePostsId'],
   updatingLikeCommentsId: {} as PostState['updatingLikeCommentsId'],
+  addingCommentPostsId: {} as PostState['addingCommentPostsId'],
   loading: false,
 };
 
@@ -152,6 +154,24 @@ const postReducer = createReducer(initialState)
       errorResponse: error,
     }),
   )
+  .handleAction(postActions.addComment.request, (state, { payload: { postId } }) => ({
+    ...state,
+    addingCommentPostsId: { ...state.addingCommentPostsId, [postId]: true },
+    errorResponse: undefined,
+  }))
+  .handleAction(postActions.addComment.success, (state, { payload: { postId, comment } }) => ({
+    ...state,
+    posts: updateEntityWithId<PostDto>(state.posts, postId, (post) => ({
+      ...post,
+      comments: [...post.comments, comment],
+    })),
+    addingCommentPostsId: R.omit([postId], state.addingCommentPostsId),
+  }))
+  .handleAction(postActions.addComment.failure, (state, { payload: { postId, error } }) => ({
+    ...state,
+    addingCommentPostsId: R.omit([postId], state.addingCommentPostsId),
+    errorResponse: error,
+  }))
   .handleAction(
     [postActions.updateComment.request, postActions.deleteComment.request],
     (state, { payload: { commentId } }) => ({

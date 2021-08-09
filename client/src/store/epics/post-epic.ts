@@ -110,6 +110,17 @@ export const deletePost: EpicType = (action$, state$, { api }) =>
     ),
   );
 
+export const addComment: EpicType = (action$, state$, { api }) =>
+  action$.pipe(
+    filter(isActionOf(postActions.addComment.request)),
+    mergeMap(({ payload: { postId, commentData } }) =>
+      api.postApi.addComment(postId, commentData).pipe(
+        map((comment) => postActions.addComment.success({ postId, comment })),
+        catchError((error: AxiosResponse<HttpException>) => of(postActions.addComment.failure({ postId, error }))),
+      ),
+    ),
+  );
+
 export const updateComment: EpicType = (action$, state$, { api }) =>
   action$.pipe(
     filter(isActionOf(postActions.updateComment.request)),

@@ -1,0 +1,57 @@
+.PostCommentForm {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  padding-right: 8px;
+}
+
+.comment-form-avatar {
+  align-self: start;
+  width: 32px;
+  height: 32px;
+  clip-path: circle(50%);
+}
+
+.comment-form-input-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.comment-form-input {
+  width: 100%;
+  margin-left: 8px;
+  padding: 4px;
+  background: none;
+  border: 0;
+  border-radius: 4px;
+  resize: none;
+
+  &.entering,
+  &:hover {
+    background-color: rgba(white, .1);
+  }
+}
+
+.comment-info-bar {
+}
+
+.comment-submit-hint {
+  margin-left: 8px;
+  padding: 2px 0;
+  color: #bdb3b8;
+  font-size: 12px;
+}
+
+.comment-input-loader {
+  width: 14px;
+  height: 14px;
+  margin-left: 4px;
+
+  &::before,
+  &::after {
+    width: 14px;
+    height: 14px;
+    margin-left: -50%;
+  }
+}

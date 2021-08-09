@@ -24,7 +24,7 @@ interface Props {
   editable?: boolean;
   loading?: boolean;
   updating?: boolean;
-  children: JSX.Element[];
+  children: JSX.Element | (JSX.Element | JSX.Element[] | null)[] | null;
 }
 
 const PostItem: React.FC<Props> = ({
