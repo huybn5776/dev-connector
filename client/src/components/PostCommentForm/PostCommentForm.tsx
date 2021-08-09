@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, ForwardedRef, useImperativeHandle, forwardRef } from 'react';
 
 import clsx from 'clsx';
 import { useDispatch } from 'react-redux';
@@ -17,12 +17,21 @@ interface Props {
   autoFocus?: boolean;
 }
 
-const PostCommentForm: React.FC<Props> = (
+interface ForwardedProps {
+  focusInput: () => void;
+}
+
+const PostCommentForm: React.ForwardRefRenderFunction<ForwardedProps, Props> = (
   { user, postId, loading, autoFocus }: Props,
+  ref: ForwardedRef<ForwardedProps>,
 ) => {
   const dispatch = useDispatch();
   const textarea = useRef<HTMLTextAreaElement | null>(null);
   const [entering, setEntering] = useState(false);
+
+  useImperativeHandle(ref, () => ({
+    focusInput: () => textarea.current?.focus(),
+  }));
 
   useEffect(() => {
     if (loading) {
@@ -69,4 +78,4 @@ const PostCommentForm: React.FC<Props> = (
   );
 };
 
-export default PostCommentForm;
+export default forwardRef(PostCommentForm);

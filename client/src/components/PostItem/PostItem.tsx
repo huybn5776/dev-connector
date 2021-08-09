@@ -24,6 +24,7 @@ interface Props {
   editable?: boolean;
   loading?: boolean;
   updating?: boolean;
+  onCommentButtonClick?: (event: React.MouseEvent) => void;
   children: JSX.Element | (JSX.Element | JSX.Element[] | null)[] | null;
 }
 
@@ -35,6 +36,7 @@ const PostItem: React.FC<Props> = ({
   editable,
   loading,
   updating,
+  onCommentButtonClick,
   children,
 }: Props) => {
   const dispatch = useDispatch();
@@ -174,7 +176,7 @@ const PostItem: React.FC<Props> = ({
             )}
             <span>{likes.length || ''}</span>
           </button>
-          <button className={styles.postAction} type="button">
+          <button className={styles.postAction} type="button" onClick={onCommentButtonClick}>
             <i className={clsx('icon', 'comment', 'alternate', 'outline')} />
             <span>{commentsCount || comments.length || ''}</span>
           </button>

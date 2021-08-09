@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 import clsx from 'clsx';
 import { connect, useDispatch } from 'react-redux';
@@ -44,12 +44,28 @@ const PostsPage: React.FC<PropsFromState> = ({
   loading,
 }: PropsFromState) => {
   const dispatch = useDispatch();
+  const [commentingPostsId, setCommentingPostsId] = useState<Record<string, true>>({});
+  const postCommentFormsRef = useRef<Record<string, React.ElementRef<typeof PostCommentForm>>>({});
+
   useEffect(() => {
     dispatch(postActions.getPosts.request());
   }, [dispatch]);
 
   function isLiked(postOrComment: PostDto | PostCommentDto): boolean {
     return postOrComment.likes.some((like) => like.user.id === user?.id);
+  }
+
+  function focusToCommentInput(postId: string): void {
+    setCommentingPostsId({ ...commentingPostsId, [postId]: true });
+    postCommentFormsRef.current[postId]?.focusInput?.();
+  }
+
+  function setCommentFormRef(postId: string, ref: React.ElementRef<typeof PostCommentForm> | null): void {
+    if (ref) {
+      postCommentFormsRef.current[postId] = ref;
+    } else {
+      delete postCommentFormsRef.current[postId];
+    }
   }
 
   return (
@@ -76,6 +92,7 @@ const PostsPage: React.FC<PropsFromState> = ({
               editable={user && user.id === post.user?.id}
               loading={loadingPostsId[post.id] || false}
               updating={updatingPostId[post.id]}
+              onCommentButtonClick={() => focusToCommentInput(post.id)}
             >
               {post.comments.map((comment) => (
                 <PostCommentItem
@@ -89,11 +106,13 @@ const PostsPage: React.FC<PropsFromState> = ({
                   updating={updatingCommentId[comment.id]}
                 />
               ))}
-              {user && (loadedPostsId[post.id]) ? (
+              {user && (loadedPostsId[post.id] || commentingPostsId[post.id]) ? (
                 <PostCommentForm
                   user={user}
                   postId={post.id}
                   loading={addingCommentPostsId[post.id]}
+                  autoFocus={commentingPostsId[post.id]}
+                  ref={(ref) => setCommentFormRef(post.id, ref)}
                 />
               ) : null}
             </PostItem>
