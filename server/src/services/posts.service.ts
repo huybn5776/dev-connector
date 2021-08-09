@@ -158,10 +158,10 @@ class PostsService {
     return post.comments;
   }
 
-  async addPostComment(user: User, postId: string, commentData: CreatePostCommentDto): Promise<PostComment[]> {
+  async addPostComment(user: User, postId: string, commentData: CreatePostCommentDto): Promise<PostComment> {
     const postDocument = await this.getPostDocument(postId);
     const comment = new PostCommentModel({
-      user: user._id,
+      user,
       text: commentData.text,
       name: user.name,
       avatar: user.avatar,
@@ -170,7 +170,7 @@ class PostsService {
     await comment.save();
     postDocument.comments.unshift(comment);
     await postDocument.save();
-    return postDocument.toObject().comments;
+    return comment.toObject();
   }
 
   async patchPostComment(user: User, commentId: string, commentData: CreatePostCommentDto): Promise<PostComment> {

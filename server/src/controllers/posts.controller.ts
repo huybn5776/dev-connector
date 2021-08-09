@@ -112,9 +112,9 @@ class PostsController {
     const postId = req.params.id;
     const user = await req.user.current();
     const commentData: CreatePostCommentDto = req.body;
-    const comments = await this.postsService.addPostComment(user, postId, commentData);
-    const commentDtoList = mapper.mapArray(comments, PostCommentDto, PostComment);
-    res.status(201).send(commentDtoList);
+    const comment = await this.postsService.addPostComment(user, postId, commentData);
+    const commentDto = mapper.map(comment, PostCommentDto, PostComment);
+    res.status(201).send(commentDto);
   };
 
   patchPostComment = async (req: Request, res: Response): Promise<void> => {
