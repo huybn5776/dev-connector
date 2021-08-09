@@ -62,7 +62,7 @@ class PostsService {
 
   async createPost(user: UserDocument, postData: CreatePostDto): Promise<Post> {
     const postDocument: PostDocument = await this.posts.create({
-      user: user._id,
+      user,
       text: postData.text,
       name: user.name,
       avatar: user.avatar,
