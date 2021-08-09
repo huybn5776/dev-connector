@@ -25,7 +25,15 @@
 .comment-content {
   display: grid;
   grid-template-rows: 20px 1fr auto;
+  width: 100%;
   min-height: 40px;
+}
+
+.comment-input {
+  padding: 4px;
+  background-color: rgba(white, .1);
+  border-radius: 4px;
+  resize: none;
 }
 
 .comment-actions {

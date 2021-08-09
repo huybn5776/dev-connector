@@ -3,7 +3,9 @@ import { AxiosResponse } from 'axios';
 import { createAsyncAction } from 'typesafe-actions';
 
 import { actionNameCreator } from '@/utils/action-utils';
+import { CreatePostCommentDto } from '@dtos/create-post-comment.dto';
 import { CreatePostDto } from '@dtos/create-post.dto';
+import { PostCommentDto } from '@dtos/post-comment.dto';
 import { PostDto } from '@dtos/post.dto';
 import HttpException from '@exceptions/http-exception';
 
@@ -50,4 +52,10 @@ export const updatePost = createAsyncAction(...asyncActionNames('Update post'))<
   { postId: string; postData: CreatePostDto },
   PostDto,
   { postId: string; error: AxiosResponse<HttpException> }
+>();
+
+export const updateComment = createAsyncAction(...asyncActionNames('Update comment'))<
+  { postId: string; commentId: string; commentData: CreatePostCommentDto },
+  { postId: string; comment: PostCommentDto },
+  { commentId: string; error: AxiosResponse<HttpException> }
 >();

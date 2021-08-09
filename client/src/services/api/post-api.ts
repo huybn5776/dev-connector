@@ -1,7 +1,9 @@
 import axios from 'axios';
 import { Observable } from 'rxjs';
 
+import { CreatePostCommentDto } from '@dtos/create-post-comment.dto';
 import { CreatePostDto } from '@dtos/create-post.dto';
+import { PostCommentDto } from '@dtos/post-comment.dto';
 import { PostLikeDto } from '@dtos/post-like.dto';
 import { PostDto } from '@dtos/post.dto';
 
@@ -36,4 +38,8 @@ export function unlikeComment(id: string): Observable<PostLikeDto[]> {
 
 export function patchPost(id: string, postData: CreatePostDto): Observable<PostDto> {
   return axiosProxy.patch(`/${id}`, postData);
+}
+
+export function patchComment(id: string, commentData: CreatePostCommentDto): Observable<PostCommentDto> {
+  return axiosProxy.patch(`/comments/${id}`, commentData);
 }

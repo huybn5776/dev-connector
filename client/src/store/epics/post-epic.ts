@@ -87,3 +87,16 @@ export const updatePost: EpicType = (action$, state$, { api }) =>
       ),
     ),
   );
+
+export const updateComment: EpicType = (action$, state$, { api }) =>
+  action$.pipe(
+    filter(isActionOf(postActions.updateComment.request)),
+    mergeMap(({ payload: { postId, commentId, commentData } }) =>
+      api.postApi.patchComment(commentId, commentData).pipe(
+        map((comment) => postActions.updateComment.success({ postId, comment })),
+        catchError((error: AxiosResponse<HttpException>) =>
+          of(postActions.updateComment.failure({ commentId, error })),
+        ),
+      ),
+    ),
+  );

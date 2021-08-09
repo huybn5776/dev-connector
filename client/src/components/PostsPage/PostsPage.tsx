@@ -19,6 +19,7 @@ type PropsFromState = Pick<ApplicationState['auth'], 'user'> &
     | 'loadedPostsId'
     | 'loadingPostsId'
     | 'updatingPostId'
+    | 'updatingCommentId'
     | 'updatingLikePostsId'
     | 'updatingLikeCommentsId'
     | 'loading'
@@ -30,6 +31,7 @@ const PostsPage: React.FC<PropsFromState> = ({
   loadedPostsId,
   loadingPostsId,
   updatingPostId,
+  updatingCommentId,
   updatingLikePostsId,
   updatingLikeCommentsId,
   loading,
@@ -69,6 +71,7 @@ const PostsPage: React.FC<PropsFromState> = ({
                   likeLoading={updatingLikeCommentsId[comment.id]}
                   detailMode={loadedPostsId[post.id]}
                   editable={user && user.id === user?.id}
+                  updating={updatingCommentId[comment.id]}
                 />
               ))}
             </PostItem>
@@ -85,6 +88,7 @@ const mapStateToProps: StateToPropsFunc<PropsFromState> = ({ auth, post }) => ({
   loadedPostsId: post.loadedPostsId,
   loadingPostsId: post.loadingPostsId,
   updatingPostId: post.updatingPostId,
+  updatingCommentId: post.updatingCommentId,
   updatingLikePostsId: post.updatingLikePostsId,
   updatingLikeCommentsId: post.updatingLikeCommentsId,
   loading: post.loading,
