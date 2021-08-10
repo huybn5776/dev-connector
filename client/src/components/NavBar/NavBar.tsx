@@ -22,15 +22,15 @@ const NavBar: React.FC = () => {
         </Link>
       </h1>
 
-      <Link to="profiles" className={styles.headerLink}>
+      <Link to="/profiles" className={styles.headerLink}>
         Developers
       </Link>
       {isAuthenticated ? (
         <>
-          <Link to="posts" className={styles.headerLink}>
+          <Link to="/posts" className={styles.headerLink}>
             Posts
           </Link>
-          <Link to="dashboard" className={styles.headerLink}>
+          <Link to="/dashboard" className={styles.headerLink}>
             Dashboard
           </Link>
           <button className={styles.headerLink} type="button" onClick={() => dispatch(authActions.logout())}>
@@ -39,10 +39,10 @@ const NavBar: React.FC = () => {
         </>
       ) : (
         <>
-          <Link to="login" className={styles.headerLink}>
+          <Link to="/login" className={styles.headerLink}>
             Login
           </Link>
-          <Link to="register" className={clsx(styles.headerLink, styles.headerLinkPrimary)}>
+          <Link to="/register" className={clsx(styles.headerLink, styles.headerLinkPrimary)}>
             Register
           </Link>
         </>
