@@ -13,6 +13,7 @@ import EditProfilePage from '@components/EditProfilePage/EditProfilePage';
 import LandingPage from '@components/LandingPage/LandingPage';
 import LoginPage from '@components/LoginPage/LoginPage';
 import NavBar from '@components/NavBar/NavBar';
+import PostPage from '@components/PostPage/PostPage';
 import PostsPage from '@components/PostsPage/PostsPage';
 import ProfilesPage from '@components/ProfilesPage/ProfilesPage';
 import ProfileViewPage from '@components/ProfileViewPage/ProfileViewPage';
@@ -41,6 +42,7 @@ const App: React.FC = () => {
                 <Route path="/profiles" exact component={ProfilesPage} />
                 <Route path="/profiles/:id" exact component={ProfileViewPage} />
                 <Route path="/posts" exact component={PostsPage} />
+                <Route path="/posts/:id" exact component={PostPage} />
                 <Redirect to="/" />
               </Switch>
             </div>

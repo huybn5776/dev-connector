@@ -116,9 +116,13 @@ const PostItem: React.FC<Props> = ({
       <div className={styles.postTop}>
         <div className={styles.postInfo}>
           <img className={styles.postAvatar} src={avatar} alt={name} />
-          <span className={styles.postTimestamp} title={`Update at ${format(new Date(updatedAt), dateFormat)}`}>
+          <Link
+            className={styles.postTimestamp}
+            to={`/posts/${id}`}
+            title={`Update at ${format(new Date(updatedAt), dateFormat)}`}
+          >
             {format(new Date(createdAt), dateFormat)}
-          </span>
+          </Link>
           <span className={styles.postBy}>&nbsp;by&nbsp;</span>
           <Link className={styles.postUsername} to={`/profiles/${user?.id}`}>
             {name}
