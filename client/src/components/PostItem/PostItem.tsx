@@ -21,10 +21,12 @@ interface Props {
   liked: boolean;
   likeLoading?: boolean;
   detailMode: boolean;
+  commentsExpanded: boolean | undefined;
   editable?: boolean;
   loading?: boolean;
   updating?: boolean;
   onCommentButtonClick?: (event: React.MouseEvent) => void;
+  onExpandCommentClick: (expand: boolean) => void;
   children: JSX.Element | (JSX.Element | JSX.Element[] | null)[] | null;
 }
 
@@ -33,14 +35,15 @@ const PostItem: React.FC<Props> = ({
   liked,
   likeLoading,
   detailMode,
+  commentsExpanded,
   editable,
   loading,
   updating,
   onCommentButtonClick,
+  onExpandCommentClick,
   children,
 }: Props) => {
   const dispatch = useDispatch();
-  const [commentsExpanded, setCommentsExpanded] = useState<boolean | undefined>(undefined);
   const [editMode, setEditMode] = useState(false);
   const textarea = useRef<HTMLTextAreaElement | null>(null);
   const [saveHotkey$, saveHotkeySubscription] = useSingleHotkey((event) => event.metaKey && event.key === 'Enter');
@@ -56,11 +59,11 @@ const PostItem: React.FC<Props> = ({
     if (!detailMode) {
       dispatch(postActions.getPost.request(id));
     }
-    setCommentsExpanded(true);
+    onExpandCommentClick(true);
   }
 
   function collapseComments(): void {
-    setCommentsExpanded(false);
+    onExpandCommentClick(false);
   }
 
   function toggleLike(): void {

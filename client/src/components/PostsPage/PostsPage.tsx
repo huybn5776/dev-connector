@@ -45,6 +45,7 @@ const PostsPage: React.FC<PropsFromState> = ({
 }: PropsFromState) => {
   const dispatch = useDispatch();
   const [commentingPostsId, setCommentingPostsId] = useState<Record<string, true>>({});
+  const [postsCommentsExpanded, setPostsCommentsExpanded] = useState<Record<string, boolean>>({});
   const postCommentFormsRef = useRef<Record<string, React.ElementRef<typeof PostCommentForm>>>({});
 
   useEffect(() => {
@@ -58,6 +59,7 @@ const PostsPage: React.FC<PropsFromState> = ({
   function focusToCommentInput(postId: string): void {
     setCommentingPostsId({ ...commentingPostsId, [postId]: true });
     postCommentFormsRef.current[postId]?.focusInput?.();
+    setPostsCommentsExpanded({ ...postsCommentsExpanded, [postId]: true });
   }
 
   function setCommentFormRef(postId: string, ref: React.ElementRef<typeof PostCommentForm> | null): void {
@@ -66,6 +68,10 @@ const PostsPage: React.FC<PropsFromState> = ({
     } else {
       delete postCommentFormsRef.current[postId];
     }
+  }
+
+  function onCommentExpandClick(postId: string, expand: boolean): void {
+    setPostsCommentsExpanded({ ...postsCommentsExpanded, [postId]: expand });
   }
 
   return (
@@ -88,11 +94,13 @@ const PostsPage: React.FC<PropsFromState> = ({
               post={post}
               liked={isLiked(post)}
               likeLoading={updatingLikePostsId[post.id]}
+              commentsExpanded={postsCommentsExpanded[post.id]}
               detailMode={loadedPostsId[post.id]}
               editable={user && user.id === post.user?.id}
               loading={loadingPostsId[post.id] || false}
               updating={updatingPostId[post.id]}
               onCommentButtonClick={() => focusToCommentInput(post.id)}
+              onExpandCommentClick={(expand) => onCommentExpandClick(post.id, expand)}
             >
               {post.comments.map((comment) => (
                 <PostCommentItem
@@ -101,7 +109,7 @@ const PostsPage: React.FC<PropsFromState> = ({
                   postId={post.id}
                   liked={isLiked(comment)}
                   likeLoading={updatingLikeCommentsId[comment.id]}
-                  detailMode={loadedPostsId[post.id]}
+                  detailMode={loadedPostsId[post.id] || commentingPostsId[post.id]}
                   editable={user && user.id === user?.id}
                   updating={updatingCommentId[comment.id]}
                 />
