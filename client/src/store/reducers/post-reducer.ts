@@ -55,6 +55,7 @@ const postReducer = createReducer(initialState)
     ...state,
     posts: action.payload,
     postsLoaded: true,
+    loadedPostsId: {},
     errorResponse: undefined,
     loading: false,
   }))
