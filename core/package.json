@@ -14,7 +14,9 @@
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
-    "@types/jest": "^26.0.23",
+    "@automapper/types": "^6.0.0",
+    "@types/jest": "^27.0.0",
+    "@types/node": "^16.4.13",
     "@types/ramda": "^0.27.44"
   }
 }

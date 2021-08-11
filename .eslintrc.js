@@ -77,6 +77,7 @@ module.exports = {
 
     'class-methods-use-this': 0,
     'import/prefer-default-export': 0,
+    'import/extensions': 0,
     'no-console': 1,
     'no-continue': 0,
     'no-multiple-empty-lines': 2,
