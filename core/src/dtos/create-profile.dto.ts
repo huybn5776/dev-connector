@@ -1,7 +1,7 @@
 import { AutoMap } from '@automapper/classes';
 import { IsString, IsNotEmpty, IsDefined } from 'class-validator';
 
-import { ProfileSocial } from '@entities/profile-social';
+import { ProfileSocialDto } from '@dtos/profile-social.dto';
 
 export class CreateProfileDto {
   @AutoMap()
@@ -36,5 +36,5 @@ export class CreateProfileDto {
   githubUsername?: string;
 
   @AutoMap()
-  social?: ProfileSocial;
+  social?: ProfileSocialDto;
 }

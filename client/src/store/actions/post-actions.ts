@@ -1,4 +1,3 @@
-import { PostLike } from '@core/entities/post-like';
 import { AxiosResponse } from 'axios';
 import { createAsyncAction } from 'typesafe-actions';
 
@@ -6,6 +5,7 @@ import { actionNameCreator } from '@/utils/action-utils';
 import { CreatePostCommentDto } from '@dtos/create-post-comment.dto';
 import { CreatePostDto } from '@dtos/create-post.dto';
 import { PostCommentDto } from '@dtos/post-comment.dto';
+import { PostLikeDto } from '@dtos/post-like.dto';
 import { PostDto } from '@dtos/post.dto';
 import HttpException from '@exceptions/http-exception';
 
@@ -26,25 +26,25 @@ export const getPost = createAsyncAction(...asyncActionNames('Get post'))<
 
 export const likePost = createAsyncAction(...asyncActionNames('Like post'))<
   string,
-  { postId: string; likes: PostLike[] },
+  { postId: string; likes: PostLikeDto[] },
   { postId: string; error: AxiosResponse<HttpException> }
 >();
 
 export const unlikePost = createAsyncAction(...asyncActionNames('Unlike post'))<
   string,
-  { postId: string; likes: PostLike[] },
+  { postId: string; likes: PostLikeDto[] },
   { postId: string; error: AxiosResponse<HttpException> }
 >();
 
 export const likeComment = createAsyncAction(...asyncActionNames('Like comment'))<
   { postId: string; commentId: string },
-  { postId: string; commentId: string; likes: PostLike[] },
+  { postId: string; commentId: string; likes: PostLikeDto[] },
   { commentId: string; error: AxiosResponse<HttpException> }
 >();
 
 export const unlikeComment = createAsyncAction(...asyncActionNames('Unlike comment'))<
   { postId: string; commentId: string },
-  { postId: string; commentId: string; likes: PostLike[] },
+  { postId: string; commentId: string; likes: PostLikeDto[] },
   { commentId: string; error: AxiosResponse<HttpException> }
 >();
 
