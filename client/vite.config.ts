@@ -5,6 +5,7 @@ import path from 'path';
 import reactRefresh from '@vitejs/plugin-react-refresh';
 import { Alias, defineConfig } from 'vite';
 
+// noinspection ES6PreferShortImport
 import { postcssIncreaseSpecificity } from './src/config/increase-specificity';
 import * as tsconfig from './tsconfig.json';
 
@@ -31,7 +32,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: 'http://localhost:5000/api',
         rewrite: (urlPath) => urlPath.replace(/^\/api/, ''),
         timeout: 10000,
       },
