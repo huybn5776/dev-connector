@@ -1,14 +1,4 @@
-import fs from 'fs';
-
 import winston from 'winston';
-import WinstonDaily from 'winston-daily-rotate-file';
-
-// logs dir
-const logDir = `${__dirname}/../logs`;
-
-if (!fs.existsSync(logDir)) {
-  fs.mkdirSync(logDir);
-}
 
 // Define log format
 const logFormat = winston.format.printf(({ timestamp, level, message }) => `${timestamp} ${level}: ${message}`);
@@ -24,28 +14,6 @@ const logger = winston.createLogger({
     }),
     logFormat,
   ),
-  transports: [
-    // debug log setting
-    new WinstonDaily({
-      level: 'debug',
-      datePattern: 'YYYY-MM-DD',
-      dirname: `${logDir}/debug`, // log file /logs/debug/*.log in save
-      filename: `%DATE%.log`,
-      maxFiles: 30, // 30 Days saved
-      json: false,
-      zippedArchive: true,
-    }),
-    // error log setting
-    new WinstonDaily({
-      level: 'error',
-      datePattern: 'YYYY-MM-DD',
-      dirname: `${logDir}/error`, // log file /logs/error/*.log in save
-      filename: `%DATE%.log`,
-      maxFiles: 30, // 30 Days saved
-      json: false,
-      zippedArchive: true,
-    }),
-  ],
 });
 
 logger.add(

@@ -36,8 +36,7 @@
     "reflect-metadata": "^0.1.13",
     "swagger-jsdoc": "^6.1.0",
     "swagger-ui-express": "^4.1.6",
-    "winston": "^3.3.3",
-    "winston-daily-rotate-file": "^4.5.5"
+    "winston": "^3.3.3"
   },
   "devDependencies": {
     "@automapper/types": "^6.0.0",
