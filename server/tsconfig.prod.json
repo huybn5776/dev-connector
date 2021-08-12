@@ -1,0 +1,25 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "typeRoots": ["node_modules/@types"],
+    "outDir": "./dist",
+    "paths": {
+      "@/*": ["src/*"],
+      "@core/*": ["../core/src/*"],
+      "@dtos/*": ["../core/src/dtos/*"],
+      "@entities/*": ["../core/src/entities/*"],
+      "@exceptions/*": ["../core/src/exceptions/*"],
+      "@exceptions": ["../core/src/exceptions"],
+      "@interfaces/*": ["../core/src/interfaces/*"],
+      "@utils/*": ["../core/src/utils/*"],
+      "@controllers/*": ["src/controllers/*"],
+      "@databases": ["src/databases"],
+      "@middlewares/*": ["src/middlewares/*"],
+      "@mappers": ["src/mappers"],
+      "@mappers/*": ["src/mappers/*"],
+      "@models/*": ["src/models/*"],
+      "@routes/*": ["src/routes/*"],
+      "@services/*": ["src/services/*"]
+    }
+  }
+}

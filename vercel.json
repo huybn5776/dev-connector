@@ -1,0 +1,42 @@
+{
+  "version": 2,
+  "env": {
+    "PORT": "3000",
+    "NODE_ENV": "production"
+  },
+  "builds": [
+    {
+      "src": "server/dist/server/src/server.js",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["dist/server/src/**"]
+      }
+    },
+    {
+      "src": "client/build/**",
+      "use": "@vercel/static",
+      "config": {
+        "includeFiles": ["client/build/**"]
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "server/dist/server/src/server.js"
+    },
+    {
+      "src": "/",
+      "dest": "client/build/index.html"
+    },
+    {
+      "src": "/[^.]+",
+      "dest": "client/build/index.html",
+      "status": 200
+    },
+    {
+      "src": "/(.+)",
+      "dest": "client/build/$1"
+    }
+  ]
+}
