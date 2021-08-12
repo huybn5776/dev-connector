@@ -9,6 +9,9 @@
 # production
 /build
 /public/build/
+/client/build
+/client/dist
+/server/dist
 
 # Logs
 **/logs
