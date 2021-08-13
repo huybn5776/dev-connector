@@ -12,5 +12,7 @@ export class User {
   @AutoMap()
   avatar!: string;
   @AutoMap()
+  createdAt!: Date;
+  @AutoMap()
   updatedAt!: Date;
 }

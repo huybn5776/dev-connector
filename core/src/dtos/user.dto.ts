@@ -10,5 +10,7 @@ export class UserDto {
   @AutoMap()
   avatar!: string;
   @AutoMap()
+  createdAt!: string;
+  @AutoMap()
   updatedAt!: string;
 }
