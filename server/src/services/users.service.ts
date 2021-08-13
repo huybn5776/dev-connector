@@ -1,6 +1,5 @@
 import bcrypt from 'bcrypt';
 import * as gravatar from 'gravatar';
-import * as R from 'ramda';
 
 import { CreateUserDto } from '@dtos/create-user.dto';
 import { PatchUserDto } from '@dtos/patch-user.dto';
@@ -11,17 +10,17 @@ import { UserDocument, UserModel } from '@models/user.model';
 class UserService {
   public users = UserModel;
 
-  public async findAllUser(): Promise<UserDocument[]> {
-    return this.users.find().select('-password');
+  public async findAllUser(): Promise<User[]> {
+    return (await this.users.find()).map((user) => user.toObject());
   }
 
-  public async findUserById(id: string): Promise<UserDocument> {
+  public async findUserById(id: string): Promise<User> {
     const user = await this.users.findById(id).select('-password');
     if (!user) {
       throw new HttpException(404);
     }
 
-    return user;
+    return user.toObject();
   }
 
   public async createUser(userData: CreateUserDto): Promise<User> {
@@ -32,11 +31,10 @@ class UserService {
     const avatar = this.generateGravatarUrl(userData.email);
     const hashedPassword = await bcrypt.hash(userData.password, 10);
     const userDocument = await this.users.create({ ...userData, password: hashedPassword, avatar });
-    const user = userDocument.toObject();
-    return R.omit(['password', '__v'], user) as User;
+    return userDocument.toObject();
   }
 
-  public async patchUser(userId: string, userData: PatchUserDto): Promise<UserDocument> {
+  public async patchUser(userId: string, userData: PatchUserDto): Promise<User> {
     const userDocument: UserDocument | null = await this.users.findById(userId);
     if (!userDocument) {
       throw new HttpException(404);
@@ -60,7 +58,7 @@ class UserService {
     }
 
     await userDocument.save();
-    return userDocument;
+    return userDocument.toObject();
   }
 
   public async deleteUser(userId: string): Promise<UserDocument> {

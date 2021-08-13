@@ -15,8 +15,7 @@ class UsersController {
   readonly profileService = new ProfileService();
 
   public getUsers = async (req: Request, res: Response): Promise<void> => {
-    const userDocuments = await this.userService.findAllUser();
-    const users = userDocuments.map((user) => user.toObject());
+    const users = await this.userService.findAllUser();
     const userDtoList = mapper.mapArray(users, UserDto, User);
     res.status(200).json(userDtoList);
   };
@@ -29,8 +28,8 @@ class UsersController {
 
   public getUserById = async (req: Request, res: Response): Promise<void> => {
     const userId: string = req.params.id;
-    const userDocument = await this.userService.findUserById(userId);
-    const userDto = mapper.map(userDocument.toObject() as User, UserDto, User);
+    const user = await this.userService.findUserById(userId);
+    const userDto = mapper.map(user, UserDto, User);
     res.status(200).json(userDto);
   };
 
@@ -46,8 +45,8 @@ class UsersController {
   public patchCurrentUser = async (req: Request, res: Response): Promise<void> => {
     const userId: string = req.user.claims().id;
     const userData: PatchUserDto = req.body;
-    const updatedUserDocument = await this.userService.patchUser(userId, userData);
-    const userDto = mapper.map(updatedUserDocument.toObject(), UserDto, User);
+    const updatedUser = await this.userService.patchUser(userId, userData);
+    const userDto = mapper.map(updatedUser, UserDto, User);
 
     res.status(200).json(userDto);
   };
