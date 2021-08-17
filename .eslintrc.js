@@ -87,6 +87,7 @@ module.exports = {
     quotes: ['error', 'single', { allowTemplateLiterals: true }],
     semi: [2, 'always'],
 
+    'jest/expect-expect': 0,
     'jsx-a11y/click-events-have-key-events': 0,
     'jsx-a11y/label-has-associated-control': [
       2,
