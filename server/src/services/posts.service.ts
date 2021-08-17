@@ -7,6 +7,7 @@ import { PostComment } from '@entities/post-comment';
 import { PostLike } from '@entities/post-like';
 import { User } from '@entities/user';
 import HttpException from '@exceptions/http-exception';
+import { mapper } from '@mappers';
 import { PostCommentModel, PostCommentDocument } from '@models/post-comment.model';
 import { PostModel, PostDocument } from '@models/post.model';
 import { UserDocument, UserModel } from '@models/user.model';
@@ -61,9 +62,10 @@ class PostsService {
   }
 
   async createPost(user: UserDocument, postData: CreatePostDto): Promise<Post> {
+    const post = mapper.map(postData, Post, CreatePostDto);
     const postDocument: PostDocument = await this.posts.create({
+      ...post,
       user,
-      text: postData.text,
       name: user.name,
       avatar: user.avatar,
     });
@@ -160,17 +162,18 @@ class PostsService {
 
   async addPostComment(user: User, postId: string, commentData: CreatePostCommentDto): Promise<PostComment> {
     const postDocument = await this.getPostDocument(postId);
-    const comment = new PostCommentModel({
+    const comment = mapper.map(commentData, PostComment, CreatePostCommentDto);
+    const commentDocument = new PostCommentModel({
+      ...comment,
       user,
-      text: commentData.text,
       name: user.name,
       avatar: user.avatar,
       post: postId,
     });
-    await comment.save();
-    postDocument.comments.unshift(comment);
+    await commentDocument.save();
+    postDocument.comments.unshift(commentDocument);
     await postDocument.save();
-    return comment.toObject();
+    return commentDocument.toObject();
   }
 
   async patchPostComment(user: User, commentId: string, commentData: CreatePostCommentDto): Promise<PostComment> {
