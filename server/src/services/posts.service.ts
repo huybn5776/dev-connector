@@ -72,13 +72,13 @@ class PostsService {
     return postDocument.toObject();
   }
 
-  async patchPost(user: UserDocument, postId: string, postData: CreatePostDto): Promise<Post> {
-    const postDocument: PostDocument | null = await this.posts
-      .findByIdAndUpdate(postId, { text: postData.text }, { new: true })
-      .populate(this.postPopulateOptions);
-    if (!postDocument) {
-      throw new HttpException(404);
+  async patchPost(userId: string, postId: string, postData: CreatePostDto): Promise<Post> {
+    const postDocument: PostDocument = await this.getPostDocument(postId);
+    if (!postDocument.user?._id || `${postDocument.user?._id}` !== userId) {
+      throw new HttpException(403);
     }
+    mapper.map(postData, Post, CreatePostDto, postDocument);
+    await postDocument.save();
     return postDocument.toObject();
   }
 
@@ -176,13 +176,13 @@ class PostsService {
     return commentDocument.toObject();
   }
 
-  async patchPostComment(user: User, commentId: string, commentData: CreatePostCommentDto): Promise<PostComment> {
-    const commentDocument = await this.comments
-      .findByIdAndUpdate(commentId, { text: commentData.text }, { new: true })
-      .populate(this.commentsPopulateOptions);
-    if (!commentDocument) {
-      throw new HttpException(404);
+  async patchPostComment(userId: string, commentId: string, commentData: CreatePostCommentDto): Promise<PostComment> {
+    const commentDocument = await this.getCommentDocument(commentId);
+    if (!commentDocument.user?._id || `${commentDocument.user._id}` !== userId) {
+      throw new HttpException(403);
     }
+    mapper.map(commentData, PostComment, CreatePostCommentDto, commentDocument);
+    await commentDocument.save();
     return commentDocument.toObject();
   }
 
