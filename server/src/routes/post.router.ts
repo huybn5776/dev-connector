@@ -49,7 +49,7 @@ class PostsRoute implements Route {
       asyncHandler(this.postsController.deleteLikeOfComment),
     );
 
-    this.router.get(`${this.path}/:id/comments`, authMiddleware, asyncHandler(this.postsController.getPostComments));
+    this.router.get(`${this.path}/:id/comments`, asyncHandler(this.postsController.getPostComments));
     this.router.post(
       `${this.path}/:id/comments`,
       validationMiddleware(CreatePostCommentDto, 'body', { skipMissingProperties: true }),
