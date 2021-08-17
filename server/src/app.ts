@@ -1,6 +1,8 @@
 /* eslint-disable import/first */
 process.env.NODE_CONFIG_DIR = `${__dirname}/configs`;
+
 import 'reflect-metadata';
+import { Server } from 'http';
 
 import express from 'express';
 
@@ -24,6 +26,7 @@ class App {
   public app: express.Application;
   public port: string | number;
   public env: string;
+  public httpServer: Server | undefined;
 
   constructor(routes: Routes[]) {
     this.app = express();
@@ -38,7 +41,7 @@ class App {
   }
 
   public listen(): void {
-    this.app.listen(this.port, () => {
+    this.httpServer = this.app.listen(this.port, () => {
       logger.info(`=================================`);
       logger.info(`======= ENV: ${this.env} =======`);
       logger.info(`🚀 App listening on the port ${this.port}`);
@@ -48,6 +51,10 @@ class App {
 
   public getServer(): express.Application {
     return this.app;
+  }
+
+  public close(): void {
+    this.httpServer?.close();
   }
 
   private connectToDatabase(): void {

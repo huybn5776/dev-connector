@@ -16,3 +16,5 @@ validateEnv();
 const app = new App([new IndexRoute(), new AuthRoute(), new UsersRoute(), new ProfileRoute(), new PostsRoute()]);
 
 app.listen();
+
+export default app;
