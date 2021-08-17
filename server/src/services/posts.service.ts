@@ -20,7 +20,7 @@ class PostsService {
   ];
   readonly postPopulateOptions: PopulateOptions[] = [
     { path: 'user', select: ['name', 'avatar'] },
-    { path: 'likes.user', select: ['name', 'avatar'] },
+    { path: 'likes.user', select: ['id'] },
     {
       path: 'comments',
       populate: this.commentsPopulateOptions,
