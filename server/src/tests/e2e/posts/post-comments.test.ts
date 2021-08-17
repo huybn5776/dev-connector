@@ -153,10 +153,12 @@ describe('Post comment tests', () => {
         .send(commentData)
         .expect(201);
 
-      const postComments: PostCommentDocument[] =
-        (await PostModel.findById(officerPost._id).populate('comments'))?.comments || [];
+      const postComments: PostComment[] =
+        (await PostModel.findById(officerPost._id).populate('comments'))?.toObject().comments || [];
       expect(postComments).toHaveLength(2);
-      expect(postComments.some((comment) => `${comment._id}` === `${originalComment._id}`)).toBeTruthy();
+      expect(postComments).toEqual(
+        expect.arrayContaining([expect.objectContaining({ _id: originalComment._id })]),
+      );
     });
 
     it('add comment, return comment detail', async () => {
@@ -352,11 +354,13 @@ describe('Post comment tests', () => {
         .delete(`/api/posts/${officerPost._id}/comments/${officerComment._id}`)
         .set('cookie', officerCookie)
         .expect(200);
-      const postComments: PostCommentDocument[] =
-        (await PostModel.findById(officerPost._id).populate('comments'))?.comments || [];
+      const postComments: PostComment[] =
+        (await PostModel.findById(officerPost._id).populate('comments'))?.toObject().comments || [];
 
       expect(postComments).toHaveLength(originalCommentsCount - 1);
-      expect(postComments.every((comment) => `${comment._id}` !== `${officerComment._id}`)).toBeTruthy();
+      expect(postComments).toEqual(
+        expect.not.arrayContaining([expect.objectContaining({ _id: officerComment._id })]),
+      );
     });
 
     it('delete comment, not mis-deleted other comment in db', async () => {
@@ -374,10 +378,10 @@ describe('Post comment tests', () => {
         .delete(`/api/posts/${officerPost._id}/comments/${officerComment._id}`)
         .set('cookie', officerCookie)
         .expect(200);
-      const postComments: PostCommentDocument[] =
-        (await PostModel.findById(officerPost._id).populate('comments'))?.comments || [];
+      const postComments: PostComment[] =
+        (await PostModel.findById(officerPost._id).populate('comments'))?.toObject().comments || [];
 
-      expect(postComments.some((comment) => `${comment._id}` === `${seniorComment._id}`)).toBeTruthy();
+      expect(postComments).toEqual(expect.arrayContaining([expect.objectContaining({ _id: seniorComment._id })]));
     });
 
     it('delete the comment that does not belong to that user, 403', async () => {
