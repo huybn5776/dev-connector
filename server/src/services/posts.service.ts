@@ -206,7 +206,9 @@ class PostsService {
   }
 
   private async getCommentDocument(id: string): Promise<PostCommentDocument> {
-    const commentDocument: PostCommentDocument | null = await this.comments.findById(id);
+    const commentDocument: PostCommentDocument | null = await this.comments
+      .findById(id)
+      .populate(this.commentsPopulateOptions);
     if (!commentDocument) {
       throw new HttpException(404);
     }
