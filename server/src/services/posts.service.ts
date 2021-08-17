@@ -90,6 +90,8 @@ class PostsService {
     if (`${postDocument.user._id}` !== userId) {
       throw new HttpException(403);
     }
+
+    await this.comments.deleteMany({ _id: { $in: postDocument.comments } });
     await postDocument.delete();
   }
 

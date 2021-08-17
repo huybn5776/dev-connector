@@ -14,6 +14,7 @@ import {
   assertListingLikes,
   assertUser,
   assertComment,
+  createPostCommentDocument,
 } from '@/tests/e2e/e2e-utils';
 import { CreatePostDto } from '@dtos/create-post.dto';
 import { PostDto } from '@dtos/post.dto';
@@ -341,6 +342,42 @@ describe('Posts tests', () => {
       await request(server).delete(`/api/posts/${officerPost._id}`).set('cookie', officerCookie).expect(204);
       const seniorPostDocument = await PostModel.findById(seniorPost._id);
       expect(seniorPostDocument).not.toBeNull();
+    });
+
+    it('delete post, also delete comments of post', async () => {
+      const officerPostComments = await PostCommentModel.insertMany([
+        createPostCommentDocument(officerUser, 'Hello everyone.'),
+        createPostCommentDocument(officerUser, 'Goodbye all.'),
+      ]);
+      officerPost.comments.push(...officerPostComments);
+      await officerPost.save();
+
+      await request(server).delete(`/api/posts/${officerPost._id}`).set('cookie', officerCookie).expect(204);
+      const commentsId = officerPostComments.map((comment) => comment._id);
+      const commentsInDb = await PostCommentModel.find({ _id: { $in: commentsId } });
+
+      expect(commentsInDb).toHaveLength(0);
+    });
+
+    it(`delete post, not delete other post's comments`, async () => {
+      const officerPostComments = await PostCommentModel.insertMany([
+        createPostCommentDocument(officerUser, 'Hello everyone.'),
+      ]);
+      officerPost.comments.push(...officerPostComments);
+      await officerPost.save();
+
+      const seniorPostComments = await PostCommentModel.insertMany([
+        createPostCommentDocument(officerUser, 'Like it.'),
+        createPostCommentDocument(officerUser, 'Great!!'),
+      ]);
+      seniorPost.comments.push(...seniorPostComments);
+      await seniorPost.save();
+
+      await request(server).delete(`/api/posts/${officerPost._id}`).set('cookie', officerCookie).expect(204);
+      const commentsId = seniorPostComments.map((comment) => comment._id);
+      const commentsInDb = await PostCommentModel.find({ _id: { $in: commentsId } });
+
+      expect(commentsInDb).toHaveLength(seniorPostComments.length);
     });
 
     it('delete the post that does not belong to that user, 403', async () => {
