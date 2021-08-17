@@ -36,7 +36,7 @@ class PostsController {
     const postData = req.body;
     const post = await this.postsService.createPost(user, postData);
     const postDto = mapper.map(post, PostDto, Post);
-    res.status(200).send(postDto);
+    res.status(201).send(postDto);
   };
 
   patchPost = async (req: Request, res: Response): Promise<void> => {
@@ -52,7 +52,7 @@ class PostsController {
     const postId = req.params.id;
     const userId = req.user.claims().id;
     await this.postsService.deletePost(userId, postId);
-    res.status(200).send();
+    res.status(204).send();
   };
 
   getLikesOfPost = async (req: Request, res: Response): Promise<void> => {
