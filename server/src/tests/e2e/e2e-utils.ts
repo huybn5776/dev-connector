@@ -19,6 +19,7 @@ import { ProfileExperience } from '@entities/profile-experience';
 import { ProfileSocial } from '@entities/profile-social';
 import { User } from '@entities/user';
 import { AuthToken } from '@interfaces/auth-token';
+import { PostCommentDocument, PostCommentModel } from '@models/post-comment.model';
 import { PostDocument, PostModel } from '@models/post.model';
 import { ProfileModel, ProfileDocument } from '@models/profile.model';
 import { UserDocument, UserModel } from '@models/user.model';
@@ -244,4 +245,8 @@ export function assertListingLikes(postLikesDto: PostLikeDto[], postLikes: PostL
     expect(postLikeDto.user.email).not.toBeDefined();
     expect(postLikeDto.user.avatar).not.toBeDefined();
   }
+}
+
+export function createPostCommentDocument(user: User, text: string): PostCommentDocument {
+  return new PostCommentModel({ text, user, name: user.name, avatar: user.avatar } as Partial<PostComment>);
 }
