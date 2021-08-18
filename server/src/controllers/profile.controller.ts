@@ -42,7 +42,7 @@ class ProfileController {
     const profileData: CreateProfileDto = req.body;
     const profile = await this.profileService.updateUserProfile(userId, profileData);
     const profileDto = mapper.map(profile, ProfileDto, Profile);
-    res.status(200).send(profileDto);
+    res.status(201).send(profileDto);
   };
 
   public patchCurrentUserProfile = async (req: Request, res: Response): Promise<void> => {
