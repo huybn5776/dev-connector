@@ -4,7 +4,7 @@ process.env.NODE_ENV = 'test';
 
 import { dbConnection } from '@databases';
 import bcrypt from 'bcrypt';
-import { connection, connect } from 'mongoose';
+import { connection, connect, Types } from 'mongoose';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import request from 'supertest';
 
@@ -215,4 +215,30 @@ async function getAuthCookie(server: Express.Application, username: string, pass
 
 export function createPostCommentDocument(user: User, text: string): PostCommentDocument {
   return new PostCommentModel({ text, user, name: user.name, avatar: user.avatar } as Partial<PostComment>);
+}
+
+export function idToString(
+  entity: undefined | string | Types.ObjectId | { id?: string; _id?: string | Types.ObjectId },
+): string | undefined {
+  if (!entity) {
+    return undefined;
+  }
+  if (typeof entity === 'string') {
+    return entity;
+  }
+  if (entity instanceof Types.ObjectId) {
+    return entity.toString();
+  }
+  if ('id' in entity && entity.id) {
+    return entity.id;
+  }
+  if ('_id' in entity) {
+    if (typeof entity._id === 'string') {
+      return entity._id;
+    }
+    if (entity._id instanceof Types.ObjectId) {
+      return entity._id?.toString();
+    }
+  }
+  return undefined;
 }
