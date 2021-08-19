@@ -19,6 +19,7 @@ import {
 import { CreateProfileDto } from '@dtos/create-profile.dto';
 import { ProfileDto } from '@dtos/profile.dto';
 import { Profile } from '@entities/profile';
+import { GithubRepo } from '@interfaces/github-repo';
 import { ProfileDocument, ProfileModel } from '@models/profile.model';
 import { UserDocument } from '@models/user.model';
 import { deleteNilProperties } from '@utils/object-utils';
@@ -180,7 +181,7 @@ describe('Profile tests', () => {
     });
   });
 
-  describe('[PATCH] /profiles/me', () => {
+  describe('[PATCH] /profile/me', () => {
     let officerCookie = '';
     let partialProfileData: CreateProfileDto;
 
@@ -243,6 +244,25 @@ describe('Profile tests', () => {
       const updatedProfile: ProfileDocument | null = await ProfileModel.findOne({ user: officerUser });
 
       expect(`${updatedProfile?.user._id}`).toBe(`${officerUser._id}`);
+    });
+  });
+
+  describe('[GET] /profile/githubRepos/:username', () => {
+    it('get github repos', async () => {
+      const response = await request(server)
+        .get(`/api/profile/githubRepos/${createOfficerProfile().githubUsername}`)
+        .expect(200);
+      const githubRepos: GithubRepo[] = response.body;
+
+      expect(githubRepos.length).toBeGreaterThan(0);
+      githubRepos.forEach((githubRepo) => {
+        expect(githubRepo.name).toBeDefined();
+        expect(githubRepo.description).toBeDefined();
+        expect(githubRepo.owner).toBeDefined();
+        expect(githubRepo.stargazerCount).toEqual(expect.any(Number));
+        expect(githubRepo.forkCount).toEqual(expect.any(Number));
+        expect(githubRepo.watcherCount).toEqual(expect.any(Number));
+      });
     });
   });
 
