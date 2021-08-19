@@ -70,7 +70,7 @@ export function assertProfile(
     user?: { id?: string; _id?: string };
   },
 ): void {
-  expect(idToString(actual.user)).toBe(idToString(expected.user));
+  expect(actual.user).toHaveSameId(expected.user);
   expect(actual.company ?? null).toBe(expected.company ?? null);
   expect(actual.website ?? null).toBe(expected.website ?? null);
   expect(actual.location ?? null).toBe(expected.location ?? null);
