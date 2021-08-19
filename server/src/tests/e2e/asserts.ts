@@ -1,4 +1,3 @@
-import { idToString } from '@/tests/e2e/e2e-utils';
 import { PostCommentDto } from '@dtos/post-comment.dto';
 import { PostLikeDto } from '@dtos/post-like.dto';
 import { ProfileEducationDto } from '@dtos/profile-education.dto';
@@ -102,28 +101,28 @@ export function assertProfileEducations(
 }
 
 export function assertProfileExperience(
-  actual: ProfileExperienceDto | ProfileExperience,
-  expected: ProfileExperienceDto | ProfileExperience,
+  actual: Omit<ProfileExperienceDto | ProfileExperience, '_id' | 'id'>,
+  expected: Omit<ProfileExperienceDto | ProfileExperience, '_id' | 'id'>,
 ): void {
   expect(actual.title ?? null).toBe(expected.title ?? null);
   expect(actual.company ?? null).toBe(expected.company ?? null);
   expect(actual.location ?? null).toBe(expected.location ?? null);
   assertDate(expected.from, actual.from);
   assertDate(expected.to, actual.to);
-  expect(actual.current ?? null).toBe(expected.current ?? null);
+  expect(actual.current ?? false).toBe(expected.current ?? false);
   expect(actual.description ?? null).toBe(expected.description ?? null);
 }
 
 export function assertProfileEducation(
-  actual: ProfileEducationDto | ProfileEducation,
-  expected: ProfileEducationDto | ProfileEducation,
+  actual: Omit<ProfileEducationDto | ProfileEducation, '_id' | 'id'>,
+  expected: Omit<ProfileEducationDto | ProfileEducation, '_id' | 'id'>,
 ): void {
   expect(expected.school ?? null).toBe(actual.school ?? null);
   expect(expected.degree ?? null).toBe(actual.degree ?? null);
   expect(expected.fieldOfStudy ?? null).toBe(actual.fieldOfStudy ?? null);
   assertDate(expected.from, actual.from);
   assertDate(expected.to, actual.to);
-  expect(expected.current ?? null).toBe(actual.current ?? null);
+  expect(expected.current ?? false).toBe(actual.current ?? false);
   expect(expected.description ?? null).toBe(actual.description ?? null);
 }
 
