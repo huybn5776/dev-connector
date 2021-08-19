@@ -179,9 +179,7 @@ query {
 						name
 						description
 						owner {
-							... on User {
-								login
-							}
+							login
 						}
 						stargazerCount
 						forkCount
