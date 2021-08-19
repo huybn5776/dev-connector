@@ -3,6 +3,7 @@ import express from 'express';
 import request from 'supertest';
 
 import App from '@/app';
+import { assertUser, assertComment, assertListingLikes } from '@/tests/e2e/asserts';
 import {
   cleanAndDisconnectToDb,
   connectAndClearDb,
@@ -11,9 +12,6 @@ import {
   loginWithSenior,
   loginWithOfficer,
   getApp,
-  assertListingLikes,
-  assertUser,
-  assertComment,
   createPostCommentDocument,
 } from '@/tests/e2e/e2e-utils';
 import { CreatePostDto } from '@dtos/create-post.dto';
