@@ -27,7 +27,16 @@
 
 .page-content {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+
+  &::after {
+    display: block;
+    float: right;
+    width: 100%;
+    height: 24px;
+    content: '';
+  }
 }
 
 .page-layout {
