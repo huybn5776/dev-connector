@@ -19,7 +19,7 @@
       "@models/*": ["src/models/*"],
       "@routes/*": ["src/routes/*"],
       "@services/*": ["src/services/*"],
-      "class-transformer": ["../core/node_modules/class-transformer"]
+      "class-transformer": ["/../server/node_modules/class-transformer"]
     }
   },
   "include": ["../core/**.*.ts", "src/**/*.ts", "src/**/*.json", ".env"],
