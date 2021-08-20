@@ -58,7 +58,7 @@ const schema = yup.object().shape({
     .nullable()
     .transform((value, originalValue) => (originalValue === '' ? null : value)),
   current: yup.boolean().label('Current'),
-  description: yup.string().label('Description'),
+  description: yup.string().label('Description').nullable(),
 });
 
 const FormLabelInput = withFormLabel(FormInput);

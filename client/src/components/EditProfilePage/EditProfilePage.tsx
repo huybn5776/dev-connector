@@ -41,17 +41,17 @@ interface EditProfileForm {
 
 const schema = yup.object().shape({
   status: yup.string().label('Status').required(),
-  company: yup.string().label('Company'),
-  website: yup.string().label('Website').url(),
-  location: yup.string().label('Location'),
-  skills: yup.string().label('Skills').required(),
-  bio: yup.string().label('Bio'),
-  githubUsername: yup.string().label('Github username'),
-  youtube: yup.string().label('Youtube').url(),
-  twitter: yup.string().label('Twitter').url(),
-  facebook: yup.string().label('Facebook').url(),
-  linkedin: yup.string().label('Linkedin').url(),
-  instagram: yup.string().label('Instagram').url(),
+  company: yup.string().label('Company').nullable(),
+  website: yup.string().label('Website').url().nullable(),
+  location: yup.string().label('Location').nullable(),
+  skills: yup.string().label('Skills').required().nullable(),
+  bio: yup.string().label('Bio').nullable(),
+  githubUsername: yup.string().label('Github username').nullable(),
+  youtube: yup.string().label('Youtube').url().nullable(),
+  twitter: yup.string().label('Twitter').url().nullable(),
+  facebook: yup.string().label('Facebook').url().nullable(),
+  linkedin: yup.string().label('Linkedin').url().nullable(),
+  instagram: yup.string().label('Instagram').url().nullable(),
 });
 
 interface PropsFromState {
