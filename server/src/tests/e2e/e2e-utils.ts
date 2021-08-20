@@ -192,25 +192,24 @@ export async function getApp(): Promise<App> {
 }
 
 export function loginWithOfficer(server: Express.Application): Promise<string> {
-  return getAuthCookie(server, officerUserData.name, officerUserData.password);
+  return getAuthCookie(server, officerUserData.email, officerUserData.password);
 }
 
 export function loginWithSenior(server: Express.Application): Promise<string> {
-  return getAuthCookie(server, seniorUserData.name, seniorUserData.password);
+  return getAuthCookie(server, seniorUserData.email, seniorUserData.password);
 }
 
 async function getAuthCookie(server: Express.Application, username: string, password: string): Promise<string> {
-  const authToken: AuthToken = (
-    await request(server)
-      .post('/api/oauth/token')
-      .send({
-        grant_type: 'password',
-        username,
-        password,
-      })
-      .expect(200)
-  ).body;
+  const authToken: AuthToken = (await getLoginRequest(server, username, password).expect(200)).body;
   return `Authorization=${authToken.access_token}`;
+}
+
+export function getLoginRequest(server: Express.Application, username: string, password: string): request.Test {
+  return request(server).post('/api/oauth/token').send({
+    grant_type: 'password',
+    username,
+    password,
+  });
 }
 
 export function createPostCommentDocument(user: User, text: string): PostCommentDocument {
