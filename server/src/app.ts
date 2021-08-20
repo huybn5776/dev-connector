@@ -4,7 +4,7 @@ process.env.NODE_CONFIG_DIR = `${__dirname}/configs`;
 import 'reflect-metadata';
 import { Server } from 'http';
 
-import express from 'express';
+import express, { Request } from 'express';
 
 import { dbConnection } from '@databases';
 import compression from 'compression';
@@ -14,13 +14,13 @@ import helmet from 'helmet';
 import hpp from 'hpp';
 import { connect, set } from 'mongoose';
 import morgan from 'morgan';
+import { useExpressServer } from 'routing-controllers';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 
-import Routes from '@/interfaces/routes';
 import { logger, stream } from '@/utils/logger';
-import { globalAuthMiddleware } from '@middlewares/auth.middleware';
-import errorMiddleware from '@middlewares/error.middleware';
+import { authorizationChecker } from '@middlewares/auth.middleware';
+import errorMiddleware, { ErrorMiddleware } from '@middlewares/error.middleware';
 
 class App {
   public app: express.Application;
@@ -28,14 +28,14 @@ class App {
   public env: string;
   public httpServer: Server | undefined;
 
-  constructor(routes: Routes[]) {
+  constructor(controllers: (new () => unknown)[]) {
     this.app = express();
     this.port = process.env.PORT || 3000;
     this.env = process.env.NODE_ENV || 'development';
 
     this.connectToDatabase();
     this.initializeMiddlewares();
-    this.initializeRoutes(routes);
+    this.initializeRouterController(controllers);
     this.initializeSwagger();
     this.initializeErrorHandling();
   }
@@ -80,12 +80,20 @@ class App {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(cookieParser());
-    this.app.use(globalAuthMiddleware);
   }
 
-  private initializeRoutes(routes: Routes[]): void {
-    routes.forEach((route) => {
-      this.app.use('/api/', route.router);
+  private initializeRouterController(controllers: { new(): unknown }[]) :void{
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useExpressServer(this.app, {
+      routePrefix: '/api',
+      middlewares: [ErrorMiddleware],
+      controllers,
+      defaultErrorHandler: false,
+      validation: { skipMissingProperties: true },
+      authorizationChecker,
+      async currentUserChecker({ request }: { request: Request }) {
+        return request.user;
+      },
     });
   }
 

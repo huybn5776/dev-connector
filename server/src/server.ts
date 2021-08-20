@@ -5,15 +5,14 @@ import 'dotenv/config';
 
 import App from '@/app';
 import validateEnv from '@/utils/validateEnv';
-import AuthRoute from '@routes/auth.route';
-import IndexRoute from '@routes/index.route';
-import PostsRoute from '@routes/post.router';
-import ProfileRoute from '@routes/profile.route';
-import UsersRoute from '@routes/users.route';
+import AuthController from '@controllers/auth.controller';
+import PostsController from '@controllers/posts.controller';
+import ProfileController from '@controllers/profile.controller';
+import UsersController from '@controllers/users.controller';
 
 validateEnv();
 
-const app = new App([new IndexRoute(), new AuthRoute(), new UsersRoute(), new ProfileRoute(), new PostsRoute()]);
+const app = new App([AuthController, UsersController, ProfileController, PostsController]);
 
 app.listen();
 

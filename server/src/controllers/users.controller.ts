@@ -1,63 +1,82 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 
+import {
+  JsonController,
+  Get,
+  Param,
+  CurrentUser,
+  Authorized,
+  Post,
+  Body,
+  Patch,
+  HttpCode,
+  Delete,
+  Res,
+  OnUndefined,
+} from 'routing-controllers';
+
+import { RequestUser } from '@/interfaces/request-user';
 import { CreateUserDto } from '@dtos/create-user.dto';
 import { PatchUserDto } from '@dtos/patch-user.dto';
 import { UserDto } from '@dtos/user.dto';
 import { User } from '@entities/user';
+import { AuthToken } from '@interfaces/auth-token';
 import { mapper } from '@mappers';
 import AuthService from '@services/auth.service';
 import ProfileService from '@services/profile.service';
 import UserService from '@services/users.service';
 
+@JsonController('/users')
 class UsersController {
   readonly authService = new AuthService();
   readonly userService = new UserService();
   readonly profileService = new ProfileService();
 
-  public getUsers = async (req: Request, res: Response): Promise<void> => {
+  @Get()
+  async getUsers(): Promise<UserDto[]> {
     const users = await this.userService.findAllUser();
-    const userDtoList = mapper.mapArray(users, UserDto, User);
-    res.status(200).json(userDtoList);
-  };
+    return mapper.mapArray(users, UserDto, User);
+  }
 
-  public getCurrentUser = async (req: Request, res: Response): Promise<void> => {
-    const currentUserDocument = await req.user.current();
-    const userDto = mapper.map(currentUserDocument.toObject() as User, UserDto, User);
-    res.status(200).json(userDto);
-  };
+  @Get('/me')
+  @Authorized()
+  async getCurrentUser(@CurrentUser() currentUser: RequestUser): Promise<UserDto> {
+    const user = await currentUser.current();
+    return mapper.map(user.toObject() as User, UserDto, User);
+  }
 
-  public getUserById = async (req: Request, res: Response): Promise<void> => {
-    const userId: string = req.params.id;
-    const user = await this.userService.findUserById(userId);
-    const userDto = mapper.map(user, UserDto, User);
-    res.status(200).json(userDto);
-  };
+  @Get('/:id')
+  async getUserById(@Param('id') id: string): Promise<UserDto> {
+    const user = await this.userService.findUserById(id);
+    return mapper.map(user, UserDto, User);
+  }
 
-  public createUser = async (req: Request, res: Response): Promise<void> => {
-    const userData: CreateUserDto = req.body;
+  @Post()
+  @HttpCode(201)
+  async createUser(@Body() userData: CreateUserDto, @Res() res: Response): Promise<AuthToken> {
     const user = await this.userService.createUser(userData);
     const token = this.authService.createToken(user);
-
     res.setHeader('Set-Cookie', [this.authService.getAuthCookie(token)]);
-    res.status(201).json(token);
-  };
+    return token;
+  }
 
-  public patchCurrentUser = async (req: Request, res: Response): Promise<void> => {
-    const userId: string = req.user.claims().id;
-    const userData: PatchUserDto = req.body;
+  @Patch('/me')
+  @Authorized()
+  async patchCurrentUser(@CurrentUser() currentUser: RequestUser, @Body() userData: PatchUserDto): Promise<UserDto> {
+    const userId: string = currentUser.claims().id;
     const updatedUser = await this.userService.patchUser(userId, userData);
-    const userDto = mapper.map(updatedUser, UserDto, User);
+    return mapper.map(updatedUser, UserDto, User);
+  }
 
-    res.status(200).json(userDto);
-  };
-
-  public deleteUser = async (req: Request, res: Response): Promise<void> => {
-    const userId: string = req.params.id;
+  @Delete('/me')
+  @Authorized()
+  @OnUndefined(204)
+  async deleteUser(@CurrentUser() currentUser: RequestUser, @Res() res: Response): Promise<void> {
+    const userId: string = currentUser.claims().id;
     await this.userService.deleteUser(userId);
     await this.profileService.deleteProfileOfUser(userId);
-
-    res.status(204).send();
-  };
+    res.setHeader('Set-Cookie', [this.authService.getRemoveAuthCookie()]);
+  }
 }
 
 export default UsersController;

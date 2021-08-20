@@ -1,5 +1,18 @@
-import { Request, Response } from 'express';
+import {
+  JsonController,
+  Get,
+  Param,
+  CurrentUser,
+  Authorized,
+  Post,
+  Body,
+  Patch,
+  HttpCode,
+  Delete,
+} from 'routing-controllers';
 
+import { RequestUser } from '@/interfaces/request-user';
+import { CreateProfileEducationDto } from '@dtos/create-profile-education.dto';
 import { CreateProfileExperienceDto } from '@dtos/create-profile-experience.dto';
 import { CreateProfileDto } from '@dtos/create-profile.dto';
 import { PatchProfileEducationDto } from '@dtos/patch-profile-education.dto';
@@ -11,112 +24,134 @@ import { ProfileDto } from '@dtos/profile.dto';
 import { Profile } from '@entities/profile';
 import { ProfileEducation } from '@entities/profile-education';
 import { ProfileExperience } from '@entities/profile-experience';
+import { GithubRepo } from '@interfaces/github-repo';
 import { mapper } from '@mappers';
 import ProfileService from '@services/profile.service';
 
+@JsonController('/profile')
 class ProfileController {
   readonly profileService = new ProfileService();
 
-  public getAllProfiles = async (req: Request, res: Response): Promise<void> => {
+  @Get()
+  async getAllProfiles(): Promise<ProfileDto[]> {
     const profiles = await this.profileService.getProfiles();
-    const profileDtoList = mapper.mapArray(profiles, ProfileDto, Profile);
-    res.status(200).send(profileDtoList);
-  };
+    return mapper.mapArray(profiles, ProfileDto, Profile);
+  }
 
-  public getProfilesWithId = async (req: Request, res: Response): Promise<void> => {
-    const { userId } = req.params;
+  @Get('/user/:id')
+  async getProfilesWithId(@Param('id') userId: string): Promise<ProfileDto> {
     const profile = await this.profileService.getUserProfile(userId);
-    const profileDto = mapper.map(profile, ProfileDto, Profile);
-    res.status(200).send(profileDto);
-  };
+    return mapper.map(profile, ProfileDto, Profile);
+  }
 
-  public getCurrentUserProfile = async (req: Request, res: Response): Promise<void> => {
-    const userId = req.user.claims().id;
+  @Get('/me')
+  @Authorized()
+  async getCurrentUserProfile(@CurrentUser() currentUser: RequestUser): Promise<ProfileDto> {
+    const userId = currentUser.claims().id;
     const profile = await this.profileService.getUserProfile(userId);
-    const profileDto = mapper.map(profile, ProfileDto, Profile);
-    res.status(200).send(profileDto);
-  };
+    return mapper.map(profile, ProfileDto, Profile);
+  }
 
-  public updateCurrentUserProfile = async (req: Request, res: Response): Promise<void> => {
-    const userId = req.user.claims().id;
-    const profileData: CreateProfileDto = req.body;
+  @Post('/me')
+  @Authorized()
+  @HttpCode(201)
+  async updateCurrentUserProfile(
+    @Body() profileData: CreateProfileDto,
+    @CurrentUser() currentUser: RequestUser,
+  ): Promise<ProfileDto> {
+    const userId = currentUser.claims().id;
     const profile = await this.profileService.updateUserProfile(userId, profileData);
-    const profileDto = mapper.map(profile, ProfileDto, Profile);
-    res.status(201).send(profileDto);
-  };
+    return mapper.map(profile, ProfileDto, Profile);
+  }
 
-  public patchCurrentUserProfile = async (req: Request, res: Response): Promise<void> => {
-    const userId = req.user.claims().id;
-    const profileData: PatchProfileDto = req.body;
+  @Patch('/me')
+  @Authorized()
+  async patchCurrentUserProfile(
+    @Body() profileData: PatchProfileDto,
+    @CurrentUser() currentUser: RequestUser,
+  ): Promise<ProfileDto> {
+    const userId = currentUser.claims().id;
     const profile = await this.profileService.patchUserProfile(userId, profileData);
-    const profileDto = mapper.map(profile, ProfileDto, Profile);
-    res.status(200).send(profileDto);
-  };
+    return mapper.map(profile, ProfileDto, Profile);
+  }
 
-  public addCurrentUserExperience = async (req: Request, res: Response): Promise<void> => {
-    const userId = req.user.claims().id;
-    const experienceData: CreateProfileExperienceDto = req.body;
+  @Post('/me/experiences')
+  @Authorized()
+  @HttpCode(201)
+  async addCurrentUserExperience(
+    @Body() experienceData: CreateProfileExperienceDto,
+    @CurrentUser() currentUser: RequestUser,
+  ): Promise<ProfileExperienceDto> {
+    const userId = currentUser.claims().id;
     const profileExperience = await this.profileService.addUserProfileExperience(userId, experienceData);
-    const experienceDto = mapper.map(profileExperience, ProfileExperienceDto, ProfileExperience);
-    res.status(201).send(experienceDto);
-  };
+    return mapper.map(profileExperience, ProfileExperienceDto, ProfileExperience);
+  }
 
-  public patchCurrentUserExperience = async (req: Request, res: Response): Promise<void> => {
-    const profileExperience = await this.patchData<PatchProfileExperienceDto, ProfileExperience>(
-      req,
-      this.profileService.patchUserProfileExperience.bind(this.profileService),
+  @Patch('/me/experiences/:id')
+  @Authorized()
+  async patchCurrentUserExperience(
+    @Param('id') experienceId: string,
+    @Body() experienceData: PatchProfileExperienceDto,
+    @CurrentUser() currentUser: RequestUser,
+  ): Promise<ProfileExperienceDto> {
+    const userId = currentUser.claims().id;
+    const profileExperience = await this.profileService.patchUserProfileExperience(
+      userId,
+      experienceId,
+      experienceData,
     );
-    const experienceDto = mapper.map(profileExperience, ProfileExperienceDto, ProfileExperience);
-    res.status(200).send(experienceDto);
-  };
+    return mapper.map(profileExperience, ProfileExperienceDto, ProfileExperience);
+  }
 
-  public deleteCurrentUserProfileExperience = async (req: Request, res: Response): Promise<void> => {
-    const userId = req.user.claims().id;
-    const experienceId: string = req.params.id;
+  @Delete('/me/experiences/:id')
+  @Authorized()
+  async deleteCurrentUserProfileExperience(
+    @Param('id') experienceId: string,
+    @CurrentUser() currentUser: RequestUser,
+  ): Promise<ProfileExperienceDto[]> {
+    const userId = currentUser.claims().id;
     const profileExperiences = await this.profileService.deleteProfileExperienceOfUser(userId, experienceId);
-    const experienceDtoList = mapper.mapArray(profileExperiences, ProfileExperienceDto, ProfileExperience);
-    res.status(200).send(experienceDtoList);
-  };
+    return mapper.mapArray(profileExperiences, ProfileExperienceDto, ProfileExperience);
+  }
 
-  public addCurrentUserEducation = async (req: Request, res: Response): Promise<void> => {
-    const userId = req.user.claims().id;
-    const education = req.body;
-    const profileEducation = await this.profileService.addUserProfileEducation(userId, education);
-    const experienceDto = mapper.map(profileEducation, ProfileEducationDto, ProfileEducation);
-    res.status(201).send(experienceDto);
-  };
+  @Post('/me/educations')
+  @Authorized()
+  @HttpCode(201)
+  async addCurrentUserEducation(
+    @Body() educationData: CreateProfileEducationDto,
+    @CurrentUser() currentUser: RequestUser,
+  ): Promise<ProfileEducationDto> {
+    const userId = currentUser.claims().id;
+    const profileEducation = await this.profileService.addUserProfileEducation(userId, educationData);
+    return mapper.map(profileEducation, ProfileEducationDto, ProfileEducation);
+  }
 
-  public patchCurrentUserEducation = async (req: Request, res: Response): Promise<void> => {
-    const profileEducation = await this.patchData<PatchProfileEducationDto, ProfileEducation>(
-      req,
-      this.profileService.patchUserProfileEducation.bind(this.profileService),
-    );
-    const experienceDto = mapper.map(profileEducation, ProfileEducationDto, ProfileEducation);
-    res.status(200).send(experienceDto);
-  };
+  @Patch('/me/educations/:id')
+  @Authorized()
+  async patchCurrentUserEducation(
+    @Param('id') educationId: string,
+    @Body() educationData: PatchProfileEducationDto,
+    @CurrentUser() currentUser: RequestUser,
+  ): Promise<ProfileEducationDto> {
+    const userId = currentUser.claims().id;
+    const profileEducation = await this.profileService.patchUserProfileEducation(userId, educationId, educationData);
+    return mapper.map(profileEducation, ProfileEducationDto, ProfileEducation);
+  }
 
-  public deleteCurrentUserProfileEducation = async (req: Request, res: Response): Promise<void> => {
-    const userId = req.user.claims().id;
-    const educationId: string = req.params.id;
+  @Delete('/me/educations/:id')
+  @Authorized()
+  async deleteCurrentUserProfileEducation(
+    @Param('id') educationId: string,
+    @CurrentUser() currentUser: RequestUser,
+  ): Promise<ProfileEducationDto[]> {
+    const userId = currentUser.claims().id;
     const profileEducations = await this.profileService.deleteProfileEducationOfUser(userId, educationId);
-    const experienceDtoList = mapper.mapArray(profileEducations, ProfileEducationDto, ProfileEducation);
-    res.status(200).send(experienceDtoList);
-  };
+    return mapper.mapArray(profileEducations, ProfileEducationDto, ProfileEducation);
+  }
 
-  public getGithubPinnedRepos = async (req: Request, res: Response): Promise<void> => {
-    const { username } = req.params;
-    const githubRepos = await this.profileService.getGithubPinnedRepos(username);
-    res.status(200).send(githubRepos);
-  };
-
-  private patchData<T, R>(
-    req: Request,
-    patchMethod: (userId: string, dataId: string, patchDate: T) => Promise<R>,
-  ): Promise<R> {
-    const userId = req.user.claims().id;
-    const dataId: string = req.params.id;
-    const patchData: T = req.body;
-    return patchMethod(userId, dataId, patchData);
+  @Get('/githubRepos/:username')
+  getGithubPinnedRepos(@Param('username') username: string): Promise<GithubRepo[]> {
+    return this.profileService.getGithubPinnedRepos(username);
   }
 }
 

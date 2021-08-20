@@ -2,9 +2,11 @@ import { NextFunction, Request, Response } from 'express';
 
 import config from 'config';
 import jwt, { TokenExpiredError } from 'jsonwebtoken';
+import { Action } from 'routing-controllers';
+import { AuthorizationChecker } from 'routing-controllers/types/AuthorizationChecker';
 
+import { RequestUser } from '@/interfaces/request-user';
 import { AuthException, AuthErrorType } from '@exceptions/auth-exception';
-import HttpException from '@exceptions/http-exception';
 import { DataStoredInToken } from '@interfaces/auth.interface';
 import { UserDocument, UserModel } from '@models/user.model';
 
@@ -12,18 +14,20 @@ declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     interface Request {
-      user: {
-        claims: () => {
-          id: string;
-        };
-        current: () => Promise<UserDocument>;
-      };
+      user: RequestUser;
       token: string;
     }
   }
 }
+export const authorizationChecker: AuthorizationChecker = async (action: Action) => {
+  const userId = await authMiddleware(action.request, action.response);
+  if (!userId) {
+    throw new AuthException(AuthErrorType.InvalidToken, 'No token');
+  }
+  return true;
+};
 
-const authMiddleware = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+const authMiddleware = async (req: Request, res: Response, next?: NextFunction): Promise<string | null> => {
   try {
     const Authorization = req.cookies.Authorization || req.header('Authorization')?.split('Bearer ')[1] || null;
 
@@ -38,36 +42,26 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction): 
           id: userId,
         }),
         current: async () => {
-          user = user ?? await UserModel.findById(userId).select(['-password', '-__v']);
+          user = user ?? (await UserModel.findById(userId).select(['-password', '-__v']));
           if (!user) {
             throw new AuthException(AuthErrorType.InvalidToken, 'The user is not exist');
           }
           return user;
         },
       };
-      next();
-    } else {
-      next(new AuthException(AuthErrorType.InvalidToken, 'No token'));
+      next?.();
+      return userId;
     }
+    next?.(new AuthException(AuthErrorType.InvalidToken, 'No token'));
+    return null;
   } catch (error) {
     if (error instanceof TokenExpiredError) {
-      next(new AuthException(AuthErrorType.InvalidToken, 'The access token expired'));
-      return;
+      next?.(new AuthException(AuthErrorType.InvalidToken, 'The access token expired'));
+      return null;
     }
-    next(new AuthException(AuthErrorType.InvalidToken, 'Invalid token'));
+    next?.(new AuthException(AuthErrorType.InvalidToken, 'Invalid token'));
   }
-};
-
-export const globalAuthMiddleware = (req: Request, res: Response, next: NextFunction): void => {
-  req.user = {
-    claims() {
-      throw new HttpException(500, 'Unauthorized');
-    },
-    current() {
-      throw new HttpException(500, 'Unauthorized');
-    },
-  };
-  next();
+  return null;
 };
 
 export default authMiddleware;

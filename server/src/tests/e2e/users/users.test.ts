@@ -61,7 +61,7 @@ describe('Users tests', () => {
     });
   });
 
-  describe('[GET] /user/:id', () => {
+  describe('[GET] /users/:id', () => {
     let officerUser: UserDocument;
     let seniorUser: UserDocument;
 
@@ -84,7 +84,7 @@ describe('Users tests', () => {
     });
   });
 
-  describe('[POST] /user/:id', () => {
+  describe('[POST] /users/me', () => {
     let userData: CreateUserDto;
 
     beforeEach(async () => {
@@ -130,7 +130,7 @@ describe('Users tests', () => {
     });
   });
 
-  describe('[PATCH] /user/:id', () => {
+  describe('[PATCH] /users/me', () => {
     let officerUser: UserDocument;
     let officerCookie = '';
 
@@ -142,7 +142,7 @@ describe('Users tests', () => {
     it('patch user without auth, 401', async () => {
       const userData: PatchUserDto = { name: 'Domingo' };
 
-      const response = await request(server).patch(`/api/users/${officerUser._id}`).send(userData);
+      const response = await request(server).patch('/api/users/me').send(userData);
 
       expect(response.statusCode).toBe(401);
     });
@@ -151,7 +151,7 @@ describe('Users tests', () => {
       const userData: PatchUserDto = { name: 'Domingo' };
 
       await request(server)
-        .patch(`/api/users/${officerUser._id}`)
+        .patch('/api/users/me')
         .set('cookie', officerCookie)
         .send(userData)
         .expect(200);
@@ -165,7 +165,7 @@ describe('Users tests', () => {
       const userData: PatchUserDto = { name: 'Domingo' };
 
       const response = await request(server)
-        .patch(`/api/users/${officerUser._id}`)
+        .patch('/api/users/me')
         .set('cookie', officerCookie)
         .send(userData)
         .expect(200);
@@ -178,7 +178,7 @@ describe('Users tests', () => {
       const userData = { password: 'aiDae9cie' };
 
       await request(server)
-        .patch(`/api/users/${officerUser._id}`)
+        .patch('/api/users/me')
         .set('cookie', officerCookie)
         .send(userData)
         .expect(200);
@@ -191,7 +191,7 @@ describe('Users tests', () => {
     });
   });
 
-  describe('[DELETE] /user/:id', () => {
+  describe('[DELETE] /users/me', () => {
     let officerUser: UserDocument;
     let officerCookie = '';
 
@@ -201,14 +201,14 @@ describe('Users tests', () => {
     });
 
     it('delete user without auth, 401', async () => {
-      const response = await request(server).delete(`/api/users/${officerUser._id}`);
+      const response = await request(server).delete('/api/users/me');
 
       expect(response.statusCode).toBe(401);
     });
 
-    it('delete user, does delete it in db', async () => {
+    it('delete current user, does delete it in db', async () => {
       await request(server)
-        .delete(`/api/users/${officerUser._id}`)
+        .delete('/api/users/me')
         .set('cookie', officerCookie)
         .expect(204);
       const userDocument: UserDocument | null = await UserModel.findById(officerUser._id);

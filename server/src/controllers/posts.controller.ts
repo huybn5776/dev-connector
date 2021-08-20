@@ -1,139 +1,173 @@
-import { Request, Response } from 'express';
+import {
+  Get,
+  JsonController,
+  Param,
+  HttpCode,
+  CurrentUser,
+  Body,
+  Patch,
+  Delete,
+  Post,
+  Authorized,
+  OnUndefined,
+} from 'routing-controllers';
 
+import { RequestUser } from '@/interfaces/request-user';
 import { CreatePostCommentDto } from '@dtos/create-post-comment.dto';
+import { CreatePostDto } from '@dtos/create-post.dto';
 import { PostCommentDto } from '@dtos/post-comment.dto';
 import { PostLikeDto } from '@dtos/post-like.dto';
 import { PostDto } from '@dtos/post.dto';
-import { Post } from '@entities/post';
+import { Post as AppPost } from '@entities/post';
 import { PostComment } from '@entities/post-comment';
 import { PostLike } from '@entities/post-like';
 import { mapper } from '@mappers';
 import PostsService from '@services/posts.service';
 
+@JsonController('/posts')
 class PostsController {
   readonly postsService = new PostsService();
 
-  getPosts = async (req: Request, res: Response): Promise<void> => {
+  @Get()
+  async getPosts(): Promise<PostDto[]> {
     const posts = await this.postsService.getPosts();
-    const postDtoList = mapper.mapArray(posts, PostDto, Post);
+    const postDtoList = mapper.mapArray(posts, PostDto, AppPost);
     const commentCountMap = await this.postsService.getPostsCommentsCount(postDtoList.map((post) => post.id));
-    const postsWithCommentsCount: PostDto[] = postDtoList.map((post) => ({
+    return postDtoList.map((post) => ({
       ...post,
       commentsCount: commentCountMap[post.id],
     }));
-    res.status(200).send(postsWithCommentsCount);
-  };
+  }
 
-  getPost = async (req: Request, res: Response): Promise<void> => {
-    const { id } = req.params;
+  @Get('/:id')
+  async getPost(@Param('id') id: string): Promise<PostDto> {
     const post = await this.postsService.getPost(id);
-    const postDto = mapper.map(post, PostDto, Post);
-    res.status(200).send(postDto);
-  };
+    return mapper.map(post, PostDto, AppPost);
+  }
 
-  createPost = async (req: Request, res: Response): Promise<void> => {
-    const user = await req.user.current();
-    const postData = req.body;
+  @Post('/')
+  @Authorized()
+  @HttpCode(201)
+  async createPost(@Body() postData: CreatePostDto, @CurrentUser() currentUser: RequestUser): Promise<PostDto> {
+    const user = await currentUser.current();
     const post = await this.postsService.createPost(user, postData);
-    const postDto = mapper.map(post, PostDto, Post);
-    res.status(201).send(postDto);
-  };
+    return mapper.map(post, PostDto, AppPost);
+  }
 
-  patchPost = async (req: Request, res: Response): Promise<void> => {
-    const { id } = req.params;
-    const userId = req.user.claims().id;
-    const postData = req.body;
+  @Patch('/:id')
+  @Authorized()
+  async patchPost(
+    @Param('id') id: string,
+    @Body() postData: CreatePostDto,
+    @CurrentUser() currentUser: RequestUser,
+  ): Promise<PostDto> {
+    const userId = currentUser.claims().id;
     const post = await this.postsService.patchPost(userId, id, postData);
-    const postDto = mapper.map(post, PostDto, Post);
-    res.status(200).send(postDto);
-  };
+    return mapper.map(post, PostDto, AppPost);
+  }
 
-  deletePost = async (req: Request, res: Response): Promise<void> => {
-    const postId = req.params.id;
-    const userId = req.user.claims().id;
+  @Delete('/:id')
+  @Authorized()
+  @OnUndefined(204)
+  async deletePost(@Param('id') postId: string, @CurrentUser() currentUser: RequestUser): Promise<void> {
+    const userId = currentUser.claims().id;
     await this.postsService.deletePost(userId, postId);
-    res.status(204).send();
-  };
+  }
 
-  getLikesOfPost = async (req: Request, res: Response): Promise<void> => {
-    const postId = req.params.id;
+  @Get('/:id/likes')
+  async getLikesOfPost(@Param('id') postId: string): Promise<PostLikeDto[]> {
     const likes = await this.postsService.getPostLikes(postId);
-    const likesDto = mapper.mapArray(likes, PostLikeDto, PostLike);
-    res.status(200).send(likesDto);
-  };
+    return mapper.mapArray(likes, PostLikeDto, PostLike);
+  }
 
-  addLikeToPost = async (req: Request, res: Response): Promise<void> => {
-    const postId = req.params.id;
-    const userId = req.user.claims().id;
+  @Post('/:id/likes')
+  @Authorized()
+  @HttpCode(201)
+  async addLikeToPost(@Param('id') postId: string, @CurrentUser() currentUser: RequestUser): Promise<PostLikeDto[]> {
+    const userId = currentUser.claims().id;
     const likes = await this.postsService.addLikeToPost(userId, postId);
-    const likesDto = mapper.mapArray(likes, PostLikeDto, PostLike);
-    res.status(201).send(likesDto);
-  };
+    return mapper.mapArray(likes, PostLikeDto, PostLike);
+  }
 
-  deleteLikeOfPost = async (req: Request, res: Response): Promise<void> => {
-    const postId = req.params.id;
-    const userId = req.user.claims().id;
+  @Delete('/:id/likes')
+  @Authorized()
+  async deleteLikeOfPost(@Param('id') postId: string, @CurrentUser() currentUser: RequestUser): Promise<PostLikeDto[]> {
+    const userId = currentUser.claims().id;
     const likes = await this.postsService.deleteLikeOfPost(userId, postId);
-    const likesDto = mapper.mapArray(likes, PostLikeDto, PostLike);
-    res.status(200).send(likesDto);
-  };
+    return mapper.mapArray(likes, PostLikeDto, PostLike);
+  }
 
-  getLikesOfComment = async (req: Request, res: Response): Promise<void> => {
-    const commentId = req.params.id;
+  @Get('/comments/:id/likes')
+  async getLikesOfComment(@Param('id') commentId: string): Promise<PostLikeDto[]> {
     const likes = await this.postsService.getCommentLikes(commentId);
-    const likesDto = mapper.mapArray(likes, PostLikeDto, PostLike);
-    res.status(200).send(likesDto);
-  };
+    return mapper.mapArray(likes, PostLikeDto, PostLike);
+  }
 
-  addLikeToComment = async (req: Request, res: Response): Promise<void> => {
-    const commentId = req.params.id;
-    const userId = req.user.claims().id;
+  @Post('/comments/:id/likes')
+  @Authorized()
+  @HttpCode(201)
+  async addLikeToComment(
+    @Param('id') commentId: string,
+    @CurrentUser() currentUser: RequestUser,
+  ): Promise<PostLikeDto[]> {
+    const userId = currentUser.claims().id;
     const likes = await this.postsService.addLikeToComment(userId, commentId);
-    const likesDto = mapper.mapArray(likes, PostLikeDto, PostLike);
-    res.status(201).send(likesDto);
-  };
+    return mapper.mapArray(likes, PostLikeDto, PostLike);
+  }
 
-  deleteLikeOfComment = async (req: Request, res: Response): Promise<void> => {
-    const commentId = req.params.id;
-    const userId = req.user.claims().id;
+  @Delete('/comments/:id/likes')
+  @Authorized()
+  async deleteLikeOfComment(
+    @Param('id') commentId: string,
+    @CurrentUser() currentUser: RequestUser,
+  ): Promise<PostLikeDto[]> {
+    const userId = currentUser.claims().id;
     const likes = await this.postsService.deleteLikeOfComment(userId, commentId);
-    const likesDto = mapper.mapArray(likes, PostLikeDto, PostLike);
-    res.status(200).send(likesDto);
-  };
+    return mapper.mapArray(likes, PostLikeDto, PostLike);
+  }
 
-  getPostComments = async (req: Request, res: Response): Promise<void> => {
-    const postId = req.params.id;
+  @Get('/:id/comments')
+  async getPostComments(@Param('id') postId: string): Promise<PostCommentDto[]> {
     const comments = await this.postsService.getPostComments(postId);
-    const commentDtoList = mapper.mapArray(comments, PostCommentDto, PostComment);
-    res.status(200).send(commentDtoList);
-  };
+    return mapper.mapArray(comments, PostCommentDto, PostComment);
+  }
 
-  addPostComment = async (req: Request, res: Response): Promise<void> => {
-    const postId = req.params.id;
-    const user = await req.user.current();
-    const commentData: CreatePostCommentDto = req.body;
-    const comment = await this.postsService.addPostComment(user, postId, commentData);
-    const commentDto = mapper.map(comment, PostCommentDto, PostComment);
-    res.status(201).send(commentDto);
-  };
+  @Post('/:id/comments')
+  @Authorized()
+  @HttpCode(201)
+  async addPostComment(
+    @Param('id') postId: string,
+    @CurrentUser() currentUser: RequestUser,
+    @Body() commentData: CreatePostCommentDto,
+  ): Promise<PostCommentDto> {
+    const comment = await this.postsService.addPostComment(await currentUser.current(), postId, commentData);
+    return mapper.map(comment, PostCommentDto, PostComment);
+  }
 
-  patchPostComment = async (req: Request, res: Response): Promise<void> => {
-    const commentId = req.params.id;
-    const userId = req.user.claims().id;
-    const commentData: CreatePostCommentDto = req.body;
+  @Patch('/comments/:id')
+  @Authorized()
+  async patchPostComment(
+    @Param('id') commentId: string,
+    @CurrentUser() currentUser: RequestUser,
+    @Body() commentData: CreatePostCommentDto,
+  ): Promise<PostCommentDto> {
+    const userId = currentUser.claims().id;
     const comments = await this.postsService.patchPostComment(userId, commentId, commentData);
-    const commentDto = mapper.map(comments, PostCommentDto, PostComment);
-    res.status(200).send(commentDto);
-  };
+    return mapper.map(comments, PostCommentDto, PostComment);
+  }
 
-  deletePostComment = async (req: Request, res: Response): Promise<void> => {
-    const userId = req.user.claims().id;
-    const { postId, commentId } = req.params;
+  @Delete('/:postId/comments/:commentId')
+  @Authorized()
+  async deletePostComment(
+    @Param('postId') postId: string,
+    @Param('commentId') commentId: string,
+    @CurrentUser() currentUser: RequestUser,
+  ): Promise<PostCommentDto[]> {
+    const userId = currentUser.claims().id;
     await this.postsService.deleteComment(userId, postId, commentId);
     const comments = await this.postsService.getPostComments(postId);
-    const commentDtoList = mapper.mapArray(comments, PostCommentDto, PostComment);
-    res.status(200).send(commentDtoList);
-  };
+    return mapper.mapArray(comments, PostCommentDto, PostComment);
+  }
 }
 
 export default PostsController;
