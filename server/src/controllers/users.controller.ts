@@ -56,7 +56,7 @@ class UsersController {
     await this.userService.deleteUser(userId);
     await this.profileService.deleteProfileOfUser(userId);
 
-    res.status(200).send();
+    res.status(204).send();
   };
 }
 
