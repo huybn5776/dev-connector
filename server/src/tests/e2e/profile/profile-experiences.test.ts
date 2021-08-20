@@ -18,6 +18,7 @@ import { CreateProfileExperienceDto } from '@dtos/create-profile-experience.dto'
 import { PatchProfileExperienceDto } from '@dtos/patch-profile-experience.dto';
 import { ProfileExperienceDto } from '@dtos/profile-experience.dto';
 import { ProfileExperience } from '@entities/profile-experience';
+import { HttpException } from '@exceptions';
 import { ProfileDocument, ProfileModel } from '@models/profile.model';
 import { UserDocument } from '@models/user.model';
 
@@ -132,6 +133,41 @@ describe('Profiles experiences tests', () => {
           expect.objectContaining({ title: previousExperienceData.title } as ProfileExperience),
         ]),
       );
+    });
+
+    it('add experience with missing fields, validateErrors', async () => {
+      const experienceData: Partial<CreateProfileExperienceDto> = {
+        title: 'CEO',
+      };
+
+      const response = await request(server)
+        .post('/api/profile/me/experiences')
+        .set('cookie', officerCookie)
+        .send(experienceData)
+        .expect(400);
+      const error: HttpException = response.body;
+
+      expect(error.validationErrors).toBeDefined();
+      expect(error.validationErrors?.company).toBeDefined();
+    });
+
+    it('add experience with incorrect field type, validateErrors', async () => {
+      const experienceData = {
+        ...currentExperienceData,
+        company: 1111,
+        from: 'not a date',
+      };
+
+      const response = await request(server)
+        .post('/api/profile/me/experiences')
+        .set('cookie', officerCookie)
+        .send(experienceData)
+        .expect(400);
+      const error: HttpException = response.body;
+
+      expect(error.validationErrors).toBeDefined();
+      expect(error.validationErrors?.company).toBeDefined();
+      expect(error.validationErrors?.from).toBeDefined();
     });
   });
 
