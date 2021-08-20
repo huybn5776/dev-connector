@@ -22,9 +22,7 @@ class AuthService {
       throw new AuthException(AuthErrorType.InvalidRequest, 'Password grant require either username and password');
     }
 
-    const userDocument: UserDocument | null = await this.users.findOne({
-      $or: [{ name: authRequest.username }, { email: authRequest.username }],
-    });
+    const userDocument: UserDocument | null = await this.users.findOne({ email: authRequest.username });
     const isPasswordMatching =
       (userDocument?.password && (await bcrypt.compare(authRequest.password, userDocument.password))) || false;
     if (!userDocument || !isPasswordMatching) {
