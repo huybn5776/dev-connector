@@ -19,7 +19,7 @@ import { PatchProfileDto } from '@dtos/patch-profile.dto';
 import { ProfileDto } from '@dtos/profile.dto';
 import HttpException from '@exceptions/http-exception';
 import { StateToPropsFunc } from '@store';
-import { isNotNilOrEmpty, deleteNilProperties } from '@utils/object-utils';
+import { isNotNilOrEmpty } from '@utils/object-utils';
 
 import buttonStyles from '@styles/button.module.scss';
 import formStyles from '@styles/form.module.scss';
@@ -152,7 +152,7 @@ const EditProfilePage: React.FC<AllProps> = ({ profile, errorResponse, loading }
   }
 
   function mapFormToPatchProfile(formData: Partial<EditProfileForm>): PatchProfileDto {
-    const profileData: PatchProfileDto = {
+    return {
       status: formData.status,
       company: formData.company,
       website: formData.website,
@@ -168,7 +168,6 @@ const EditProfilePage: React.FC<AllProps> = ({ profile, errorResponse, loading }
         instagram: formData.instagram,
       },
     };
-    return deleteNilProperties(profileData);
   }
 
   return (
