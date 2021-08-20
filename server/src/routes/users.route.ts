@@ -32,7 +32,7 @@ class UsersRoute implements Route {
       authMiddleware,
       asyncHandler(this.usersController.patchCurrentUser),
     );
-    this.router.delete(`${this.path}/:id`, asyncHandler(this.usersController.deleteUser));
+    this.router.delete(`${this.path}/:id`, authMiddleware, asyncHandler(this.usersController.deleteUser));
   }
 }
 
