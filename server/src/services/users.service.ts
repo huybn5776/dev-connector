@@ -53,6 +53,12 @@ class UserService {
       throw new HttpException(404);
     }
 
+    if (userData.password && !userData.originalPassword) {
+      throw new HttpException(400).withValidationError<PatchUserDto>({
+        originalPassword: 'Original password is required when changing password',
+      });
+    }
+
     if (userData.fullName) {
       userDocument.fullName = userData.fullName;
     }
@@ -66,7 +72,13 @@ class UserService {
       userDocument.avatar = this.generateGravatarUrl(userData.email);
     }
 
-    if (userData.password) {
+    if (userData.password && userData.originalPassword) {
+      const isPasswordMatch = await bcrypt.compare(userData.originalPassword, userDocument.password);
+      if (!isPasswordMatch) {
+        throw new HttpException(400).withValidationError<PatchUserDto>({
+          originalPassword: 'Original password is incorrect',
+        });
+      }
       userDocument.password = await bcrypt.hash(userData.password, 10);
     }
 

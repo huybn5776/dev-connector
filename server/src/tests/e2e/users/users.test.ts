@@ -21,6 +21,7 @@ import { CreateUserDto } from '@dtos/create-user.dto';
 import { PatchUserDto } from '@dtos/patch-user.dto';
 import { UserDto } from '@dtos/user.dto';
 import { User } from '@entities/user';
+import { HttpException } from '@exceptions';
 import { AuthToken } from '@interfaces/auth-token';
 import { UserDocument, UserModel } from '@models/user.model';
 
@@ -186,7 +187,10 @@ describe('Users tests', () => {
     });
 
     it('patch user password, only able to login with new password', async () => {
-      const userData = { password: 'aiDae9cie' };
+      const userData: Required<Pick<PatchUserDto, 'originalPassword' | 'password'>> = {
+        originalPassword: officerUserData.password,
+        password: 'aiDae9cie',
+      };
 
       await request(server).patch('/api/users/me').set('cookie', officerCookie).send(userData).expect(200);
 
@@ -195,6 +199,35 @@ describe('Users tests', () => {
 
       const loginWithNewPassword = await getLoginRequest(server, officerUser.email, userData.password);
       expect(loginWithNewPassword.statusCode).toBe(200);
+    });
+
+    it('patch user password without originalPassword, validateErrors', async () => {
+      const userData: PatchUserDto = { password: 'aiDae9cie' };
+
+      const response = await request(server)
+        .patch('/api/users/me')
+        .set('cookie', officerCookie)
+        .send(userData)
+        .expect(400);
+      const error: HttpException = response.body;
+
+      expect(error.validationErrors?.originalPassword).toBeDefined();
+    });
+
+    it('patch user password with incorrect originalPassword, validateErrors', async () => {
+      const userData: PatchUserDto = {
+        originalPassword: 'incorrectPassword123',
+        password: 'aiDae9cie',
+      };
+
+      const response = await request(server)
+        .patch('/api/users/me')
+        .set('cookie', officerCookie)
+        .send(userData)
+        .expect(400);
+      const error: HttpException = response.body;
+
+      expect(error.validationErrors?.originalPassword).toBeDefined();
     });
   });
 

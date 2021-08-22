@@ -9,6 +9,9 @@ export class PatchUserDto {
   @IsNotEmpty()
   public email?: string;
 
+  @IsString()
+  public originalPassword?: string;
+
   @MinLength(6)
   @IsNotEmpty()
   public password?: string;
