@@ -149,14 +149,7 @@ const EditExperiencePage: React.FC<AllProps> = ({ edit, profile, errorResponse, 
           <FormLabelInput name="company" required register={register} errors={errors} />
           <FormLabelInput name="location" register={register} errors={errors} />
           <FormLabelInput name="from" type="date" required register={register} errors={errors} />
-          <FormLabelInput
-            name="to"
-            type="date"
-            required
-            register={register}
-            errors={errors}
-            disabled={watchCurrentChecked}
-          />
+          <FormLabelInput name="to" type="date" register={register} errors={errors} disabled={watchCurrentChecked} />
           <FormLabelInput name="current" type="checkbox" register={register} errors={errors} />
           <FormLabelInput name="description" register={register} errors={errors} />
 
