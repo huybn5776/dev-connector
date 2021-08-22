@@ -72,7 +72,7 @@ const LoginPage: React.FC<AllProps> = ({ errorResponse, loading }: AllProps) => 
 
         <form className={formStyles.form} onSubmit={handleSubmit(onSubmit)}>
           <FormInput name="username" placeholder="Username or Email" register={register} errors={errors} />
-          <FormInput name="password" register={register} errors={errors} />
+          <FormInput name="password" type="password" register={register} errors={errors} />
 
           <button
             className={clsx(
