@@ -71,6 +71,7 @@ class ProfileService {
     userId: string,
     experienceData: CreateProfileExperienceDto,
   ): Promise<ProfileExperience> {
+    this.validateExperience(experienceData);
     const profile: ProfileDocument | null = await this.profiles.findOne({ user: new UserModel({ _id: userId }) });
     if (!profile) {
       throw new HttpException(404);
@@ -97,6 +98,7 @@ class ProfileService {
     }
 
     mapper.map(experienceData, ProfileExperience, CreateProfileExperienceDto, experience);
+    this.validateExperience(experience);
 
     await profile.save();
     return experience.toObject();
@@ -117,6 +119,7 @@ class ProfileService {
   }
 
   async addUserProfileEducation(userId: string, educationData: CreateProfileEducationDto): Promise<ProfileEducation> {
+    this.validateEducation(educationData);
     const profile: ProfileDocument | null = await this.profiles.findOne({ user: new UserModel({ _id: userId }) });
     if (!profile) {
       throw new HttpException(404);
@@ -143,6 +146,7 @@ class ProfileService {
     }
 
     mapper.map(educationData, ProfileEducation, CreateProfileEducationDto, education);
+    this.validateEducation(education);
 
     await profile.save();
     return education.toObject();
@@ -227,6 +231,22 @@ query {
       throw new HttpException(404);
     }
     return profile;
+  }
+
+  private validateExperience(experience: CreateProfileExperienceDto): void {
+    if (!experience.current && !experience.to) {
+      throw new HttpException(400, 'Validation fail').withValidationError<CreateProfileExperienceDto>({
+        to: `'To' is required when it's not current experience`,
+      });
+    }
+  }
+
+  private validateEducation(education: CreateProfileEducationDto): void {
+    if (!education.current && !education.to) {
+      throw new HttpException(400, 'Validation fail').withValidationError<CreateProfileEducationDto>({
+        to: `'To' is required when it's not current education`,
+      });
+    }
   }
 }
 

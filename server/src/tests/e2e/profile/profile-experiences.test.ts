@@ -169,16 +169,35 @@ describe('Profiles experiences tests', () => {
       expect(error.validationErrors?.company).toBeDefined();
       expect(error.validationErrors?.from).toBeDefined();
     });
+
+    it(`add non current experience without 'to' date, validateErrors`, async () => {
+      const experienceData: CreateProfileExperienceDto = {
+        title: 'CTO and SVP Engineering',
+        company: 'Mozilla',
+        location: 'CA San Francisco',
+        from: new Date(2013, 1, 1),
+      };
+
+      const response = await request(server)
+        .post('/api/profile/me/experiences')
+        .set('cookie', officerCookie)
+        .send(experienceData)
+        .expect(400);
+      const error: HttpException = response.body;
+
+      expect(error.validationErrors?.to).toBeDefined();
+    });
   });
 
   describe('[PATCH] /profile/me/experiences/:id', () => {
+    let profile: ProfileDocument;
     let partialExperienceData: PatchProfileExperienceDto;
     let originalExperiences: ProfileExperience[];
     let originalExperience: ProfileExperience;
 
     beforeEach(async () => {
+      profile = await createOfficerProfile().save();
       partialExperienceData = { title: 'Chief Architect' };
-      const profile: ProfileDocument = await createOfficerProfile().save();
       originalExperiences = profile.toObject().experiences;
       [originalExperience] = originalExperiences;
     });
@@ -215,6 +234,27 @@ describe('Profiles experiences tests', () => {
 
       expect(experience.id).toBe(`${originalExperience._id}`);
       assertProfileExperience(experience, { ...originalExperience, ...experience });
+    });
+
+    it(`patch experience to non current and no 'to' date, validateErrors`, async () => {
+      profile.experiences.push({
+        title: 'CEO',
+        company: 'Brave Software',
+        location: 'California San Francisco',
+        from: new Date(2015, 5, 1),
+        current: true,
+      } as ProfileExperience);
+      await profile.save();
+
+      const experienceData: PatchProfileExperienceDto = { current: false };
+      const response = await request(server)
+        .patch(`/api/profile/me/experiences/${originalExperience._id}`)
+        .set('cookie', officerCookie)
+        .send(experienceData)
+        .expect(400);
+      const error: HttpException = response.body;
+
+      expect(error.validationErrors?.to).toBeDefined();
     });
   });
 
