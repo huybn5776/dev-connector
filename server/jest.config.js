@@ -8,6 +8,7 @@ module.exports = {
   transform: {
     '^.+\\.tsx?$': 'ts-jest',
   },
+  testMatch: ['**/src/**/?(*.)+(spec|test).ts?(x)'],
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, { prefix: '<rootDir>/' }),
   setupFilesAfterEnv: ['<rootDir>/src/tests/setup-tests.ts'],
   testTimeout: 10000,
