@@ -57,7 +57,7 @@ const PostCommentForm: React.ForwardRefRenderFunction<ForwardedProps, Props> = (
 
   return (
     <form className={styles.PostCommentForm}>
-      <img className={styles.commentFormAvatar} src={user.avatar} alt={user.name} />
+      <img className={styles.commentFormAvatar} src={user.avatar} alt={user.fullName} />
       <div className={styles.commentFormInputContainer}>
         <TextareaAutosize
           className={clsx(styles.commentFormInput, entering && styles.entering)}

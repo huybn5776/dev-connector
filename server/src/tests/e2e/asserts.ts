@@ -11,10 +11,19 @@ import { ProfileEducation } from '@entities/profile-education';
 import { ProfileExperience } from '@entities/profile-experience';
 import { User } from '@entities/user';
 
+type PartialUser = Omit<User, '_id' | 'password' | 'createdAt' | 'updatedAt'> & { id?: string; _id?: string };
+
 export function assertUser(userDto: UserDto | undefined, user: User | undefined): void {
   expect(userDto?.id).toBe(`${user?._id}`);
-  expect(userDto?.name).toBe(user?.name);
+  expect(userDto?.fullName).toBe(user?.fullName);
+  expect(userDto?.username).toBe(user?.username);
   expect(userDto?.avatar).toBe(user?.avatar);
+}
+
+export function assertPartialUser(actual: PartialUser | undefined, expected: PartialUser | undefined): void {
+  expect(actual).toHaveSameId(expected);
+  expect(actual?.fullName).toBe(expected?.fullName);
+  expect(actual?.avatar).toBe(expected?.avatar);
 }
 
 export function assertDate(
@@ -39,9 +48,9 @@ export function assertDate(
 
 export function assertComment(commentDto: PostCommentDto, comment: PostComment): void {
   expect(commentDto.text).toBe(comment.text);
-  expect(commentDto.name).toBe(comment.name);
+  expect(commentDto.author).toBe(comment.author);
   expect(commentDto.avatar).toBe(comment.avatar);
-  assertUser(commentDto.user, comment.user);
+  assertPartialUser(commentDto.user, comment.user);
 
   expect(commentDto.likes).toHaveLength(comment.likes.length);
 }
@@ -55,7 +64,7 @@ export function assertListingLikes(postLikesDto: PostLikeDto[], postLikes: PostL
     expect(postLikeDto.user.id).toBe(`${postLike.user._id}`);
 
     // should not have detail information in listing api
-    expect(postLikeDto.user.name).not.toBeDefined();
+    expect(postLikeDto.user.fullName).not.toBeDefined();
     expect(postLikeDto.user.email).not.toBeDefined();
     expect(postLikeDto.user.avatar).not.toBeDefined();
   }
@@ -63,10 +72,10 @@ export function assertListingLikes(postLikesDto: PostLikeDto[], postLikes: PostL
 
 export function assertProfile(
   actual: Omit<ProfileDto, 'id' | 'user' | 'experiences' | 'educations' | 'createdAt' | 'updatedAt'> & {
-    user?: { id?: string; _id?: string };
+    user?: PartialUser;
   },
   expected: Omit<ProfileDto, 'id' | 'user' | 'experiences' | 'educations' | 'createdAt' | 'updatedAt'> & {
-    user?: { id?: string; _id?: string };
+    user?: PartialUser;
   },
 ): void {
   expect(actual.user).toHaveSameId(expected.user);
@@ -126,7 +135,10 @@ export function assertProfileEducation(
   expect(expected.description ?? null).toBe(actual.description ?? null);
 }
 
-export function assertProfileSocial(actual: ProfileSocialDto | undefined, expected: ProfileSocialDto | undefined): void {
+export function assertProfileSocial(
+  actual: ProfileSocialDto | undefined,
+  expected: ProfileSocialDto | undefined,
+): void {
   expect(actual?.youtube ?? null).toBe(expected?.youtube ?? null);
   expect(actual?.twitter ?? null).toBe(expected?.twitter ?? null);
   expect(actual?.facebook ?? null).toBe(expected?.facebook ?? null);

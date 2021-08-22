@@ -12,7 +12,7 @@ export class PostComment {
   @AutoMap()
   text!: string;
   @AutoMap()
-  name?: string;
+  author?: string;
   @AutoMap()
   avatar?: string;
   @AutoMap({ typeFn: () => PostLike })

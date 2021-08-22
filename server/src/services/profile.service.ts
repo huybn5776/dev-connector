@@ -22,7 +22,7 @@ class ProfileService {
   async getProfiles(): Promise<Profile[]> {
     const profileDocuments = await this.profiles
       .find()
-      .populate('user', ['name', 'avatar'])
+      .populate('user', ['fullName', 'avatar'])
       .select('-experiences -educations')
       .exec();
     return profileDocuments.map((profile) => profile.toObject() as Profile);
@@ -31,7 +31,7 @@ class ProfileService {
   async getUserProfile(userId: string): Promise<Profile> {
     const profile: ProfileDocument | null = await this.profiles
       .findOne({ user: new UserModel({ _id: userId }) })
-      .populate('user', ['name', 'avatar']);
+      .populate('user', ['fullName', 'avatar']);
     if (!profile) {
       throw new HttpException(404);
     }

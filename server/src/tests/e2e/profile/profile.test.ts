@@ -5,7 +5,11 @@ import express from 'express';
 import request from 'supertest';
 
 import App from '@/app';
-import { assertProfile, assertProfileExperiences, assertProfileEducations } from '@/tests/e2e/asserts';
+import {
+  assertProfile,
+  assertProfileExperiences,
+  assertProfileEducations, assertPartialUser,
+} from '@/tests/e2e/asserts';
 import {
   cleanAndDisconnectToDb,
   connectAndClearDb,
@@ -53,6 +57,8 @@ describe('Profile tests', () => {
         createOfficerProfile(),
         createSeniorProfile(),
       ]);
+      officerProfile.user = officerUser;
+      seniorProfile.user = seniorUser;
 
       const response = await request(server).get('/api/profile').expect(200);
       const profilesDto: ProfileDto[] = response.body;
@@ -62,6 +68,7 @@ describe('Profile tests', () => {
         const profileDto = profilesDto.find((profile) => profile.user.id === `${profileDocument.user._id}`);
         assert(profileDto !== undefined);
         assertProfile(profileDto, profileDocument);
+        assertPartialUser(profileDto.user, profileDocument.user);
         expect(profileDto.experiences).not.toBeDefined();
         expect(profileDto.educations).not.toBeDefined();
       });
@@ -86,6 +93,7 @@ describe('Profile tests', () => {
       const profileDto: ProfileDto = response.body;
 
       assertProfile(profileDto, officerProfile);
+      assertPartialUser(profileDto.user, officerUser);
       assertProfileExperiences(profileDto.experiences, officerProfile.experiences);
       assertProfileEducations(profileDto.educations, officerProfile.educations);
     });
@@ -138,6 +146,7 @@ describe('Profile tests', () => {
       const profileDto: ProfileDto = response.body;
 
       assertProfile(profileDto, { ...officerProfileData, user: officerUser });
+      assertPartialUser(profileDto.user, officerUser);
       expect(profileDto.experiences).toHaveLength(0);
       expect(profileDto.educations).toHaveLength(0);
     });
@@ -165,6 +174,7 @@ describe('Profile tests', () => {
       const profileDto: ProfileDto = response.body;
 
       assertProfile(profileDto, { ...partialProfileData, user: officerUser });
+      assertPartialUser(profileDto.user, officerUser);
       expect(profileDto.experiences).toHaveLength(0);
       expect(profileDto.educations).toHaveLength(0);
     });
@@ -230,6 +240,7 @@ describe('Profile tests', () => {
       const profileDto: ProfileDto = response.body;
 
       assertProfile(profileDto, { ...officerProfile.toObject(), ...partialProfileData, user: officerUser });
+      assertPartialUser(profileDto.user, officerUser);
       assertProfileExperiences(profileDto.experiences, officerProfile.experiences);
       assertProfileEducations(profileDto.educations, officerProfile.educations);
     });

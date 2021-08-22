@@ -26,8 +26,8 @@ const ProfileTop: React.FC<Props> = ({ profile: { user, status, company, locatio
 
   return (
     <div className={styles.ProfileTop}>
-      <img className={styles.profileViewAvatar} src={user.avatar} alt={user.name} />
-      <h1 className={styles.profileViewName}>{user.name}</h1>
+      <img className={styles.profileViewAvatar} src={user.avatar} alt={user.fullName} />
+      <h1 className={styles.profileViewName}>{user.fullName}</h1>
       <p className={clsx(styles.profileViewText, styles.profileViewSummary)}>
         {status}
         {company && ` at ${company}`}

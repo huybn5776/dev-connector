@@ -3,7 +3,7 @@ import { IsEmail, IsString, MinLength, IsNotEmpty } from 'class-validator';
 export class PatchUserDto {
   @IsString()
   @IsNotEmpty()
-  public name?: string;
+  public fullName?: string;
 
   @IsEmail()
   @IsNotEmpty()

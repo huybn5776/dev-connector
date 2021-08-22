@@ -59,14 +59,16 @@ export async function insertPosts(userId: string): Promise<PostDocument[]> {
 
 export const officerUserData = {
   _id: '61191d088072a39bd1d3b4bb',
-  name: 'Fabien Potencier',
+  fullName: 'Fabien Potencier',
+  username: 'fabien',
   email: 'fabien@symfony.com',
   password: 'ohcaiJuk8Iqu',
   avatar: 'https://www.gravatar.com/avatar/9a22d09f92d50fa3d2a16766d0ba52f8',
 };
 export const seniorUserData = {
   _id: '4e47f1000000000000000000',
-  name: 'Minko Gechev',
+  fullName: 'Minko Gechev',
+  username: 'mgechev',
   email: 'mgechev@gmail.com',
   password: 'QuooNg6au9ph',
   avatar: 'https://www.gravatar.com/avatar/82bafb0432ce4ccc9dcc26f94d5fe5bc',
@@ -213,5 +215,5 @@ export function getLoginRequest(server: Express.Application, username: string, p
 }
 
 export function createPostCommentDocument(user: User, text: string): PostCommentDocument {
-  return new PostCommentModel({ text, user, name: user.name, avatar: user.avatar } as Partial<PostComment>);
+  return new PostCommentModel({ text, user, author: user.fullName, avatar: user.avatar } as Partial<PostComment>);
 }

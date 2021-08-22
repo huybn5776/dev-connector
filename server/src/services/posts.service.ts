@@ -16,11 +16,11 @@ class PostsService {
   readonly posts = PostModel;
   readonly comments = PostCommentModel;
   readonly commentsPopulateOptions: PopulateOptions[] = [
-    { path: 'user', select: ['name', 'avatar'] },
+    { path: 'user', select: ['fullName', 'avatar'] },
     { path: 'likes.user', select: ['id'] },
   ];
   readonly postPopulateOptions: PopulateOptions[] = [
-    { path: 'user', select: ['name', 'avatar'] },
+    { path: 'user', select: ['fullName', 'avatar'] },
     { path: 'likes.user', select: ['id'] },
     {
       path: 'comments',
@@ -32,8 +32,8 @@ class PostsService {
     const postDocuments: PostDocument[] = await this.posts
       .find()
       .sort({ created: -1 })
-      .populate('user', ['name', 'avatar'])
-      .populate({ path: 'comments', populate: { path: 'user', select: ['name', 'avatar'] } })
+      .populate('user', ['fullName', 'avatar'])
+      .populate({ path: 'comments', populate: { path: 'user', select: ['fullName', 'avatar'] } })
       .exec();
     return postDocuments.map((postDocument) => {
       let post = postDocument.toObject();
@@ -66,7 +66,8 @@ class PostsService {
     const postDocument: PostDocument = await this.posts.create({
       ...post,
       user,
-      name: user.name,
+      author: user.fullName,
+      username: user.username,
       avatar: user.avatar,
     });
     return postDocument.toObject();
@@ -168,7 +169,8 @@ class PostsService {
     const commentDocument = new PostCommentModel({
       ...comment,
       user,
-      name: user.name,
+      author: user.fullName,
+      username: user.username,
       avatar: user.avatar,
       post: postId,
     });

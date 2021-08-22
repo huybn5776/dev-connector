@@ -58,12 +58,12 @@ const PostForm: React.FC<Props> = ({ user, loading }: Props) => {
     <form className={styles.PostForm}>
       <div className={styles.postFormTop}>
         <div className={styles.postFormInfo}>
-          <img className={styles.postFormAvatar} src={user.avatar} alt={user.name} />
+          <img className={styles.postFormAvatar} src={user.avatar} alt={user.fullName} />
           {expanded ? (
             <>
               <span className={styles.postFormTimestamp}>{format(new Date(), dateFormat)}</span>
               <span>&nbsp;by&nbsp;</span>
-              <span className={styles.postFormUsername}>{user.name}</span>
+              <span className={styles.postFormUsername}>{user.fullName}</span>
             </>
           ) : (
             <button className={styles.writePostHint} type="button" onClick={startWritingPost}>

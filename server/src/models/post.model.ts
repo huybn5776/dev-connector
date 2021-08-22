@@ -8,7 +8,7 @@ const postSchema = new Schema<Post>(
   {
     user: { type: Schema.Types.ObjectId, ref: 'User' },
     text: { type: String, required: true },
-    name: { type: String },
+    author: { type: String },
     avatar: { type: String },
     likes: [{ user: { type: Schema.Types.ObjectId, ref: 'User' } }],
     comments: [{ type: Schema.Types.ObjectId, ref: 'PostComment' }],

@@ -26,10 +26,10 @@ const ProfileCard: React.FC<Props> = ({
   return (
     <CardLayout>
       <div className={styles.ProfileCard}>
-        <img className={styles.profileAvatarImg} src={user.avatar} alt={user.name} />
+        <img className={styles.profileAvatarImg} src={user.avatar} alt={user.fullName} />
 
         <div className={styles.profileSummary}>
-          <p className={clsx(styles.profileSummaryText, styles.profileSummaryName)}>{user.name}</p>
+          <p className={clsx(styles.profileSummaryText, styles.profileSummaryName)}>{user.fullName}</p>
           <p className={styles.profileSummaryText}>
             {status}
             {company && ` at ${company}`}

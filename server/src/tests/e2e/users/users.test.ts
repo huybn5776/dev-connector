@@ -100,7 +100,8 @@ describe('Users tests', () => {
       const userDocument: UserDocument | null = await UserModel.findById(user?.id);
 
       assert(userDocument !== null);
-      expect(userDocument.name).toBe(userData.name);
+      expect(userDocument.fullName).toBe(userData.fullName);
+      expect(userDocument.username).toBe(userData.username);
       expect(userDocument.email).toBe(userData.email);
       expect(userDocument.avatar).toMatch(/www.gravatar.com\/avatar\//);
     });
@@ -111,9 +112,23 @@ describe('Users tests', () => {
       const { user } = authToken;
 
       assert(user !== null);
-      expect(user?.name).toBe(userData?.name);
+      expect(user?.fullName).toBe(userData?.fullName);
+      expect(user?.username).toBe(userData?.username);
       expect(user?.email).toBe(userData?.email);
       expect(user?.avatar).toMatch(/www.gravatar.com\/avatar\//);
+    });
+
+    it('create user with used username, 409', async () => {
+      const seniorUser = await (await createSenior()).save();
+
+      userData = {
+        ...userData,
+        fullName: 'Domingo',
+        username: seniorUser.username,
+      };
+      const response = await request(server).post('/api/users').send(userData);
+
+      expect(response.statusCode).toBe(409);
     });
 
     it('create user with used email, 409', async () => {
@@ -121,7 +136,7 @@ describe('Users tests', () => {
 
       userData = {
         ...userData,
-        name: 'Domingo',
+        fullName: 'Domingo',
         email: seniorUser.email,
       };
       const response = await request(server).post('/api/users').send(userData);
@@ -140,29 +155,25 @@ describe('Users tests', () => {
     });
 
     it('patch user without auth, 401', async () => {
-      const userData: PatchUserDto = { name: 'Domingo' };
+      const userData: PatchUserDto = { fullName: 'Domingo' };
 
       const response = await request(server).patch('/api/users/me').send(userData);
 
       expect(response.statusCode).toBe(401);
     });
 
-    it('patch user name, does saved to db', async () => {
-      const userData: PatchUserDto = { name: 'Domingo' };
+    it('patch user fullName, does saved to db', async () => {
+      const userData: PatchUserDto = { fullName: 'Domingo' };
 
-      await request(server)
-        .patch('/api/users/me')
-        .set('cookie', officerCookie)
-        .send(userData)
-        .expect(200);
+      await request(server).patch('/api/users/me').set('cookie', officerCookie).send(userData).expect(200);
       const userDocument: UserDocument | null = await UserModel.findById(officerUser._id);
 
       assert(userDocument !== null);
       assertUser(userDocument, { ...officerUser.toObject(), ...userData });
     });
 
-    it('patch user name, response correct fields', async () => {
-      const userData: PatchUserDto = { name: 'Domingo' };
+    it('patch user username, response correct fields', async () => {
+      const userData: PatchUserDto = { fullName: 'Domingo' };
 
       const response = await request(server)
         .patch('/api/users/me')
@@ -177,11 +188,7 @@ describe('Users tests', () => {
     it('patch user password, only able to login with new password', async () => {
       const userData = { password: 'aiDae9cie' };
 
-      await request(server)
-        .patch('/api/users/me')
-        .set('cookie', officerCookie)
-        .send(userData)
-        .expect(200);
+      await request(server).patch('/api/users/me').set('cookie', officerCookie).send(userData).expect(200);
 
       const loginWithOldPassword = await getLoginRequest(server, officerUser.email, officerUser.password);
       expect(loginWithOldPassword.statusCode).toBe(401);
@@ -207,10 +214,7 @@ describe('Users tests', () => {
     });
 
     it('delete current user, does delete it in db', async () => {
-      await request(server)
-        .delete('/api/users/me')
-        .set('cookie', officerCookie)
-        .expect(204);
+      await request(server).delete('/api/users/me').set('cookie', officerCookie).expect(204);
       const userDocument: UserDocument | null = await UserModel.findById(officerUser._id);
 
       expect(userDocument).toBeNull();
@@ -219,14 +223,16 @@ describe('Users tests', () => {
 
   function assertUser(userDto: UserDto | UserDocument | undefined, user: User | UserDocument | undefined): void {
     expect(userDto).toHaveSameId(user);
-    expect(userDto?.name).toBe(user?.name);
+    expect(userDto?.fullName).toBe(user?.fullName);
+    expect(userDto?.username).toBe(user?.username);
     expect(userDto?.email).toBe(user?.email);
     expect(userDto?.avatar).toBe(user?.avatar);
   }
 
   function getOfficerUserData(): CreateUserDto {
     return {
-      name: officerUserData.name,
+      fullName: officerUserData.fullName,
+      username: officerUserData.username,
       email: officerUserData.email,
       password: officerUserData.password,
     };

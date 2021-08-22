@@ -3,7 +3,7 @@ import express from 'express';
 import request from 'supertest';
 
 import App from '@/app';
-import { assertUser, assertListingLikes } from '@/tests/e2e/asserts';
+import { assertListingLikes, assertPartialUser } from '@/tests/e2e/asserts';
 import {
   cleanAndDisconnectToDb,
   connectAndClearDb,
@@ -43,13 +43,13 @@ describe('Post comment tests', () => {
       {
         user: officerUser,
         text: 'Aenean in turpis et nunc elementum eleifend non eu ex.',
-        name: officerUser.name,
+        author: officerUser.fullName,
         avatar: officerUser.avatar,
       } as PostDocument,
       {
         user: seniorUser,
         text: 'Bibendum nibh volutpat, dictum neque sed, euismod turpisseniorUser.',
-        name: seniorUser.name,
+        author: seniorUser.fullName,
         avatar: seniorUser.avatar,
       } as PostDocument,
     ]);
@@ -93,7 +93,7 @@ describe('Post comment tests', () => {
       for (let i = 0; i < officerPost.comments.length; i += 1) {
         expect(commentsDto[i].user?.id).toBe(`${officerPost.comments[i].user._id}`);
         expect(commentsDto[i].text).toBe(officerPost.comments[i].text);
-        expect(commentsDto[i].name).toBe(officerPost.comments[i].name);
+        expect(commentsDto[i].author).toBe(officerPost.comments[i].author);
         expect(commentsDto[i].avatar).toBe(officerPost.comments[i].avatar);
         assertListingLikes(commentsDto[i].likes, officerPost.comments[i].likes);
       }
@@ -169,9 +169,9 @@ describe('Post comment tests', () => {
         .expect(201);
       const commentDto: PostCommentDto = response.body;
 
-      assertUser(commentDto.user, officerUser);
+      assertPartialUser(commentDto.user, officerUser);
       expect(commentDto.text).toBe(commentData.text);
-      expect(commentDto.name).toBe(officerUser.name);
+      expect(commentDto.author).toBe(officerUser.fullName);
       expect(commentDto.avatar).toBe(officerUser.avatar);
       expect(commentDto.likes).toHaveLength(0);
     });
@@ -180,7 +180,7 @@ describe('Post comment tests', () => {
       const commentData: RecursivePartial<PostComment> = {
         user: { _id: `${seniorUser._id}}` },
         text: 'Praesent ultrices.',
-        name: seniorUser.name,
+        author: seniorUser.fullName,
         avatar: seniorUser.avatar,
         likes: [{ user: officerUser.id }, { user: seniorUser.id }],
       };
@@ -192,7 +192,7 @@ describe('Post comment tests', () => {
       const savedComment: PostCommentDocument | null = await PostCommentModel.findById(commentDto.id);
 
       expect(`${savedComment?.user._id}`).toBe(`${officerUser._id}`);
-      expect(savedComment?.name).toBe(officerUser.name);
+      expect(savedComment?.author).toBe(officerUser.fullName);
       expect(savedComment?.avatar).toBe(officerUser.avatar);
       expect(savedComment?.likes).toHaveLength(0);
     });
@@ -253,7 +253,7 @@ describe('Post comment tests', () => {
           expect(comment).toBeDefined();
           expect(`${comment?.user._id}`).toBe(`${originalComment.user._id}`);
           expect(comment?.text).toBe(originalComment.text);
-          expect(comment?.name).toBe(originalComment.name);
+          expect(comment?.author).toBe(originalComment.author);
           expect(comment?.avatar).toBe(originalComment.avatar);
           expect(comment?.updatedAt.getTime()).toBe(originalComment.updatedAt.getTime());
         });
@@ -268,9 +268,9 @@ describe('Post comment tests', () => {
         .expect(200);
       const commentDto: PostCommentDto = response.body;
 
-      assertUser(commentDto.user, officerUser);
+      assertPartialUser(commentDto.user, officerUser);
       expect(commentDto.text).toBe(commentData.text);
-      expect(commentDto.name).toBe(officerUser.name);
+      expect(commentDto.author).toBe(officerUser.fullName);
       expect(commentDto.avatar).toBe(officerUser.avatar);
       expect(commentDto.likes).toBeDefined();
     });
@@ -279,7 +279,7 @@ describe('Post comment tests', () => {
       const commentData: RecursivePartial<PostComment> = {
         user: { _id: `${seniorUser._id}}` },
         text: 'Praesent ultrices.',
-        name: seniorUser.name,
+        author: seniorUser.fullName,
         avatar: seniorUser.avatar,
         likes: [{ user: officerUser.id }, { user: seniorUser.id }],
       };
@@ -294,7 +294,7 @@ describe('Post comment tests', () => {
       );
 
       expect(`${updatedComment?.user._id}`).toBe(`${officerUser._id}`);
-      expect(updatedComment?.name).toBe(officerUser.name);
+      expect(updatedComment?.author).toBe(officerUser.fullName);
       expect(updatedComment?.avatar).toBe(officerUser.avatar);
       expect(updatedComment?.likes).toHaveLength(0);
     });

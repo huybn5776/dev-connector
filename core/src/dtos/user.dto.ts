@@ -4,7 +4,9 @@ export class UserDto {
   @AutoMap()
   id!: string;
   @AutoMap()
-  name!: string;
+  fullName!: string;
+  @AutoMap()
+  username!: string;
   @AutoMap()
   email!: string;
   @AutoMap()

@@ -35,7 +35,7 @@ const ProfileViewCard: React.FC<Props> = ({ user, profile }: Props) => {
 
       <CardContent className={styles.profileContent}>
         <h3>
-          {user.name} - {profile.status}
+          {user.fullName} - {profile.status}
         </h3>
         {profile.company && <p>at {profile.company}</p>}
         {profile.location && <p className={styles.profileSecondaryContent}>{profile.location}</p>}

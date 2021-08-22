@@ -5,6 +5,7 @@ import { CreateUserDto } from '@dtos/create-user.dto';
 import { PatchUserDto } from '@dtos/patch-user.dto';
 import { User } from '@entities/user';
 import HttpException from '@exceptions/http-exception';
+import { mapper } from '@mappers';
 import { UserDocument, UserModel } from '@models/user.model';
 
 class UserService {
@@ -24,13 +25,25 @@ class UserService {
   }
 
   public async createUser(userData: CreateUserDto): Promise<User> {
-    const existingUser = await this.users.findOne({ email: userData.email });
+    const existingUser: UserDocument | null = await this.users.findOne({
+      $or: [{ username: userData.username }, { email: userData.email }],
+    });
     if (existingUser) {
-      throw new HttpException(409, `This email address is already being used`);
+      throw new HttpException(
+        409,
+        `This ${existingUser.username === userData.username ? 'username' : 'email address'} is already being used`,
+      );
     }
     const avatar = this.generateGravatarUrl(userData.email);
     const hashedPassword = await bcrypt.hash(userData.password, 10);
-    const userDocument = await this.users.create({ ...userData, password: hashedPassword, avatar });
+
+    const user = mapper.map(userData, User, CreateUserDto);
+    const userDocument = await this.users.create({
+      ...user,
+      password: hashedPassword,
+      avatar,
+    });
+
     return userDocument.toObject();
   }
 
@@ -40,8 +53,8 @@ class UserService {
       throw new HttpException(404);
     }
 
-    if (userData.name) {
-      userDocument.name = userData.name;
+    if (userData.fullName) {
+      userDocument.fullName = userData.fullName;
     }
 
     if (userData.email && userData.email !== userDocument.email) {

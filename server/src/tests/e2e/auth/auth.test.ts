@@ -53,7 +53,19 @@ describe('Auth tests', () => {
       expect(response.statusCode).toBe(400);
     });
 
-    it('login with officer, response token and user', async () => {
+    it('login with officer username, response token and user', async () => {
+      const authData: AuthRequest = {
+        grant_type: 'password',
+        username: officerUserData.username,
+        password: officerUserData.password,
+      };
+      const response = await request(server).post('/api/oauth/token').send(authData).expect(200);
+      const authToken: AuthToken = response.body;
+
+      assertAuthToken(authToken, officerUser);
+    });
+
+    it('login with officer email, response token and user', async () => {
       const authData: AuthRequest = {
         grant_type: 'password',
         username: officerUserData.email,
@@ -68,7 +80,7 @@ describe('Auth tests', () => {
     it('login with senior, response token and user', async () => {
       const authData = {
         grant_type: 'password',
-        username: seniorUserData.email,
+        username: seniorUserData.username,
         password: seniorUserData.password,
       };
       const response = await request(server).post('/api/oauth/token').send(authData).expect(200);
@@ -80,7 +92,7 @@ describe('Auth tests', () => {
     it('login with officer, set auth cookie', async () => {
       const authData = {
         grant_type: 'password',
-        username: seniorUserData.email,
+        username: seniorUserData.username,
         password: seniorUserData.password,
       };
       await request(server)
@@ -115,7 +127,8 @@ describe('Auth tests', () => {
     expect(authToken.expires_in).toBeGreaterThan(0);
     expect(authToken.expires).toBeGreaterThan(new Date().getTime());
     assert(authToken.user !== undefined);
-    expect(authToken.user.name).toBe(user.name);
+    expect(authToken.user.fullName).toBe(user.fullName);
+    expect(authToken.user.username).toBe(user.username);
     expect(authToken.user.email).toBe(user.email);
     expect(authToken.user.avatar).toBe(user.avatar);
   }

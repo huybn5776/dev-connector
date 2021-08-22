@@ -19,14 +19,16 @@ import buttonStyles from '@styles/button.module.scss';
 import formStyles from '@styles/form.module.scss';
 
 interface RegisterForm {
-  name: string;
+  fullName: string;
+  username: string;
   email: string;
   password: string;
   confirmPassword: string;
 }
 
 const schema = yup.object().shape({
-  name: yup.string().label('Name').required().max(100),
+  fullName: yup.string().label('Full name').required().max(100),
+  username: yup.string().label('Username').required().max(100),
   email: yup.string().required().label('Email').max(100, 'Email is too long').email(),
   password: yup.string().required().label('Password').min(6).max(24).required(),
   confirmPassword: yup
@@ -62,7 +64,12 @@ const RegisterPage: React.FC<AllProps> = ({ errorResponse, loading }: AllProps) 
       return;
     }
     setFormErrorMessage('');
-    const userData: CreateUserDto = { name: formData.name, email: formData.email, password: formData.password };
+    const userData: CreateUserDto = {
+      fullName: formData.fullName,
+      username: formData.username,
+      email: formData.email,
+      password: formData.password,
+    };
     dispatch(userActions.createUser.request(userData));
   }
 
@@ -72,7 +79,8 @@ const RegisterPage: React.FC<AllProps> = ({ errorResponse, loading }: AllProps) 
         <h1 className={formStyles.formTitle}>Sign up</h1>
 
         <form className={formStyles.form} onSubmit={handleSubmit(onSubmit)}>
-          <FormInput name="name" required register={register} errors={errors} />
+          <FormInput name="fullName" required register={register} errors={errors} />
+          <FormInput name="username" required register={register} errors={errors} />
           <FormInput
             name="email"
             required

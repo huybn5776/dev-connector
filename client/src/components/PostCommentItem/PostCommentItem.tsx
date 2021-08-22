@@ -25,7 +25,7 @@ interface Props {
 }
 
 const PostCommentItem: React.FC<Props> = ({
-  comment: { id, user, text, name, avatar, likes, updatedAt },
+  comment: { id, user, text, author, avatar, likes, updatedAt },
   postId,
   liked,
   likeLoading,
@@ -100,11 +100,11 @@ const PostCommentItem: React.FC<Props> = ({
   return (
     <div className={styles.PostComment}>
       <Link to={`/profiles/${user?.id}`}>
-        <img className={styles.commentAvatar} src={avatar} alt={name} />
+        <img className={styles.commentAvatar} src={avatar} alt={author} />
       </Link>
       <div className={styles.commentContent}>
-        <Link className={styles.commentUsername} to={`/profiles/${user?.id}`}>
-          {name}
+        <Link className={styles.commentAuthor} to={`/profiles/${user?.id}`}>
+          {author}
         </Link>
         {editMode ? (
           <TextareaAutosize

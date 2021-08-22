@@ -31,7 +31,7 @@ interface Props {
 }
 
 const PostItem: React.FC<Props> = ({
-  post: { id, user, text, name, avatar, likes, comments, commentsCount, createdAt, updatedAt },
+  post: { id, user, text, author, avatar, likes, comments, commentsCount, createdAt, updatedAt },
   liked,
   likeLoading,
   detailMode,
@@ -115,7 +115,7 @@ const PostItem: React.FC<Props> = ({
     <div className={styles.PostItem}>
       <div className={styles.postTop}>
         <div className={styles.postInfo}>
-          <img className={styles.postAvatar} src={avatar} alt={name} />
+          <img className={styles.postAvatar} src={avatar} alt={user?.fullName || author} />
           <Link
             className={styles.postTimestamp}
             to={`/posts/${id}`}
@@ -124,8 +124,8 @@ const PostItem: React.FC<Props> = ({
             {format(new Date(createdAt), dateFormat)}
           </Link>
           <span className={styles.postBy}>&nbsp;by&nbsp;</span>
-          <Link className={styles.postUsername} to={`/profiles/${user?.id}`}>
-            {name}
+          <Link className={styles.postAuthor} to={`/profiles/${user?.id}`}>
+            {user?.fullName || author}
           </Link>
         </div>
 

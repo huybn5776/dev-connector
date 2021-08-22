@@ -35,7 +35,7 @@ describe('Post like tests', () => {
     officerPost = await new PostModel({
       user: officerUser,
       text: 'Aenean in turpis et nunc elementum eleifend non eu ex.',
-      name: officerUser.name,
+      author: officerUser.fullName,
       avatar: officerUser.avatar,
     } as PostDocument).save();
   });
