@@ -104,11 +104,11 @@ const EditExperiencePage: React.FC<AllProps> = ({ edit, profile, errorResponse, 
   }, [experienceId, reset, loading, profile, setValue]);
 
   function onSubmit(formData: ExperienceForm): void {
-    if (formData.current && !formData.to) {
+    if (!formData.current && !formData.to) {
       setError('to', { type: 'required', message: `'To' is required when it's not current experience` });
-    } else {
-      clearErrors('to');
+      return;
     }
+    clearErrors('to');
     if (isNotNilOrEmpty(formState.errors)) {
       return;
     }

@@ -104,11 +104,11 @@ const EditEducationPage: React.FC<AllProps> = ({ edit, profile, errorResponse, l
   }, [educationId, reset, loading, profile, setValue]);
 
   function onSubmit(formData: EducationForm): void {
-    if (formData.current && !formData.to) {
+    if (!formData.current && !formData.to) {
       setError('to', { type: 'required', message: `'To' is required when it's not current education` });
-    } else {
-      clearErrors('to');
+      return;
     }
+    clearErrors('to');
     if (isNotNilOrEmpty(formState.errors)) {
       return;
     }
