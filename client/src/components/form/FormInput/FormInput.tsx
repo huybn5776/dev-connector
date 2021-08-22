@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { capitalize } from '@core/utils/string-utils';
+import clsx from 'clsx';
 import { FieldValues, FieldError } from 'react-hook-form';
 
 import { FormField } from '@/interfaces/form-field';
@@ -20,7 +21,7 @@ const FormInput = <T extends FieldValues>({
   return (
     <>
       <input
-        className={formStyles.formInput}
+        className={clsx(formStyles.formField, formStyles.formInput)}
         placeholder={(placeholder ?? capitalize(name)) + (required && '*' || '')}
         {...rest}
         {...register(name)}

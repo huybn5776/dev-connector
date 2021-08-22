@@ -28,7 +28,7 @@ const FormSelect = <T extends FieldValues>({
 }: AllProps<T>): ReturnType<React.FC> => {
   return (
     <>
-      <select className={clsx('ui', 'dropdown', formStyles.formDropdown)} {...register(name)} {...rest}>
+      <select className={clsx('ui', 'dropdown', formStyles.formField, formStyles.formDropdown)} {...register(name)} {...rest}>
         <option disabled hidden value="">
           {placeholder}
         </option>
