@@ -46,6 +46,10 @@ const authReducer = createReducer(initialState)
     errorResponse: undefined,
     loading: false,
   }))
+  .handleAction(userActions.updateUser.success, (state, { payload }) => ({
+    ...state,
+    user: payload,
+  }))
   .handleAction(authActions.login.failure, (state, action) => ({
     ...state,
     errorResponse: action.payload,

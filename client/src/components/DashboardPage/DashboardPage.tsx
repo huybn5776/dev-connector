@@ -8,6 +8,7 @@ import { profileActions } from '@actions';
 import ProfileViewCard from '@components/DashboardPage/ProfileViewCard/ProfileViewCard';
 import ExperienceList from '@components/ExperienceList/ExperienceList';
 import Loader from '@components/Loader/Loader';
+import UserInfoCard from '@components/UserInfoCard/UserInfoCard';
 import { ProfileDto } from '@dtos/profile.dto';
 import { UserDto } from '@dtos/user.dto';
 import { HttpException } from '@exceptions';
@@ -39,6 +40,7 @@ const DashboardPage: React.FC<AllProps> = ({ user, profile, loading, errorRespon
   function renderProfile(): JSX.Element {
     return (
       <>
+        {user && <UserInfoCard user={user} />}
         {user && profile ? (
           <>
             <ProfileViewCard user={user} profile={profile} />

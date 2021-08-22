@@ -8,6 +8,7 @@ import { isActionOf, RootAction, RootState, Services } from 'typesafe-actions';
 import { navigateTo } from '@/utils/navigate-utils';
 import { authActions, userActions } from '@actions';
 import HttpException from '@exceptions/http-exception';
+import { AuthToken } from '@interfaces/auth-token';
 
 type EpicType = Epic<RootAction, RootAction, RootState, Services>;
 
@@ -27,6 +28,17 @@ export const saveAuthToStorage: EpicType = (action$) =>
     filter(isActionOf([authActions.login.success, userActions.createUser.success])),
     switchMap(({ payload: authToken }) => {
       localStorage.setItem('authToken', JSON.stringify(R.omit(['access_token'], authToken)));
+      return EMPTY;
+    }),
+  );
+
+export const updateAuthUserToStorage: EpicType = (action$) =>
+  action$.pipe(
+    filter(isActionOf(userActions.updateUser.success)),
+    switchMap(({ payload: user }) => {
+      const authToken: AuthToken = JSON.parse(localStorage.getItem('authToken') || '{}');
+      authToken.user = user;
+      localStorage.setItem('authToken', JSON.stringify(authToken));
       return EMPTY;
     }),
   );

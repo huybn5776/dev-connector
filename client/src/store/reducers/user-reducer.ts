@@ -14,16 +14,16 @@ export const initialState: UserState = {
 };
 
 const userReducer = createReducer(initialState)
-  .handleAction([userActions.createUser.request], (state) => ({
+  .handleAction([userActions.createUser.request, userActions.updateUser.request], (state) => ({
     ...state,
     loading: true,
   }))
-  .handleAction(userActions.createUser.success, (state) => ({
+  .handleAction([userActions.createUser.success, userActions.updateUser.success], (state) => ({
     ...state,
     errorResponse: undefined,
     loading: false,
   }))
-  .handleAction(userActions.createUser.failure, (state, action) => ({
+  .handleAction([userActions.createUser.failure, userActions.updateUser.failure], (state, action) => ({
     ...state,
     errorResponse: action.payload,
     loading: false,

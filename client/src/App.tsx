@@ -10,6 +10,7 @@ import DashboardPage from '@components/DashboardPage/DashboardPage';
 import EditEducationPage from '@components/EditEducationPage/EditEducationPage';
 import EditExperiencePage from '@components/EditExperiencePage/EditExperiencePage';
 import EditProfilePage from '@components/EditProfilePage/EditProfilePage';
+import EditUserInfoPage from '@components/EditUserInfoPage/EditUserInfoPage';
 import LandingPage from '@components/LandingPage/LandingPage';
 import LoginPage from '@components/LoginPage/LoginPage';
 import NavBar from '@components/NavBar/NavBar';
@@ -34,6 +35,7 @@ const App: React.FC = () => {
                 <Route path="/login" exact component={LoginPage} />
                 <UnauthenticatedRoute path="/register" exact component={RegisterPage} fallbackTo="/dashboard" />
                 <AuthenticatedRoute path="/dashboard" exact component={DashboardPage} />
+                <AuthenticatedRoute path="/edit-user-info" exact component={EditUserInfoPage} />
                 <AuthenticatedRoute path="/edit-profile" exact component={EditProfilePage} />
                 <AuthenticatedRoute path="/add-experience" exact render={() => <EditExperiencePage />} />
                 <AuthenticatedRoute path="/edit-experience/:id?" exact render={() => <EditExperiencePage edit />} />

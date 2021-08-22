@@ -13,7 +13,7 @@ type EpicType = Epic<RootAction, RootAction, RootState, Services>;
 export const createUser: EpicType = (action$, state$, { api }) =>
   action$.pipe(
     filter(isActionOf(userActions.createUser.request)),
-    switchMap(({payload}) =>
+    switchMap(({ payload }) =>
       api.userApi.createUser(payload).pipe(
         map(userActions.createUser.success),
         catchError((error: AxiosResponse<HttpException>) => of(userActions.createUser.failure(error))),
@@ -21,9 +21,20 @@ export const createUser: EpicType = (action$, state$, { api }) =>
     ),
   );
 
-export const redirectAfterCreateUser: EpicType = (action$) =>
+export const updateUser: EpicType = (action$, state$, { api }) =>
   action$.pipe(
-    filter(isActionOf(userActions.createUser.success)),
+    filter(isActionOf(userActions.updateUser.request)),
+    switchMap(({ payload }) =>
+      api.userApi.updateUser(payload).pipe(
+        map(userActions.updateUser.success),
+        catchError((error: AxiosResponse<HttpException>) => of(userActions.updateUser.failure(error))),
+      ),
+    ),
+  );
+
+export const redirectAfterSaveUser: EpicType = (action$) =>
+  action$.pipe(
+    filter(isActionOf([userActions.createUser.success, userActions.updateUser.success])),
     switchMap(() => {
       navigateTo('/dashboard');
       return EMPTY;
