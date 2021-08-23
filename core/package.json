@@ -6,17 +6,17 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@automapper/classes": "^6.0.0",
-    "@automapper/core": "^6.0.0",
+    "@automapper/classes": "^6.0.2",
+    "@automapper/core": "^6.0.2",
     "class-transformer": "^0.4.0",
     "class-validator": "^0.13.1",
     "ramda": "^0.27.1",
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
-    "@automapper/types": "^6.0.0",
-    "@types/jest": "^27.0.0",
-    "@types/node": "^16.4.13",
+    "@automapper/types": "^6.0.2",
+    "@types/jest": "^27.0.1",
+    "@types/node": "^16.7.1",
     "@types/ramda": "^0.27.44"
   }
 }
