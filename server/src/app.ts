@@ -83,7 +83,6 @@ class App {
   }
 
   private initializeRouterController(controllers: { new(): unknown }[]) :void{
-    // eslint-disable-next-line react-hooks/rules-of-hooks
     useExpressServer(this.app, {
       routePrefix: '/api',
       middlewares: [ErrorMiddleware],
