@@ -52,13 +52,16 @@ const PostsPage: React.FC<PropsFromState> = ({
   const postCommentFormsRef = useRef<Record<string, React.ElementRef<typeof PostCommentForm>>>({});
 
   const pageSize = 10;
+  const [initialized] = useState(!!posts.length && posts.length >= pageSize);
   const updateIntersectionIndexes = useLazyLoading(posts, pageSize, total, (offset) =>
     dispatch(postActions.getPosts.request({ limit: pageSize, offset })),
   );
 
   useEffect(() => {
-    dispatch(postActions.getPosts.request({ limit: pageSize, offset: 0 }));
-  }, [dispatch]);
+    if (!initialized) {
+      dispatch(postActions.getPosts.request({ limit: pageSize, offset: 0 }));
+    }
+  }, [initialized, dispatch]);
 
   function isLiked(postOrComment: PostDto | PostCommentDto): boolean {
     return postOrComment.likes.some((like) => like.user.id === user?.id);
