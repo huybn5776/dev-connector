@@ -2,6 +2,7 @@ import { PopulateOptions } from 'mongoose';
 
 import { CreatePostCommentDto } from '@dtos/create-post-comment.dto';
 import { CreatePostDto } from '@dtos/create-post.dto';
+import { PaginationResult } from '@dtos/pagination-result';
 import { Post } from '@entities/post';
 import { PostComment } from '@entities/post-comment';
 import { PostLike } from '@entities/post-like';
@@ -28,18 +29,26 @@ class PostsService {
     },
   ];
 
-  async getPosts(): Promise<Post[]> {
-    const postDocuments: PostDocument[] = await this.posts
+  async getPosts(limit?: number, offset?: number): Promise<PaginationResult<Post>> {
+    let postsQuery = this.posts
       .find()
-      .sort({ created: -1 })
+      .sort({ createdAt: -1 })
       .populate('user', ['fullName', 'avatar'])
-      .populate({ path: 'comments', populate: { path: 'user', select: ['fullName', 'avatar'] } })
-      .exec();
-    return postDocuments.map((postDocument) => {
+      .populate({ path: 'comments', populate: { path: 'user', select: ['fullName', 'avatar'] } });
+    if (limit) {
+      postsQuery = postsQuery.limit(limit);
+    }
+    if (offset) {
+      postsQuery = postsQuery.skip(offset);
+    }
+    const postDocuments: PostDocument[] = await postsQuery.exec();
+    const posts = postDocuments.map((postDocument) => {
       let post = postDocument.toObject();
       post = { ...post, comments: post.comments.slice(0, 1) };
       return post;
     });
+    const total = await this.posts.count().exec();
+    return { total, offset, items: posts };
   }
 
   async getPostsCommentsCount(postIds: string[]): Promise<Record<string, number>> {

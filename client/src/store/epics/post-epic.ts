@@ -12,8 +12,8 @@ type EpicType = Epic<RootAction, RootAction, RootState, Services>;
 export const getPosts: EpicType = (action$, state$, { api }) =>
   action$.pipe(
     filter(isActionOf(postActions.getPosts.request)),
-    switchMap(() =>
-      api.postApi.getPosts().pipe(
+    switchMap(({ payload: { limit, offset } }) =>
+      api.postApi.getPosts(limit, offset).pipe(
         map(postActions.getPosts.success),
         catchError((error: AxiosResponse<HttpException>) => of(postActions.getPosts.failure(error))),
       ),

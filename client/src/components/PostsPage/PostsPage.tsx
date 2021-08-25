@@ -11,6 +11,7 @@ import PostForm from '@components/PostForm/PostForm';
 import PostItem from '@components/PostItem/PostItem';
 import { PostCommentDto } from '@dtos/post-comment.dto';
 import { PostDto } from '@dtos/post.dto';
+import { useLazyLoading } from '@hooks/use-lazy-loading';
 import { ApplicationState, StateToPropsFunc } from '@store';
 
 import styles from './PostsPage.module.scss';
@@ -19,6 +20,7 @@ type PropsFromState = Pick<ApplicationState['auth'], 'user'> &
   Pick<
     ApplicationState['post'],
     | 'posts'
+    | 'total'
     | 'creatingPost'
     | 'loadedPostsId'
     | 'loadingPostsId'
@@ -33,6 +35,7 @@ type PropsFromState = Pick<ApplicationState['auth'], 'user'> &
 const PostsPage: React.FC<PropsFromState> = ({
   user,
   posts,
+  total,
   creatingPost,
   loadedPostsId,
   loadingPostsId,
@@ -48,8 +51,13 @@ const PostsPage: React.FC<PropsFromState> = ({
   const [postsCommentsExpanded, setPostsCommentsExpanded] = useState<Record<string, boolean>>({});
   const postCommentFormsRef = useRef<Record<string, React.ElementRef<typeof PostCommentForm>>>({});
 
+  const pageSize = 10;
+  const updateIntersectionIndexes = useLazyLoading(posts, pageSize, total, (offset) =>
+    dispatch(postActions.getPosts.request({ limit: pageSize, offset })),
+  );
+
   useEffect(() => {
-    dispatch(postActions.getPosts.request());
+    dispatch(postActions.getPosts.request({ limit: pageSize, offset: 0 }));
   }, [dispatch]);
 
   function isLiked(postOrComment: PostDto | PostCommentDto): boolean {
@@ -84,53 +92,51 @@ const PostsPage: React.FC<PropsFromState> = ({
         </div>
       ) : null}
 
-      {loading ? (
-        <Loader />
-      ) : (
-        <div className={styles.postList}>
-          {posts.map((post) => (
-            <PostItem
-              key={post.id}
-              post={post}
-              liked={isLiked(post)}
-              likeLoading={updatingLikePostsId[post.id]}
-              commentsExpanded={postsCommentsExpanded[post.id]}
-              detailMode={loadedPostsId[post.id]}
-              editable={user && user.id === post.user?.id}
-              loading={loadingPostsId[post.id] || false}
-              updating={updatingPostId[post.id]}
-              onCommentButtonClick={() => focusToCommentInput(post.id)}
-              onExpandCommentClick={(expand) => onCommentExpandClick(post.id, expand)}
-            >
-              {post.comments.map((comment) => (
-                <PostCommentItem
-                  key={comment.id}
-                  comment={comment}
-                  postId={post.id}
-                  liked={isLiked(comment)}
-                  likeLoading={updatingLikeCommentsId[comment.id]}
-                  detailMode={loadedPostsId[post.id] || commentingPostsId[post.id]}
-                  editable={user && user.id === user?.id}
-                  updating={updatingCommentId[comment.id]}
-                />
-              ))}
-              {user &&
-              (post.commentsCount === 0 ||
-                post.comments.length === 0 ||
-                loadedPostsId[post.id] ||
-                commentingPostsId[post.id]) ? (
-                <PostCommentForm
-                  user={user}
-                  postId={post.id}
-                  loading={addingCommentPostsId[post.id]}
-                  autoFocus={commentingPostsId[post.id]}
-                  ref={(ref) => setCommentFormRef(post.id, ref)}
-                />
-              ) : null}
-            </PostItem>
-          ))}
-        </div>
-      )}
+      <div className={styles.postList}>
+        {posts.map((post, index) => (
+          <PostItem
+            key={post.id}
+            post={post}
+            liked={isLiked(post)}
+            likeLoading={updatingLikePostsId[post.id]}
+            commentsExpanded={postsCommentsExpanded[post.id]}
+            detailMode={loadedPostsId[post.id]}
+            editable={user && user.id === post.user?.id}
+            loading={loadingPostsId[post.id] || false}
+            updating={updatingPostId[post.id]}
+            onCommentButtonClick={() => focusToCommentInput(post.id)}
+            onExpandCommentClick={(expand) => onCommentExpandClick(post.id, expand)}
+            onIntersection={(intersection) => updateIntersectionIndexes(index, intersection)}
+          >
+            {post.comments.map((comment) => (
+              <PostCommentItem
+                key={comment.id}
+                comment={comment}
+                postId={post.id}
+                liked={isLiked(comment)}
+                likeLoading={updatingLikeCommentsId[comment.id]}
+                detailMode={loadedPostsId[post.id] || commentingPostsId[post.id]}
+                editable={user && user.id === user?.id}
+                updating={updatingCommentId[comment.id]}
+              />
+            ))}
+            {user &&
+            (post.commentsCount === 0 ||
+              post.comments.length === 0 ||
+              loadedPostsId[post.id] ||
+              commentingPostsId[post.id]) ? (
+              <PostCommentForm
+                user={user}
+                postId={post.id}
+                loading={addingCommentPostsId[post.id]}
+                autoFocus={commentingPostsId[post.id]}
+                ref={(ref) => setCommentFormRef(post.id, ref)}
+              />
+            ) : null}
+          </PostItem>
+        ))}
+      </div>
+      {loading ? <Loader /> : null}
     </div>
   );
 };
@@ -138,6 +144,7 @@ const PostsPage: React.FC<PropsFromState> = ({
 const mapStateToProps: StateToPropsFunc<PropsFromState> = ({ auth, post }) => ({
   user: auth.user,
   posts: post.posts,
+  total: post.total,
   creatingPost: post.creatingPost,
   loadedPostsId: post.loadedPostsId,
   loadingPostsId: post.loadingPostsId,

@@ -2,8 +2,9 @@ import { AxiosResponse } from 'axios';
 import * as R from 'ramda';
 import { createReducer } from 'typesafe-actions';
 
-import { upsertEntityWithSameId, updateEntityWithId } from '@/utils/store-utils';
+import { upsertEntityWithSameId, updateEntityWithId, upsertEntitiesWithSameId } from '@/utils/store-utils';
 import { postActions } from '@actions';
+import { PaginationResult } from '@dtos/pagination-result';
 import { PostCommentDto } from '@dtos/post-comment.dto';
 import { PostDto } from '@dtos/post.dto';
 import HttpException from '@exceptions/http-exception';
@@ -11,6 +12,8 @@ import HttpException from '@exceptions/http-exception';
 export interface PostState {
   posts: PostDto[];
   postsLoaded: boolean;
+  total: number;
+  offset: number;
   creatingPost: boolean;
   loadingPostsId: Record<string, true>;
   loadedPostsId: Record<string, true>;
@@ -26,6 +29,8 @@ export interface PostState {
 export const initialState: PostState = {
   posts: [],
   postsLoaded: false,
+  total: 0,
+  offset: 0,
   creatingPost: false,
   loadingPostsId: {} as PostState['loadingPostsId'],
   loadedPostsId: {} as PostState['loadedPostsId'],
@@ -51,14 +56,23 @@ const postReducer = createReducer(initialState)
     errorResponse: action.payload,
     loading: false,
   }))
-  .handleAction(postActions.getPosts.success, (state, action) => ({
-    ...state,
-    posts: action.payload,
-    postsLoaded: true,
-    loadedPostsId: {},
-    errorResponse: undefined,
-    loading: false,
-  }))
+  .handleAction(postActions.getPosts.success, (state, { payload }: { payload: PaginationResult<PostDto> }) => {
+    const posts = upsertEntitiesWithSameId(state.posts, payload.items, (entity, fetchedEntity) => ({
+      ...entity,
+      text: fetchedEntity.text,
+      updateAt: fetchedEntity.updatedAt,
+    }));
+    return {
+      ...state,
+      posts,
+      postsLoaded: true,
+      total: payload.total,
+      offset: payload.offset || 0,
+      loadedPostsId: {},
+      errorResponse: undefined,
+      loading: false,
+    };
+  })
   .handleAction(postActions.getPost.success, (state, { payload: post }) => ({
     ...state,
     posts: upsertEntityWithSameId(state.posts, post),

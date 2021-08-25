@@ -27,6 +27,7 @@ interface Props {
   updating?: boolean;
   onCommentButtonClick?: (event: React.MouseEvent) => void;
   onExpandCommentClick: (expand: boolean) => void;
+  onIntersection?: (intersecting: boolean) => void;
   children: JSX.Element | (JSX.Element | JSX.Element[] | null)[] | null;
 }
 
@@ -41,6 +42,7 @@ const PostItem: React.FC<Props> = ({
   updating,
   onCommentButtonClick,
   onExpandCommentClick,
+  onIntersection,
   children,
 }: Props) => {
   const dispatch = useDispatch();
@@ -48,6 +50,11 @@ const PostItem: React.FC<Props> = ({
   const textarea = useRef<HTMLTextAreaElement | null>(null);
   const [saveHotkey$, saveHotkeySubscription] = useSingleHotkey((event) => event.metaKey && event.key === 'Enter');
   const [cancelHotkey$, cancelHotkeySubscription] = useSingleHotkey((event) => event.key === 'Escape');
+
+  const intersectionObserver = useRef<IntersectionObserver | undefined>(
+    new IntersectionObserver((entries) => onIntersection?.(entries[0].isIntersecting)),
+  );
+  const elementRef = useRef<HTMLElement | undefined>();
 
   useEffect(() => {
     if (!updating) {
@@ -111,8 +118,17 @@ const PostItem: React.FC<Props> = ({
     dispatch(postActions.deletePost.request({ postId: id }));
   }
 
+  function updateObserver(element: HTMLElement | null): void {
+    if (element) {
+      intersectionObserver.current?.observe(element);
+      elementRef.current = element;
+    } else if (elementRef.current) {
+      intersectionObserver.current?.unobserve(elementRef.current);
+    }
+  }
+
   return (
-    <div className={styles.PostItem}>
+    <div className={styles.PostItem} ref={updateObserver}>
       <div className={styles.postTop}>
         <div className={styles.postInfo}>
           <img className={styles.postAvatar} src={avatar} alt={user?.fullName || author} />

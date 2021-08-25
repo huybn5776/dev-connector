@@ -10,11 +10,13 @@ import {
   Post,
   Authorized,
   OnUndefined,
+  QueryParam,
 } from 'routing-controllers';
 
 import { RequestUser } from '@/interfaces/request-user';
 import { CreatePostCommentDto } from '@dtos/create-post-comment.dto';
 import { CreatePostDto } from '@dtos/create-post.dto';
+import { PaginationResult } from '@dtos/pagination-result';
 import { PostCommentDto } from '@dtos/post-comment.dto';
 import { PostLikeDto } from '@dtos/post-like.dto';
 import { PostDto } from '@dtos/post.dto';
@@ -29,14 +31,18 @@ class PostsController {
   readonly postsService = new PostsService();
 
   @Get()
-  async getPosts(): Promise<PostDto[]> {
-    const posts = await this.postsService.getPosts();
-    const postDtoList = mapper.mapArray(posts, PostDto, AppPost);
+  async getPosts(
+    @QueryParam('limit') limit: number,
+    @QueryParam('offset') offset: number,
+  ): Promise<PaginationResult<PostDto>> {
+    const { total, items: posts } = await this.postsService.getPosts(limit, offset);
+    let postDtoList = mapper.mapArray(posts, PostDto, AppPost);
     const commentCountMap = await this.postsService.getPostsCommentsCount(postDtoList.map((post) => post.id));
-    return postDtoList.map((post) => ({
+    postDtoList = postDtoList.map((post) => ({
       ...post,
       commentsCount: commentCountMap[post.id],
     }));
+    return { total, offset, items: postDtoList };
   }
 
   @Get('/:id')

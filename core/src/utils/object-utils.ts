@@ -39,3 +39,20 @@ export function deleteNilProperties<T>(obj: T): Partial<T> {
   });
   return newObj;
 }
+
+type PropertiesWhereMarker<T, K> = {
+  [Key in keyof T]: T[Key] extends K ? Key : never;
+};
+type PropertiesWhere<T, K> = {
+  [Key in PropertiesWhereMarker<T, K>[keyof T]]: T[Key];
+};
+
+export type StringOrNumberPropertiesOf<T> = keyof PropertiesWhere<Required<T>, string>;
+
+export function indexOfBy<T, K extends StringOrNumberPropertiesOf<T>>(field: K, items: T[]): Record<string, number> {
+  const indexOfMap = {} as Record<K, number>;
+  items.forEach((item, index) => {
+    indexOfMap[item[field]] = index;
+  });
+  return indexOfMap;
+}

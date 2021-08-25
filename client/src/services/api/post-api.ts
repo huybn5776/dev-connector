@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 
 import { CreatePostCommentDto } from '@dtos/create-post-comment.dto';
 import { CreatePostDto } from '@dtos/create-post.dto';
+import { PaginationResult } from '@dtos/pagination-result';
 import { PostCommentDto } from '@dtos/post-comment.dto';
 import { PostLikeDto } from '@dtos/post-like.dto';
 import { PostDto } from '@dtos/post.dto';
@@ -12,8 +13,8 @@ import { AxiosProxy } from './api-utils';
 const axiosInstance = axios.create({ baseURL: '/api/posts' });
 const axiosProxy = new AxiosProxy(axiosInstance);
 
-export function getPosts(): Observable<PostDto[]> {
-  return axiosProxy.get('/');
+export function getPosts(limit?: number, offset?: number): Observable<PaginationResult<PostDto>> {
+  return axiosProxy.get('/', { params: { limit, offset } });
 }
 
 export function getPost(id: string): Observable<PostDto> {

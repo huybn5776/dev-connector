@@ -4,6 +4,7 @@ import { createAsyncAction } from 'typesafe-actions';
 import { actionNameCreator } from '@/utils/action-utils';
 import { CreatePostCommentDto } from '@dtos/create-post-comment.dto';
 import { CreatePostDto } from '@dtos/create-post.dto';
+import { PaginationResult } from '@dtos/pagination-result';
 import { PostCommentDto } from '@dtos/post-comment.dto';
 import { PostLikeDto } from '@dtos/post-like.dto';
 import { PostDto } from '@dtos/post.dto';
@@ -13,8 +14,8 @@ const stateName = 'Post';
 const { asyncActionNames } = actionNameCreator(stateName);
 
 export const getPosts = createAsyncAction(...asyncActionNames('Get posts'))<
-  undefined,
-  PostDto[],
+  { limit?: number; offset?: number },
+  PaginationResult<PostDto>,
   AxiosResponse<HttpException>
 >();
 
