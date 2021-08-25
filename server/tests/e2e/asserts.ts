@@ -1,3 +1,5 @@
+import '@tests/setup-tests';
+
 import { PostCommentDto } from '@dtos/post-comment.dto';
 import { PostLikeDto } from '@dtos/post-like.dto';
 import { ProfileEducationDto } from '@dtos/profile-education.dto';

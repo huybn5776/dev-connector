@@ -1,8 +1,11 @@
+import assert from 'assert';
+
 import express from 'express';
 
 import request from 'supertest';
 
 import { CreatePostDto } from '@dtos/create-post.dto';
+import { PaginationResult } from '@dtos/pagination-result';
 import { PostDto } from '@dtos/post.dto';
 import { Post } from '@entities/post';
 import { PostCommentModel, PostCommentDocument } from '@models/post-comment.model';
@@ -57,31 +60,33 @@ describe('Posts tests', () => {
     });
 
     it('response all posts', async () => {
-      const responseData = await getPosts();
+      const { items: postsDto } = await getPosts();
 
-      expect(responseData).toHaveLength(posts.length);
+      expect(postsDto).toHaveLength(posts.length);
     });
 
     it('response all posts with correct fields', async () => {
       await insertCommentToPosts();
 
-      const responseData = await getPosts();
+      const { items: postsDto } = await getPosts();
 
       for (let i = 0; i < posts.length; i += 1) {
-        expect(responseData[i].text).toBe(posts[i].text);
-        assertPartialUser(responseData[i].user, posts[i].user);
-        expect(responseData[i].author).toBe(posts[i].author);
-        expect(responseData[i].avatar).toBe(posts[i].avatar);
+        const { postDto, post } = findPost(postsDto, posts[i]);
+        expect(postDto.text).toBe(post.text);
+        assertPartialUser(postDto.user, post.user);
+        expect(postDto.author).toBe(post.author);
+        expect(postDto.avatar).toBe(post.avatar);
       }
     });
 
     it('response all posts with correct commentCount', async () => {
       await insertCommentToPosts();
 
-      const responseData = await getPosts();
+      const { items: postsDto } = await getPosts();
 
       for (let i = 0; i < posts.length; i += 1) {
-        expect(responseData[i].commentsCount).toBe(posts[i].comments.length);
+        const { postDto, post } = findPost(postsDto, posts[i]);
+        expect(postDto.commentsCount).toBe(post.comments.length);
       }
     });
 
@@ -91,23 +96,45 @@ describe('Posts tests', () => {
       posts[1].likes.push({ user: seniorUser });
       await Promise.all([posts[0].save(), posts[1].save()]);
 
-      const responseData = await getPosts();
+      const { items: postsDto } = await getPosts();
 
       for (let i = 0; i < posts.length; i += 1) {
-        expect(responseData[i].likes.length).toBe(posts[i].likes.length);
-        assertListingLikes(responseData[i].likes, posts[i].likes);
+        const { postDto, post } = findPost(postsDto, posts[i]);
+        expect(postDto.likes.length).toBe(post.likes.length);
+        assertListingLikes(postDto.likes, post.likes);
       }
     });
 
     it('response all posts with only first comment', async () => {
       await insertCommentToPosts();
 
-      const responseData = await getPosts();
+      const { items: postsDto } = await getPosts();
 
-      expect(responseData[0].comments.length).toBe(1);
-      expect(responseData[1].comments.length).toBe(1);
-      expect(responseData[0].comments[0].text).toBe(posts[0].comments[0].text);
-      expect(responseData[1].comments[0].text).toBe(posts[1].comments[0].text);
+      for (let i = 0; i < posts.length; i += 1) {
+        const { postDto, post } = findPost(postsDto, posts[i]);
+        expect(postDto.comments.length).toBe(Math.min(1, post.comments.length));
+        expect(postDto.comments).toEqual(
+          expect.arrayContaining(post.comments[0] ? [expect.objectContaining({ text: post.comments[0].text })] : []),
+        );
+      }
+    });
+
+    it('response posts with limit', async () => {
+      await insertCommentToPosts();
+
+      const response = await request(server).get('/api/posts').query({ limit: 2 }).expect(200);
+      const { items: postsDto } = response.body as PaginationResult<PostDto>;
+
+      expect(postsDto.length).toBe(2);
+    });
+
+    it('response posts with offset', async () => {
+      await insertCommentToPosts();
+
+      const response = await request(server).get('/api/posts').query({ offset: 1 }).expect(200);
+      const { items: postsDto } = response.body as PaginationResult<PostDto>;
+
+      expect(postsDto.length).toBe(2);
     });
 
     it('response post with correct fields', async () => {
@@ -142,7 +169,7 @@ describe('Posts tests', () => {
       }
     });
 
-    async function getPosts(): Promise<PostDto[]> {
+    async function getPosts(): Promise<PaginationResult<PostDto>> {
       const response = await request(server).get('/api/posts').expect(200);
       return response.body;
     }
@@ -164,6 +191,12 @@ describe('Posts tests', () => {
         await new PostCommentModel({ user: officerUser, text: 'WTF' }).save(),
       );
       await Promise.all([posts[0].save(), posts[1].save()]);
+    }
+
+    function findPost(postsDto: PostDto[], post: Post): { postDto: PostDto; post: Post } {
+      const postDto = postsDto.find((p) => p.id === `${post._id}`);
+      assert(postDto !== undefined);
+      return { post, postDto };
     }
   });
 
