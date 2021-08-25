@@ -3,6 +3,10 @@ import express from 'express';
 import request from 'supertest';
 
 import App from '@/app';
+import { PostLikeDto } from '@dtos/post-like.dto';
+import { PostLike } from '@entities/post-like';
+import { PostModel, PostDocument } from '@models/post.model';
+import { UserDocument } from '@models/user.model';
 import {
   cleanAndDisconnectToDb,
   connectAndClearDb,
@@ -10,11 +14,7 @@ import {
   clearDb,
   getApp,
   loginWithOfficer,
-} from '@/tests/e2e/e2e-utils';
-import { PostLikeDto } from '@dtos/post-like.dto';
-import { PostLike } from '@entities/post-like';
-import { PostModel, PostDocument } from '@models/post.model';
-import { UserDocument } from '@models/user.model';
+} from '@tests/e2e/e2e-utils';
 
 describe('Post like tests', () => {
   let app: App;

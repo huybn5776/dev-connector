@@ -3,7 +3,13 @@ import express from 'express';
 import request from 'supertest';
 
 import App from '@/app';
-import { assertProfileEducation, assertProfileEducations } from '@/tests/e2e/asserts';
+import { CreateProfileEducationDto } from '@dtos/create-profile-education.dto';
+import { PatchProfileEducationDto } from '@dtos/patch-profile-education.dto';
+import { ProfileEducationDto } from '@dtos/profile-education.dto';
+import { ProfileEducation } from '@entities/profile-education';
+import { ProfileDocument, ProfileModel } from '@models/profile.model';
+import { UserDocument } from '@models/user.model';
+import { assertProfileEducation, assertProfileEducations } from '@tests/e2e/asserts';
 import {
   cleanAndDisconnectToDb,
   connectAndClearDb,
@@ -13,13 +19,7 @@ import {
   getApp,
   createOfficerProfile,
   loginWithSenior,
-} from '@/tests/e2e/e2e-utils';
-import { CreateProfileEducationDto } from '@dtos/create-profile-education.dto';
-import { PatchProfileEducationDto } from '@dtos/patch-profile-education.dto';
-import { ProfileEducationDto } from '@dtos/profile-education.dto';
-import { ProfileEducation } from '@entities/profile-education';
-import { ProfileDocument, ProfileModel } from '@models/profile.model';
-import { UserDocument } from '@models/user.model';
+} from '@tests/e2e/e2e-utils';
 
 describe('Profiles educations tests', () => {
   let app: App;

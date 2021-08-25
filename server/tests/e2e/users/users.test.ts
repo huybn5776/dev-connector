@@ -5,6 +5,13 @@ import express from 'express';
 import request from 'supertest';
 
 import App from '@/app';
+import { CreateUserDto } from '@dtos/create-user.dto';
+import { PatchUserDto } from '@dtos/patch-user.dto';
+import { UserDto } from '@dtos/user.dto';
+import { User } from '@entities/user';
+import { HttpException } from '@exceptions';
+import { AuthToken } from '@interfaces/auth-token';
+import { UserDocument, UserModel } from '@models/user.model';
 import {
   cleanAndDisconnectToDb,
   connectAndClearDb,
@@ -16,14 +23,7 @@ import {
   loginWithOfficer,
   getLoginRequest,
   createOfficer,
-} from '@/tests/e2e/e2e-utils';
-import { CreateUserDto } from '@dtos/create-user.dto';
-import { PatchUserDto } from '@dtos/patch-user.dto';
-import { UserDto } from '@dtos/user.dto';
-import { User } from '@entities/user';
-import { HttpException } from '@exceptions';
-import { AuthToken } from '@interfaces/auth-token';
-import { UserDocument, UserModel } from '@models/user.model';
+} from '@tests/e2e/e2e-utils';
 
 describe('Users tests', () => {
   let app: App;

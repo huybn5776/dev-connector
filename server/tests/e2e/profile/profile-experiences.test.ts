@@ -3,7 +3,14 @@ import express from 'express';
 import request from 'supertest';
 
 import App from '@/app';
-import { assertProfileExperience, assertProfileExperiences } from '@/tests/e2e/asserts';
+import { CreateProfileExperienceDto } from '@dtos/create-profile-experience.dto';
+import { PatchProfileExperienceDto } from '@dtos/patch-profile-experience.dto';
+import { ProfileExperienceDto } from '@dtos/profile-experience.dto';
+import { ProfileExperience } from '@entities/profile-experience';
+import { HttpException } from '@exceptions';
+import { ProfileDocument, ProfileModel } from '@models/profile.model';
+import { UserDocument } from '@models/user.model';
+import { assertProfileExperience, assertProfileExperiences } from '@tests/e2e/asserts';
 import {
   cleanAndDisconnectToDb,
   connectAndClearDb,
@@ -13,14 +20,7 @@ import {
   getApp,
   createOfficerProfile,
   loginWithSenior,
-} from '@/tests/e2e/e2e-utils';
-import { CreateProfileExperienceDto } from '@dtos/create-profile-experience.dto';
-import { PatchProfileExperienceDto } from '@dtos/patch-profile-experience.dto';
-import { ProfileExperienceDto } from '@dtos/profile-experience.dto';
-import { ProfileExperience } from '@entities/profile-experience';
-import { HttpException } from '@exceptions';
-import { ProfileDocument, ProfileModel } from '@models/profile.model';
-import { UserDocument } from '@models/user.model';
+} from '@tests/e2e/e2e-utils';
 
 describe('Profiles experiences tests', () => {
   let app: App;

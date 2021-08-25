@@ -5,6 +5,10 @@ import express from 'express';
 import request from 'supertest';
 
 import App from '@/app';
+import { AuthRequest } from '@dtos/auth-request';
+import { User } from '@entities/user';
+import { AuthToken } from '@interfaces/auth-token';
+import { UserDocument } from '@models/user.model';
 import {
   connectAndClearDb,
   getApp,
@@ -14,11 +18,7 @@ import {
   officerUserData,
   seniorUserData,
   loginWithOfficer,
-} from '@/tests/e2e/e2e-utils';
-import { AuthRequest } from '@dtos/auth-request';
-import { User } from '@entities/user';
-import { AuthToken } from '@interfaces/auth-token';
-import { UserDocument } from '@models/user.model';
+} from '@tests/e2e/e2e-utils';
 
 describe('Auth tests', () => {
   let app: App;

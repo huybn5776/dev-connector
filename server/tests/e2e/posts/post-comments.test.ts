@@ -3,7 +3,13 @@ import express from 'express';
 import request from 'supertest';
 
 import App from '@/app';
-import { assertListingLikes, assertPartialUser } from '@/tests/e2e/asserts';
+import { CreatePostCommentDto } from '@dtos/create-post-comment.dto';
+import { PostCommentDto } from '@dtos/post-comment.dto';
+import { PostComment } from '@entities/post-comment';
+import { PostCommentModel, PostCommentDocument } from '@models/post-comment.model';
+import { PostModel, PostDocument } from '@models/post.model';
+import { UserDocument } from '@models/user.model';
+import { assertListingLikes, assertPartialUser } from '@tests/e2e/asserts';
 import {
   cleanAndDisconnectToDb,
   connectAndClearDb,
@@ -13,13 +19,7 @@ import {
   loginWithOfficer,
   getApp,
   createPostCommentDocument,
-} from '@/tests/e2e/e2e-utils';
-import { CreatePostCommentDto } from '@dtos/create-post-comment.dto';
-import { PostCommentDto } from '@dtos/post-comment.dto';
-import { PostComment } from '@entities/post-comment';
-import { PostCommentModel, PostCommentDocument } from '@models/post-comment.model';
-import { PostModel, PostDocument } from '@models/post.model';
-import { UserDocument } from '@models/user.model';
+} from '@tests/e2e/e2e-utils';
 import { RecursivePartial } from '@utils/type-utils';
 
 describe('Post comment tests', () => {

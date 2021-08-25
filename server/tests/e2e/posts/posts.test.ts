@@ -2,8 +2,13 @@ import express from 'express';
 
 import request from 'supertest';
 
-import App from '@/app';
-import { assertUser, assertComment, assertListingLikes, assertPartialUser } from '@/tests/e2e/asserts';
+import { CreatePostDto } from '@dtos/create-post.dto';
+import { PostDto } from '@dtos/post.dto';
+import { Post } from '@entities/post';
+import { PostCommentModel, PostCommentDocument } from '@models/post-comment.model';
+import { PostModel, PostDocument } from '@models/post.model';
+import { UserDocument } from '@models/user.model';
+import { assertUser, assertComment, assertListingLikes, assertPartialUser } from '@tests/e2e/asserts';
 import {
   cleanAndDisconnectToDb,
   connectAndClearDb,
@@ -13,14 +18,10 @@ import {
   loginWithOfficer,
   getApp,
   createPostCommentDocument,
-} from '@/tests/e2e/e2e-utils';
-import { CreatePostDto } from '@dtos/create-post.dto';
-import { PostDto } from '@dtos/post.dto';
-import { Post } from '@entities/post';
-import { PostCommentModel } from '@models/post-comment.model';
-import { PostModel, PostDocument } from '@models/post.model';
-import { UserDocument } from '@models/user.model';
+} from '@tests/e2e/e2e-utils';
 import { RecursivePartial } from '@utils/type-utils';
+
+import App from '../../../src/app';
 
 describe('Posts tests', () => {
   let app: App;
@@ -59,6 +60,19 @@ describe('Posts tests', () => {
       const responseData = await getPosts();
 
       expect(responseData).toHaveLength(posts.length);
+    });
+
+    it('response all posts with correct fields', async () => {
+      await insertCommentToPosts();
+
+      const responseData = await getPosts();
+
+      for (let i = 0; i < posts.length; i += 1) {
+        expect(responseData[i].text).toBe(posts[i].text);
+        assertPartialUser(responseData[i].user, posts[i].user);
+        expect(responseData[i].author).toBe(posts[i].author);
+        expect(responseData[i].avatar).toBe(posts[i].avatar);
+      }
     });
 
     it('response all posts with correct commentCount', async () => {
@@ -343,7 +357,7 @@ describe('Posts tests', () => {
     });
 
     it('delete post, also delete comments of post', async () => {
-      const officerPostComments = await PostCommentModel.insertMany([
+      const officerPostComments: PostCommentDocument[] = await PostCommentModel.insertMany([
         createPostCommentDocument(officerUser, 'Hello everyone.'),
         createPostCommentDocument(officerUser, 'Goodbye all.'),
       ]);

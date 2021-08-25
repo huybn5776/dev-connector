@@ -5,11 +5,17 @@ import express from 'express';
 import request from 'supertest';
 
 import App from '@/app';
+import { CreateProfileDto } from '@dtos/create-profile.dto';
+import { ProfileDto } from '@dtos/profile.dto';
+import { Profile } from '@entities/profile';
+import { GithubRepo } from '@interfaces/github-repo';
+import { ProfileDocument, ProfileModel } from '@models/profile.model';
+import { UserDocument } from '@models/user.model';
 import {
   assertProfile,
   assertProfileExperiences,
   assertProfileEducations, assertPartialUser,
-} from '@/tests/e2e/asserts';
+} from '@tests/e2e/asserts';
 import {
   cleanAndDisconnectToDb,
   connectAndClearDb,
@@ -19,13 +25,7 @@ import {
   getApp,
   createOfficerProfile,
   createSeniorProfile,
-} from '@/tests/e2e/e2e-utils';
-import { CreateProfileDto } from '@dtos/create-profile.dto';
-import { ProfileDto } from '@dtos/profile.dto';
-import { Profile } from '@entities/profile';
-import { GithubRepo } from '@interfaces/github-repo';
-import { ProfileDocument, ProfileModel } from '@models/profile.model';
-import { UserDocument } from '@models/user.model';
+} from '@tests/e2e/e2e-utils';
 import { deleteNilProperties } from '@utils/object-utils';
 import { RecursivePartial } from '@utils/type-utils';
 

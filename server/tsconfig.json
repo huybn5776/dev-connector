@@ -19,6 +19,7 @@
       "@models/*": ["src/models/*"],
       "@routes/*": ["src/routes/*"],
       "@services/*": ["src/services/*"],
+      "@tests/*": ["tests/*"],
       "class-transformer": ["/../server/node_modules/class-transformer"]
     }
   },
