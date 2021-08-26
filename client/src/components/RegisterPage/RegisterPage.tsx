@@ -6,6 +6,7 @@ import { AxiosResponse } from 'axios';
 import clsx from 'clsx';
 import { useForm } from 'react-hook-form';
 import { connect, useDispatch } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 import * as yup from 'yup';
 
 import { useHandleFormError } from '@/hooks/use-handle-form-error';
@@ -46,6 +47,7 @@ interface PropsFromState {
 type AllProps = PropsFromState;
 
 const RegisterPage: React.FC<AllProps> = ({ errorResponse, loading }: AllProps) => {
+  const location = useLocation();
   const {
     register,
     handleSubmit,
@@ -54,6 +56,9 @@ const RegisterPage: React.FC<AllProps> = ({ errorResponse, loading }: AllProps) 
     formState: { errors },
   } = useForm<RegisterForm>({
     resolver: yupResolver(schema),
+    defaultValues: {
+      email: (location.state as { email: string })?.email,
+    },
   });
 
   const [formErrorMessage, setFormErrorMessage] = useHandleFormError(setError, errorResponse);
